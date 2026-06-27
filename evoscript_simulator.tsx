@@ -503,6 +503,40 @@ export default function App() {
             return;
           }
 
+          // ── Pre-JSON guard ──────────────────────────────────────────────
+          // The JSON rules contain enormous synonym lists that accidentally match
+          // common short lines like "var name = X" or "int age = 5".
+          // Handle these safe patterns here before the JSON engine sees them,
+          // so the JSON is only used for things it's actually good at.
+          let guardedLine: string | null = null;
+
+          // "var/let/const/int/float/string/bool name = value" — type-prefixed assignment
+          const typedAssign = trimmed.match(/^(?:var|let|const|int|float|string|bool|integer|double)\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*(.+)$/i);
+          if (typedAssign) {
+            const [, varName, val] = typedAssign;
+            const kw = trimmed.split(/\s+/)[0].toLowerCase();
+            if (kw === 'int' || kw === 'integer') guardedLine = `${varName} = int(${val.trim()})`;
+            else if (kw === 'float' || kw === 'double') guardedLine = `${varName} = float(${val.trim()})`;
+            else if (kw === 'string') guardedLine = `${varName} = str(${val.trim()})`;
+            else if (kw === 'bool') guardedLine = `${varName} = bool(${val.trim()})`;
+            else guardedLine = `${varName} = ${val.trim()}`;
+            if (!currentEvolvedSyntax.some(s => s.keyword === 'type-prefixed assignment'))
+              currentEvolvedSyntax.push({ keyword: 'type-prefixed assignment', desc: 'Typed var declaration stripped to Python assignment.' });
+          }
+
+          // "name = value" bare assignment — already valid Python, pass through
+          if (!guardedLine) {
+            const bareAssign = trimmed.match(/^([a-zA-Z_][a-zA-Z0-9_]*)\s*([+\-*\/%]?=)\s*(.+)$/);
+            if (bareAssign) {
+              guardedLine = trimmed; // already Python-valid, don't let JSON touch it
+            }
+          }
+
+          if (guardedLine !== null) {
+            finalCodeLines.push(indent + postProcessMathWords(guardedLine));
+            return;
+          }
+
           // ── Multi-pass rules engine ──────────────────────────────────────
           // Keeps applying rules until the line fully stabilises (no more changes).
           // This lets compound natural-language statements resolve completely even
