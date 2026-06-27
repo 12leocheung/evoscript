@@ -1,0 +1,2487 @@
+[
+  {
+    "pattern": "^\\s*(?:make|create|define|declare|initialize|initialise|init|set up|setup|build|give me|i want|i need|i'd like|id like|gimme|new|let|var|store|save|assign|put|place|stick|establish|prepare|generate|write|construct|instantiate|produce|craft|forge|design|develop|program|code|deploy|launch|boot|activate|start|begin|run|execute|spawn|origin|allocate|register|record|log|save|keep|hold|preserve|maintain|secure|retain|deposit|stash|hide|conceal|pack|load|fill|populate|inject|insert|add|plus|append|tack on|attach|affix|couple|join|unify|connect|register|enroll|schedule|enter|file|catalogue|index|list|note|jot|scribe|draft|outline|sketch|blueprint|model|shape|form|mold|fashion|build up|set down|write down|record in a variable|put in a variable|store in a variable|hold in a variable|keep in a variable|preserve in a variable|save in a variable|assign to a variable|set a variable|declare a variable|define a variable|initialize a variable|initialise a variable|create a variable|make a variable|instantiate a variable|setup a variable|set up a variable|build a variable|give me a variable|i want a variable|i need a variable|i'd like a variable|id like a variable|gimme a variable|new variable|let there be a variable|var variable|store variable|save variable|assign variable|put variable|place variable|stick variable|establish variable|prepare variable|generate variable|write variable|construct variable|instantiate variable|produce variable|craft variable|forge variable|design variable|develop variable|program variable|code variable|deploy variable|launch variable|boot variable|activate variable|start variable|begin variable|run variable|execute variable|spawn variable|origin variable|allocate variable|register variable|record variable|log variable|save variable|keep variable|hold variable|preserve variable|maintain variable|secure variable|retain variable|deposit variable|stash variable|hide variable|conceal variable|pack variable|load variable|fill variable|populate variable|inject variable|insert variable|add variable|plus variable|append variable|tack on variable|attach variable|affix variable|couple variable|join variable|unify variable|connect variable)\\s+(?:a\\s+)?(?:variable|var|val|value|thing|object|item|element|entity|token|datum|piece of data|parameter|property|attribute|field|member|key|name|identifier|id|tag|label|flag|indicator|marker|sign|signal|symbol|ref|reference|pointer|address|location|slot|spot|niche|place|position|rank|status|state|condition|mode|setting|config|option|preference|choice|selection|decision|result|output|outcome|answer|solution|product|sum|difference|quotient|product|total|grand total|subtotal|balance|amount|quantity|count|number|score|grade|mark|rating|rank|level|stage|phase|step|turn|round|cycle|iteration|loop|pass|run|try|attempt|test|check|verify|validation|proof|evidence|fact|truth|lie|boolean|truth value|flag|switch|toggle|button|trigger|event|hook|callback|handler|listener|observer|subject|broker|agent|proxy|delegate|client|server|host|peer|node|vertex|edge|link|path|route|track|trail|trace|line|row|column|cell|grid|table|matrix|array|list|vector|tensor|set|collection|group|bunch|pile|heap|stack|queue|buffer|stream|pipe|channel|socket|port|connection|session|request|response|message|envelope|packet|frame|byte|word|string|text|character|char|symbol|digit|number|float|double|integer|int|whole number|natural number|real number|complex number|fraction|ratio|decimal|percentage|rate|speed|velocity|acceleration|force|mass|weight|volume|density|area|perimeter|length|width|height|depth|size|dimension|scale|factor|multiplier|divisor|dividend|remainder|modulo|mod|root|square|cube|power|exponent|index|base|log|logarithm|ln|sine|cosine|tangent|secant|cosecant|cotangent|arcsin|arccos|arctan|sinh|cosh|tanh|angle|radian|degree|pi|e|tau|infinity|nan|null|none|void|nil|nothing|empty|blank|zero|false|true|yes|no|on|off|up|down|left|right|forward|backward|north|south|east|west|latitude|longitude|altitude|elevation|bearing|heading|course|destination|source|origin|start|end|stop|pause|resume|cancel|abort|terminate|kill|destroy|delete|remove|clear|reset|wipe|erase|clean|sanitize|format|parse|serialize|encode|decode|encrypt|decrypt|hash|compress|decompress|zip|unzip|tar|untar|gzip|gunzip|download|upload|fetch|get|post|put|delete|patch|head|options|connect|trace|socket|stream|read|write|open|close|flush|seek|tell|truncate|sync|lock|unlock|acquire|release|wait|notify|broadcast|signal|interrupt|sleep|delay|timeout|interval|timer|clock|calendar|date|time|year|month|week|day|hour|minute|second|millisecond|microsecond|nanosecond|epoch|timestamp|timezone|offset|duration|period|span|range|interval|boundary|limit|threshold|margin|padding|border|outline|shadow|color|font|size|weight|style|variant|family|line height|letter spacing|word spacing|text decoration|text transform|text align|vertical align|white space|word break|overflow|display|position|top|bottom|left|right|float|clear|visibility|opacity|z index|cursor|pointer events|user select|box sizing|width|height|min width|min height|max width|max height|margin top|margin bottom|margin left|margin right|padding top|padding bottom|padding left|padding right|border top|border bottom|border left|border right|border color|border style|border width|border radius|background|background color|background image|background repeat|backgroundattachment|backgroundposition|backgroundsize|backgroundorigin|backgroundclip|backgroundblendmode|boxshadow|textshadow|transition|transform|animation|gradient|filter|backdropfilter|perspective|backfacevisibility|transformstyle|transformorigin|willchange|contain|content|counterreset|counterincrement|liststyle|liststyleimage|liststyleposition|liststyletype|marker|quotes|navup|navdown|navleft|navright|resize|outlineoffset|textoverflow|writingmode|direction|unicodebidi|orphans|widows|pagebreakbefore|pagebreakafter|pagebreakinside|breakbefore|breakafter|breakinside|columncount|columnfill|columngap|columnrule|columnrulecolor|columnrulestyle|columnrulewidth|columnspan|columnwidth|columns|flex|flexbasis|flexdirection|flexflow|flexgrow|flexshrink|flexwrap|justifycontent|alignitems|aligncontent|alignself|order|gridtemplate|gridtemplatecolumns|gridtemplaterows|gridtemplateareas|gridcolumn|gridrow|gridcolumnstart|gridcolumnend|gridrowstart|gridrowend|gridarea|gridgap|gridcolumngap|gridrowgap|justifyitems|alignitems|justifycontent|aligncontent|placeitems|placecontent|placeself|gridauto|gridautocolumns|gridautorows|gridautoflow|grid|masonry|subgrid|aspectratio|objectfit|objectposition|imageorientation|imagerendering|imagesolution|clip|clippath|mask|maskimage|maskrepeat|maskposition|masksize|maskorigin|maskclip|maskcomposite|maskmode|masktype|borderimage|borderimagesource|borderimageslice|borderimagewidth|borderimageoutset|borderimagerepeat|scrollbehavior|scrollpadding|scrollmargin|scrollsnaptype|scrollsnapalign|scrollsnapstop|overscrollbehavior|touchaction|scrollbarwidth|scrollbarcolor|colorscheme|forcedcolors|printcoloradjust)\\s*(?:called|named|with name|with the name|known as|labelled|labeled|id|=)?\\s*['\"]?([a-zA-Z_][a-zA-Z0-9_]*)['\"]?\\s*(?:and set it to|and make it|set it to|set to|equal to|equals|and its value is|with value|with the value|to be|to|=|:=|as|and assign|and give it the value of|holding|containing|that is|that equals|which is|which equals|representing|pointing to|referencing|denoting|signifying|holding the value|initialized to|initialised to|carrying|carrying the value|storing|storing the value|saving|saving the value|keeping|keeping the value|preserving|preserving the value|loaded with|populated with|filled with|injected with|assigned the value|given the value|set equal to|matching|corresponding to)?\\s*(.+?)?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = $2",
+    "desc": "Verbose variable assignment (make/create/define/let).",
+    "ruleKeyword": "make variable [X] to [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:set|let|let there be|give|assign|store|save|write|put|place|stick|establish|initialize|initialise|define|declare|inject|load|deposit|stash|retain|register|record)\\s+['\"]?([a-zA-Z_][a-zA-Z0-9_]*)['\"]?\\s*(?:to be|to|=|as|equal to|equals|:=|:|holding|containing|representing|with value|with the value|as the value|to the value|equal|is)?\\s*(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = $2",
+    "desc": "Short-form set/let assignment.",
+    "ruleKeyword": "set [X] to [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:assign|store|save|put|place|stick|shove|throw|chuck|dump|write|load|push|deposit|stash|retain|file|register|record|inject|embed|insert|pack|stuff|cram|tuck|hide|lock|secure|seal|deposit)\\s+(.+?)\\s+(?:into|in|to|as|inside|under the name|in a variable called|in a var called|into a variable called|into a var called|under variable|under var|inside a variable called|inside a var called|to the variable named|to the var named|into the variable named|into the var named)\\s+['\"]?([a-zA-Z_][a-zA-Z0-9_]*)['\"]?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$2 = $1",
+    "desc": "Reversed assignment — value first then variable.",
+    "ruleKeyword": "store [Y] in [X]"
+  },
+  {
+    "pattern": "^\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:should be|should equal|should contain|is now|becomes|gets|will be|must be|needs to be|has to be|ought to be|is going to be|is supposed to be|shall be|is set to|is assigned to|is equal to|matches|represents|holds|contains|stores|saves|keeps|preserves|carries)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = $2",
+    "desc": "Declarative assignment — X should be Y.",
+    "ruleKeyword": "[X] should be [Y]"
+  },
+  {
+    "pattern": "^\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?:<-|=>|->|:=)\\s*(.+?)\\s*$",
+    "flags": "i",
+    "replace": "$1 = $2",
+    "desc": "Arrow-style assignment.",
+    "ruleKeyword": "[X] <- [Y]"
+  },
+  {
+    "pattern": "^\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*=\\s*(.+?)\\s*$",
+    "flags": "",
+    "replace": "$1 = $2",
+    "desc": "Bare Python-style assignment passthrough.",
+    "ruleKeyword": "[X] = [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:make|create|new|give me|i want|declare|define|let|set up|initialise|initialize|setup|build|forge|craft|generate|spawn|allocate)?\\s*(?:an?\\s+)?(?:integer|int|whole number|whole num|whole no|integer number|integer value|int value|int variable|integer variable)\\s+(?:called|named|var|variable|with name|known as|labelled|labeled|id)?\\s*['\"]?([a-zA-Z_][a-zA-Z0-9_]*)['\"]?\\s*(?:and set it to|set to|equal to|equals|to|=|with value|as|that is|:|holding|containing|initialized to|initialised to)?\\s*(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = int($2)",
+    "desc": "Integer typed variable assignment.",
+    "ruleKeyword": "int [X] = [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:make|create|new|give me|i want|declare|define|let|set up|initialise|initialize|setup|build|forge|craft|generate|spawn|allocate)?\\s*(?:a\\s+)?(?:float|floating point|decimal|decimal number|double|real number|real|fraction|ratio|real value|float value|float variable|float var)\\s+(?:called|named|var|variable|with name|known as|labelled|labeled|id)?\\s*['\"]?([a-zA-Z_][a-zA-Z0-9_]*)['\"]?\\s*(?:and set it to|set to|equal to|equals|to|=|with value|as|that is|:|holding|containing|initialized to|initialised to)?\\s*(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = float($2)",
+    "desc": "Float typed variable assignment.",
+    "ruleKeyword": "float [X] = [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:make|create|new|give me|i want|declare|define|let|set up|initialise|initialize|setup|build|forge|craft|generate|spawn|allocate)?\\s*(?:a\\s+)?(?:string|str|text|word|sentence|phrase|piece of text|chunk of text|text string|string value|string variable|string var)\\s+(?:called|named|var|variable|with name|known as|labelled|labeled|id)?\\s*['\"]?([a-zA-Z_][a-zA-Z0-9_]*)['\"]?\\s*(?:and set it to|set to|equal to|equals|to|=|with value|as|that is|:|holding|containing|initialized to|initialised to)?\\s*(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = str($2)",
+    "desc": "String typed variable assignment.",
+    "ruleKeyword": "string [X] = [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:make|create|new|give me|i want|declare|define|let|set up|initialise|initialize|setup|build|forge|craft|generate|spawn|allocate)?\\s*(?:a\\s+)?(?:bool|boolean|true\\/false|yes\\/no|flag|truth value|logical|logical value|boolean value|boolean variable|boolean var)\\s+(?:called|named|var|variable|with name|known as|labelled|labeled|id)?\\s*['\"]?([a-zA-Z_][a-zA-Z0-9_]*)['\"]?\\s*(?:and set it to|set to|equal to|equals|to|=|with value|as|that is|:|holding|containing|initialized to|initialised to)?\\s*(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = bool($2)",
+    "desc": "Boolean typed variable assignment.",
+    "ruleKeyword": "bool [X] = [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:int|integer)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?:=|to be|to|:=|equal to|equals)?\\s*(.+?)\\s*$",
+    "flags": "i",
+    "replace": "$1 = int($2)",
+    "desc": "C-style int declaration.",
+    "ruleKeyword": "int [X] = [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:float|double)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?:=|to be|to|:=|equal to|equals)?\\s*(.+?)\\s*$",
+    "flags": "i",
+    "replace": "$1 = float($2)",
+    "desc": "C-style float declaration.",
+    "ruleKeyword": "float [X] = [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:string|str)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?:=|to be|to|:=|equal to|equals)?\\s*(.+?)\\s*$",
+    "flags": "i",
+    "replace": "$1 = str($2)",
+    "desc": "C-style string declaration.",
+    "ruleKeyword": "string [X] = [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:bool|boolean)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?:=|to be|to|:=|equal to|equals)?\\s*(.+?)\\s*$",
+    "flags": "i",
+    "replace": "$1 = bool($2)",
+    "desc": "C-style bool declaration.",
+    "ruleKeyword": "bool [X] = [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:cast|convert|turn|change|transform|coerce|make)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:to|into|as|to be|to a|into a|to an|into an)\\s+(?:integer|int|whole number|integer value|int type)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = int($1)",
+    "desc": "In-place cast to int.",
+    "ruleKeyword": "cast [X] to integer"
+  },
+  {
+    "pattern": "^\\s*(?:cast|convert|turn|change|transform|coerce|make)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:to|into|as|to be|to a|into a)\\s+(?:float|decimal|double|real|real number|floating point)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = float($1)",
+    "desc": "In-place cast to float.",
+    "ruleKeyword": "cast [X] to float"
+  },
+  {
+    "pattern": "^\\s*(?:cast|convert|turn|change|transform|coerce|make)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:to|into|as|to be|to a|into a)\\s+(?:string|str|text|string value)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = str($1)",
+    "desc": "In-place cast to str.",
+    "ruleKeyword": "cast [X] to string"
+  },
+  {
+    "pattern": "^\\s*(?:print out|print|output|write out|write|emit|send out|spit out|dump|echo|log|console\\.log|console log|shout|shout out|say|tell me|show me|display|show|put out|put it out|give me|spit|write to screen|write to console|spew|output|barf|barf out|spill|reveal|expose|display to screen|output to screen|write to stdout|send to output|publish|stream|broadcast|render|render to screen|render to console|present|present on screen|flash|flash on screen|advertise|manifest|demonstrate|exhibit|print on screen|print to screen|print to terminal|print to stdout|write to terminal|write out to terminal|write out to screen|display on terminal|display in terminal|show on terminal|show in terminal|output to terminal|output in terminal|log to console|log to terminal|log to screen|echo to screen|echo to terminal|say to terminal|say to screen)\\s*[:(]?\\s*(.+?)\\s*\\)?[;]?\\s*$",
+    "flags": "i",
+    "replace": "print($1)",
+    "desc": "Any output command maps to print().",
+    "ruleKeyword": "print/show/say/display/log [X]"
+  },
+  {
+    "pattern": "^\\s*(?:what\\s+(?:is|are|does|would|will)?\\s+|tell me\\s+(?:the\\s+value\\s+of\\s+)?|what's\\s+(?:the\\s+value\\s+of\\s+)?|whats\\s+(?:the\\s+value\\s+of\\s+)?|could you tell me the value of\\s+|please show the value of\\s+|value of\\s+|get the value of\\s+|evaluate\\s+)(.+?)\\??\\s*$",
+    "flags": "i",
+    "replace": "print($1)",
+    "desc": "Question-form print: what is X?",
+    "ruleKeyword": "what is [X]?"
+  },
+  {
+    "pattern": "^\\s*(?:newline|blank line|empty line|print newline|print empty|print blank|print a newline|add a newline|insert a newline|blank|gap|empty|spacing|add space|print blank line|output blank line|emit blank line|write blank line|insert blank line|newline character|print newline character|output newline character)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print()",
+    "desc": "Print an empty newline.",
+    "ruleKeyword": "newline"
+  },
+  {
+    "pattern": "^\\s*(?:print|show|display|output|log|echo|say|shout|tell me|give me|write)\\s+(.+?)\\s+(?:without a newline|without newline|no newline|on the same line|inline|on same line|in place|in-place|no new line|without ending|no ending|suppressing newline|keep on same line|stay on same line|continuing the line|continuous line|with no newline|without trailing newline|no trailing newline)\\s*$",
+    "flags": "i",
+    "replace": "print($1, end='')",
+    "desc": "Print without trailing newline.",
+    "ruleKeyword": "print [X] without a newline"
+  },
+  {
+    "pattern": "^\\s*(?:pretty ?print|pprint|nicely print|pretty-print|pretty print out|format print|formatted print|beautify print|beautiful print|print beautifully|print nicely|print structured|print structured data|structure print)\\s+(.+?)\\s*$",
+    "flags": "i",
+    "replace": "import pprint; pprint.pprint($1)",
+    "desc": "Pretty-print using pprint.",
+    "ruleKeyword": "pprint [X]"
+  },
+  {
+    "pattern": "^\\s*(?:show|print|display|output|log|check|get|tell me|show me|describe|what is|whats|what's)\\s+(?:the\\s+)?type\\s+(?:of\\s+)?(.+?)\\??\\s*$",
+    "flags": "i",
+    "replace": "print(type($1))",
+    "desc": "Print type of variable.",
+    "ruleKeyword": "show type of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:what type|what kind|what sort|what datatype|what data type|what class)\\s+(?:is|of|are)?\\s+(.+?)\\??\\s*$",
+    "flags": "i",
+    "replace": "print(type($1))",
+    "desc": "Question-form type check.",
+    "ruleKeyword": "what type is [X]?"
+  },
+  {
+    "pattern": "^\\s*(?:is|check if|check whether|see if|test if)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:a|an)\\s+(int|integer|float|string|str|bool|boolean|list|dict|dictionary|set|tuple|complex|bytes|bytearray|range|frozenset|dict_keys|dict_values)\\??\\s*$",
+    "flags": "i",
+    "replace": "print(isinstance($1, $2))",
+    "desc": "isinstance type check.",
+    "ruleKeyword": "is [X] a [TYPE]?"
+  },
+  {
+    "pattern": "^\\s*(?:add|increase|bump up|bump|raise|increment by|plus|inc by|plus-ify|add on|chuck|tack on|throw|put|stick|append|attach|heap|pile|inject|feed|slap|insert)\\s+(.+?)\\s+(?:to|onto|into|on top of|on to|to the variable|to variable|into the variable|into variable)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$2 += $1",
+    "desc": "Add X to Y.",
+    "ruleKeyword": "add [X] to [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:increase|bump|raise|increment|grow|boost|go up|push up|jack up|ramp up|up|scale up|multiply up|add to)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:by|with|using|of|amount|value)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 += $2",
+    "desc": "Increase [X] by [Y].",
+    "ruleKeyword": "increase [X] by [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:subtract|decrease|lower|reduce|take away|minus|remove|deduct|knock off|decrement by|shrink by|pull|strip|dock|cut|slice|peel|extract|drop|subtract value)\\s+(.+?)\\s+(?:from|of|off|off of|from the|away from|out of)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$2 -= $1",
+    "desc": "Subtract [X] from [Y].",
+    "ruleKeyword": "subtract [X] from [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:decrease|lower|reduce|shrink|decrement|go down|drop|cut down|dial back|dial down|tone down|fall by|substract from|lower value of)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:by|with|using|of|amount|value)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 -= $2",
+    "desc": "Decrease [X] by [Y].",
+    "ruleKeyword": "decrease [X] by [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:multiply|times|scale up|scale|mult|times-ify|product of|compound|factor|magnify|amplify)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:by|with|using|x|X|\\*|times|factor of)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 *= $2",
+    "desc": "Multiply [X] by [Y].",
+    "ruleKeyword": "multiply [X] by [Y]"
+  },
+  {
+    "pattern": "^\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:times|multiplied by|x|X|\\*)\\s+(.+?)\\s*$",
+    "flags": "i",
+    "replace": "$1 *= $2",
+    "desc": "Alternative multiply: [X] times [Y].",
+    "ruleKeyword": "[X] times [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:divide|split|scale down|div|quotient of|halve by|fraction|share|distribute)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:by|using|with|\\/|÷|over|denominator)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 /= $2",
+    "desc": "Divide [X] by [Y].",
+    "ruleKeyword": "divide [X] by [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:halve|cut in half|cut to half|half|divide by 2|split in two|divide in half)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 /= 2",
+    "desc": "Halve a variable.",
+    "ruleKeyword": "halve [X]"
+  },
+  {
+    "pattern": "^\\s*(?:double|times two|multiply by 2|×2|x2|2x|double up|make twice as big)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 *= 2",
+    "desc": "Double a variable.",
+    "ruleKeyword": "double [X]"
+  },
+  {
+    "pattern": "^\\s*(?:triple|times three|multiply by 3|×3|x3|3x|make thrice as big|triple up)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 *= 3",
+    "desc": "Triple a variable.",
+    "ruleKeyword": "triple [X]"
+  },
+  {
+    "pattern": "^\\s*(?:square|raise to power of 2|power 2|to the power 2|\\^2|\\*\\*2|squared|multiply by itself)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 **= 2",
+    "desc": "Square a variable.",
+    "ruleKeyword": "square [X]"
+  },
+  {
+    "pattern": "^\\s*(?:raise|power|exponent|to the power|pow|exponential)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:to the power of|to the power|to|\\^|\\*\\*|to power|raised to|to exponent|power of)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 **= $2",
+    "desc": "Raise to a power.",
+    "ruleKeyword": "raise [X] to the power of [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:modulo|mod|remainder|remainder of|modulus|mod of|modulo division)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:by|divided by|with|%|modulo|modulating)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 %= $2",
+    "desc": "Modulo.",
+    "ruleKeyword": "modulo [X] by [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:floor divide|integer divide|whole divide|int divide|floor div|floordiv|integer division)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:by|with|using|//|divisor)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 //= $2",
+    "desc": "Floor division.",
+    "ruleKeyword": "floor divide [X] by [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:increment|inc|add one to|add 1 to|plus one to|plus 1 to|bump up|count up|step up|go up by 1|go up by one|tick up|nudge up|plus plus|increment by one|add one|bump by one)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 += 1",
+    "desc": "Increment by 1.",
+    "ruleKeyword": "increment [X]"
+  },
+  {
+    "pattern": "^\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\+\\+\\s*$",
+    "flags": "",
+    "replace": "$1 += 1",
+    "desc": "C-style increment ++.",
+    "ruleKeyword": "[X]++"
+  },
+  {
+    "pattern": "^\\s*(?:decrement|dec|subtract one from|minus one from|take one from|go down by 1|go down by one|count down|step down|tick down|nudge down|minus minus|decrement by one|minus one|decrease by one|reduce by one)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 -= 1",
+    "desc": "Decrement by 1.",
+    "ruleKeyword": "decrement [X]"
+  },
+  {
+    "pattern": "^\\s*([a-zA-Z_][a-zA-Z0-9_]*)--\\s*$",
+    "flags": "",
+    "replace": "$1 -= 1",
+    "desc": "C-style decrement --.",
+    "ruleKeyword": "[X]--"
+  },
+  {
+    "pattern": "^\\s*(?:negate|flip sign|flip the sign|make negative|opposite|negative of|reverse sign of|invert sign|toggle sign)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = -$1",
+    "desc": "Negate a variable.",
+    "ruleKeyword": "negate [X]"
+  },
+  {
+    "pattern": "^\\s*(?:absolute value|abs|absolute|abs of|make positive|positive of|magnitude of|unsigned value of)\\s+(?:of\\s+)?([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = abs($1)",
+    "desc": "Absolute value.",
+    "ruleKeyword": "absolute value of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:round|round off|round to nearest)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:to|to the nearest)\\s+(\\d+)\\s+(?:decimal places?|decimals?|dp|d\\.p\\.?|places?|sig figs?|digits)?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = round($1, $2)",
+    "desc": "Round to N decimal places.",
+    "ruleKeyword": "round [X] to [N] decimal places"
+  },
+  {
+    "pattern": "^\\s*(?:round|round off|round it|approximate)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = round($1)",
+    "desc": "Round to nearest integer.",
+    "ruleKeyword": "round [X]"
+  },
+  {
+    "pattern": "^\\s*(?:swap|exchange|switch|flip|swap values of|interchange)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:and|with|&|for|and variable|with variable)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1, $2 = $2, $1",
+    "desc": "Swap two variables.",
+    "ruleKeyword": "swap [X] and [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:if|when|whenever|should|in case|assuming|provided that|check if|check whether|see if|given that|as long as|only if|provided|whenever|if it is true that|suppose that)\\s+(.+?)\\s+(?:is the same as|equals|is equal to|is equal|is exactly|==|matches|is identical to|is identical|is|is equivalent to)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "if $1 == $2:",
+    "desc": "if [X] equals [Y]:",
+    "ruleKeyword": "if [X] equals [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:if|when|whenever|check if|see if|should)\\s+(.+?)\\s+(?:is bigger than|is greater than|is more than|exceeds|is above|>|is over|is higher than|is larger than|is larger|surpasses|beats|goes beyond|is past|is beyond|is ahead of|is heavier than|is longer than|is wider than|is taller than)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "if $1 > $2:",
+    "desc": "if [X] > [Y]:",
+    "ruleKeyword": "if [X] is bigger than [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:if|when|whenever|check if|see if|should)\\s+(.+?)\\s+(?:is smaller than|is less than|is below|is under|<|is fewer than|is lower than|is not as big as|is not as large as|is beneath|doesn't reach|does not reach|falls below|falls short of|drops below|is shorter than|is lighter than|is narrower than)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "if $1 < $2:",
+    "desc": "if [X] < [Y]:",
+    "ruleKeyword": "if [X] is smaller than [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:if|when|whenever|check if|see if|should)\\s+(.+?)\\s+(?:is not equal to|does not equal|isn't equal to|isnt equal to|!=|is different from|is different to|doesn't equal|doesnt equal|is not the same as|differs from|is unlike|is not|is not equivalent to|is not identical to)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "if $1 != $2:",
+    "desc": "if [X] != [Y]:",
+    "ruleKeyword": "if [X] is not equal to [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:if|when|check if|see if)\\s+(.+?)\\s+(?:is at least|>=|is greater than or equal to|is bigger than or equal|is no less than|is not less than|is not below|is not under|is not smaller than|is at minimum|is minimum|at least|is equal or greater than)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "if $1 >= $2:",
+    "desc": "if [X] >= [Y]:",
+    "ruleKeyword": "if [X] is at least [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:if|when|check if|see if)\\s+(.+?)\\s+(?:is at most|<=|is less than or equal to|is smaller than or equal|is no more than|is not more than|is not above|is not greater than|is at maximum|is maximum|at most|is equal or less than)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "if $1 <= $2:",
+    "desc": "if [X] <= [Y]:",
+    "ruleKeyword": "if [X] is at most [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:if|when|check if|see if)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:is true|is truthy|is set|is on|is enabled|is yes|is positive|is valid|holds|is real|is present|exists|is defined|is available|holds true)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "if $1:",
+    "desc": "if [X] is true:",
+    "ruleKeyword": "if [X] is true"
+  },
+  {
+    "pattern": "^\\s*(?:if|when|check if|see if)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "if $1:",
+    "desc": "if [X]: bare truthy check.",
+    "ruleKeyword": "if [X]"
+  },
+  {
+    "pattern": "^\\s*(?:if|when|check if|see if)\\s+(.+?)\\s+(?:is false|is falsy|is not set|is off|is disabled|is no|is zero|is empty|is nothing|is null|is none|doesn't exist|doesnt exist|does not exist|is not there|isn't there|is blank|is missing|is absent|is not valid|is invalid|holds false|is disabled)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "if not $1:",
+    "desc": "if [X] is false/empty/not set:",
+    "ruleKeyword": "if [X] is false"
+  },
+  {
+    "pattern": "^\\s*(?:if not|unless|if it's not|if its not|if it isnt|if it isn't|if thats not|if that's not|when not|except when|except if|other than when|assuming not)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "if not $1:",
+    "desc": "if not [X]: / unless [X]:",
+    "ruleKeyword": "if not [X]"
+  },
+  {
+    "pattern": "^\\s*(?:otherwise|else|otherwise do|if not|if that's not the case|if not then|if thats not the case|or else|alternatively|in any other case|if none of the above|if all else fails|if that fails|failing that|if that doesn't work|if that doesn't apply|or|but otherwise|but if not|otherwise if none)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "else:",
+    "desc": "else: block.",
+    "ruleKeyword": "otherwise / else"
+  },
+  {
+    "pattern": "^\\s*(?:else if|elif|but if|otherwise if|however if|or if|and if|but when|else when|otherwise when|or when|alternatively if|but alternatively if|and alternatively if|if instead|but instead if|however when|but in case|or else if|or else when)\\s+(.+?)\\s+(?:is the same as|equals|is equal to|==|is|matches|is exactly|is identical to)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "elif $1 == $2:",
+    "desc": "elif [X] == [Y]:",
+    "ruleKeyword": "else if [X] equals [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:else if|elif|but if|otherwise if|however if|or if|and if|but when|else when|otherwise when|or when|alternatively if)\\s+(.+?)\\s+(?:is bigger than|is greater than|>|is more than|exceeds|is above)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "elif $1 > $2:",
+    "desc": "elif [X] > [Y]:",
+    "ruleKeyword": "else if [X] is bigger than [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:else if|elif|but if|otherwise if|however if|or if|and if|but when|else when|otherwise when|or when|alternatively if)\\s+(.+?)\\s+(?:is smaller than|is less than|<|is below|is under|is fewer than)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "elif $1 < $2:",
+    "desc": "elif [X] < [Y]:",
+    "ruleKeyword": "else if [X] is smaller than [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:else if|elif|but if|otherwise if|however if|or if|and if|but when|else when|otherwise when|or when|alternatively if)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "elif $1:",
+    "desc": "elif [X]: generic.",
+    "ruleKeyword": "else if [X]"
+  },
+  {
+    "pattern": "^\\s*(?:if|when)\\s+(.+?)\\s+(?:equals|is the same as|is equal to|is|==|matches)\\s+(.+?)\\s+(?:then|do|->|=>|,|;)\\s+(.+)$",
+    "flags": "i",
+    "replace": "if $1 == $2: $3",
+    "desc": "One-liner if equals then action.",
+    "ruleKeyword": "if [X] equals [Y] then [Z]"
+  },
+  {
+    "pattern": "^\\s*(?:if|when)\\s+(.+?)\\s+(?:is bigger than|>|is greater than|is more than)\\s+(.+?)\\s+(?:then|do|->|=>|,|;)\\s+(.+)$",
+    "flags": "i",
+    "replace": "if $1 > $2: $3",
+    "desc": "One-liner if greater then action.",
+    "ruleKeyword": "if [X] > [Y] then [Z]"
+  },
+  {
+    "pattern": "^\\s*(?:if|when)\\s+(.+?)\\s+(?:is smaller than|<|is less than|is below)\\s+(.+?)\\s+(?:then|do|->|=>|,|;)\\s+(.+)$",
+    "flags": "i",
+    "replace": "if $1 < $2: $3",
+    "desc": "One-liner if less then action.",
+    "ruleKeyword": "if [X] < [Y] then [Z]"
+  },
+  {
+    "pattern": "^\\s*(?:if|when)\\s+(.+?)\\s+(?:is not|isnt|isn't|!=|doesn't equal|doesnt equal|is different from)\\s+(.+?)\\s+(?:then|do|->|=>|,|;)\\s+(.+)$",
+    "flags": "i",
+    "replace": "if $1 != $2: $3",
+    "desc": "One-liner if not equal then action.",
+    "ruleKeyword": "if [X] != [Y] then [Z]"
+  },
+  {
+    "pattern": "^\\s*(?:if|when|check if|see if)\\s+(.+?)\\s+(?:is in|is inside|is contained in|is part of|is within|belongs to|is an element of|is a member of|is one of|is among|is among the|lives in|exists in|appears in|can be found in|is found in|is included in|is included among|resides in)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "if $1 in $2:",
+    "desc": "if [X] in [Y]:",
+    "ruleKeyword": "if [X] is in [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:if|when|check if|see if)\\s+(.+?)\\s+(?:is not in|is not inside|is not contained in|is not part of|isn't in|isnt in|is missing from|is absent from|is not within|is not a member of|is not one of|is not among|is not found in|is not included in|does not appear in|doesn't appear in|resides outside of)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "if $1 not in $2:",
+    "desc": "if [X] not in [Y]:",
+    "ruleKeyword": "if [X] is not in [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:if|when)\\s+(.+?)\\s+(?:and also|and|&&|as well as|plus|but also|along with|together with|combined with|coupled with|conjoined with|in addition to)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "if $1 and $2:",
+    "desc": "if [X] and [Y]:",
+    "ruleKeyword": "if [X] and [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:if|when)\\s+(.+?)\\s+(?:or|either|\\|\\||or else|or maybe|or possibly|or alternatively|alternatively)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "if $1 or $2:",
+    "desc": "if [X] or [Y]:",
+    "ruleKeyword": "if [X] or [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:if|when|check if)\\s+(.+?)\\s+(?:is between|is in the range|is in range|falls between|lies between|is in the range of|is somewhere between|is locked between)\\s+(\\d+|[a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:and|to|through|up to)\\s+(\\d+|[a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "if $2 <= $1 <= $3:",
+    "desc": "if [X] between [A] and [B]:",
+    "ruleKeyword": "if [X] is between [A] and [B]"
+  },
+  {
+    "pattern": "^\\s*(?:if|when|check if|see if)\\s+(.+?)\\s+is\\s+(?:none|null|nil|nothing|undefined|not defined|not set|missing|absent|nonexistent|non-existent|not here|not there|not around|no value|no data|lacking|void|empty value)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "if $1 is None:",
+    "desc": "if [X] is None:",
+    "ruleKeyword": "if [X] is None"
+  },
+  {
+    "pattern": "^\\s*(?:if|when|check if|see if)\\s+(.+?)\\s+is\\s+(?:not none|not null|not nil|not nothing|not undefined|defined|exists|set|has a value|is not missing|is there|is present|is available|is around|is not empty|has data)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "if $1 is not None:",
+    "desc": "if [X] is not None:",
+    "ruleKeyword": "if [X] is not None"
+  },
+  {
+    "pattern": "^\\s*(?:loop|repeat|do|run|execute|go|iterate|cycle|spin|do it|do this|perform)\\s+(\\d+)\\s+(?:times?|x|iterations?|cycles?|rounds?|more times?|repetitions)?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "for _ in range($1):",
+    "desc": "Repeat N times.",
+    "ruleKeyword": "loop [N] times"
+  },
+  {
+    "pattern": "^\\s*(?:do the following|do this|execute the following|run the following|repeat the following|perform the following|carry out the following)\\s+(\\d+)\\s+(?:times?|x|iterations?|cycles?|rounds?|runs)?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "for _ in range($1):",
+    "desc": "Do the following N times.",
+    "ruleKeyword": "do the following [N] times"
+  },
+  {
+    "pattern": "^\\s*(?:for each|for every|for all|foreach|iterate over|go through|loop through|loop over|walk through|traverse|step through|scan through|go over|iterate through|go over each|go over every|process each|process every|visit each|visit every|run through|cycle through|cycle over|spin through|chug through|work through|work over|work on each|each of|every one of|for|each|examine each|evaluate each|inspect each|look at each|stream through|map over)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:in|inside|within|of|from|from within|contained in|that is in|belonging to|coming from|that comes from|out of|from inside|across)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "for $1 in $2:",
+    "desc": "For-each loop.",
+    "ruleKeyword": "for each [X] in [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:count|go|count up|count from|iterate from|loop from|run from|start from|begin from|number from|go from|range from)\\s+(?:from\\s+)?(\\d+|[a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:to|up to|until|through|to reach|up through|all the way to|through to|ending at|going to|stopping before)\\s+(\\d+|[a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "for i in range($1, $2):",
+    "desc": "Count from A to B.",
+    "ruleKeyword": "count from [A] to [B]"
+  },
+  {
+    "pattern": "^\\s*(?:count|go|count up|iterate from|loop from|run from|range from)\\s+(?:from\\s+)?(\\d+|[a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:to|up to|until|through)\\s+(\\d+|[a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:by|in steps of|stepping by|with step|every|skipping by|incrementing by|in increments of|step|jump|jumping by|going by|increments of)\\s+(\\d+|[a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "for i in range($1, $2, $3):",
+    "desc": "Count from A to B by C.",
+    "ruleKeyword": "count from [A] to [B] by [C]"
+  },
+  {
+    "pattern": "^\\s*(?:count down|count backwards|count backward|go down|iterate down|loop down|count back|go backwards from|countdown from|reverse count|go backward from|decrease from)\\s+(?:from\\s+)?(\\d+|[a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:to|down to|until|ending at|stopping at|stopping before)\\s+(\\d+|[a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "for i in range($1, $2, -1):",
+    "desc": "Countdown from A to B.",
+    "ruleKeyword": "count down from [A] to [B]"
+  },
+  {
+    "pattern": "^\\s*(?:while|as long as|keep going while|keep doing while|keep looping while|keep running while|keep going until|loop while|repeat while|so long as|whilst|during|throughout|for as long as|until it is not true that)\\s+(.+?)\\s+(?:is less than|is smaller than|<|is below|is under|is not yet|hasn't reached|has not reached|falls below|stays below|remains below|is still less than|is still smaller than|is still below|is still under)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "while $1 < $2:",
+    "desc": "while [X] < [Y]:",
+    "ruleKeyword": "while [X] is less than [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:while|as long as|keep going while|keep doing while|keep looping while|loop while|repeat while|so long as|whilst|for as long as)\\s+(.+?)\\s+(?:is greater than|is bigger than|>|is above|is over|exceeds|surpasses|stays above|remains above|is still greater than|is still bigger than|is still above|is still over)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "while $1 > $2:",
+    "desc": "while [X] > [Y]:",
+    "ruleKeyword": "while [X] is greater than [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:while|as long as|keep going while|keep doing while|loop while|repeat while|so long as|whilst)\\s+(.+?)\\s+(?:is the same as|equals|is equal to|==|is|matches|stays|remains)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "while $1 == $2:",
+    "desc": "while [X] == [Y]:",
+    "ruleKeyword": "while [X] equals [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:while|as long as|keep going while|keep doing while|loop while|repeat while|so long as|whilst)\\s+(.+?)\\s+(?:is not|isnt|isn't|!=|is not equal to|differs from|stays different|remains different|is different from|doesn't equal|doesnt equal)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "while $1 != $2:",
+    "desc": "while [X] != [Y]:",
+    "ruleKeyword": "while [X] is not [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:while|as long as|keep going while|loop while|repeat while|so long as|whilst|for as long as)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "while $1:",
+    "desc": "while [X]: truthy loop.",
+    "ruleKeyword": "while [X]"
+  },
+  {
+    "pattern": "^\\s*(?:loop forever|repeat forever|infinite loop|do forever|keep going|keep looping|keep running|loop infinitely|go forever|never stop|do indefinitely|loop endlessly|always|run always|run forever|spin forever|go on forever|loop always|stay looping|run endlessly|loop perpetually|perpetual loop|execute infinitely|continuous loop|endless loop)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "while True:",
+    "desc": "Infinite loop.",
+    "ruleKeyword": "loop forever"
+  },
+  {
+    "pattern": "^\\s*(?:stop|break|exit|quit|leave|break out|break out of the loop|stop the loop|exit the loop|leave the loop|get out|get out of the loop|escape|escape the loop|abort|cancel|bail|bail out|jump out|pop out|cut|cut out|end the loop|finish the loop|get out of here|scram|done with loop|done looping|terminate loop|halt loop|break execution|stop iteration|abort iteration)\\s*(?:the\\s+(?:loop|for loop|while loop|iteration))?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "break",
+    "desc": "Break.",
+    "ruleKeyword": "stop / break"
+  },
+  {
+    "pattern": "^\\s*(?:skip|continue|next|skip this|skip this one|go to next|skip to next|next iteration|go to next iteration|carry on|move on|move to next|skip the rest|ignore this|hop over|jump over|skip ahead|pass this one|pass this iteration|next one|bypass|ignore current|skip step|continue loop|next step)\\s*(?:iteration|one|item|step|round|cycle)?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "continue",
+    "desc": "Continue.",
+    "ruleKeyword": "skip / continue"
+  },
+  {
+    "pattern": "^\\s*(?:with index|with indices|with i and|enumerate|with counter|loop with index|for each with index|numbered|numbered loop|using index|using counter|with position|track index with|with index counter)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:and|,)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:in|from)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "for $1, $2 in enumerate($3):",
+    "desc": "Enumerate loop.",
+    "ruleKeyword": "with index [i] and [X] in [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:for each|loop through|iterate over)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:and|,)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:in|from)\\s+(?:the pairs of|zip of|both|zipping|paired from|zip together|zipped)\\s+(.+?)\\s+(?:and|,|with)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "for $1, $2 in zip($3, $4):",
+    "desc": "Zip loop.",
+    "ruleKeyword": "for each [A] and [B] in zip of [X] and [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:create|make|define|build|write|declare|add|new|set up|setup|draft|code up|implement|start|begin|design|introduce|establish|produce|forge|craft|construct|assemble|formulate)\\s+(?:a\\s+)?(?:function|func|method|procedure|routine|sub|subroutine|block|def|piece of code|chunk of code|bit of code|helper|utility|handler|callback|hook|action|operation|task)\\s+(?:called|named|that's called|that is called|known as|labelled|labeled|with name|under the name|with the identifier)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "def $1():",
+    "desc": "Define a function (no args).",
+    "ruleKeyword": "create function [X]"
+  },
+  {
+    "pattern": "^\\s*(?:create|make|define|build|write|declare|add|new|set up|implement|produce|forge|craft|construct|assemble|formulate)\\s+(?:a\\s+)?(?:function|func|method|procedure|routine|sub|subroutine|def|helper|utility)\\s+(?:called|named|known as|labelled|labeled|with name)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:that takes?|taking|with|accepting|using|which takes?|receiving|with args?|with arguments?|with params?|with parameters?|that accepts?|with inputs?|that receives?|that uses?|requiring|that requires?|needing|that needs?|taking inputs|configured with)\\s+([a-zA-Z0-9_,\\s]+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "def $1($2):",
+    "desc": "Define a function with arguments.",
+    "ruleKeyword": "create function [X] taking [args]"
+  },
+  {
+    "pattern": "^\\s*(?:def|function|func)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?:\\(([^)]*)\\))?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "def $1($2):",
+    "desc": "Python/JS-style function def passthrough.",
+    "ruleKeyword": "def [X]([args])"
+  },
+  {
+    "pattern": "^\\s*(?:return|give back|output|spit out|send back|pass back|hand back|result is|produce|output the result|the answer is|gives|hand|provide|respond with|result|answer|yield back|return value)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "return $1",
+    "desc": "Return statement.",
+    "ruleKeyword": "return [X]"
+  },
+  {
+    "pattern": "^\\s*(?:return|give back|return nothing|return none|send back nothing|produce nothing|output nothing|come back empty|return empty|nothing|come back|quit function|exit function)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "return",
+    "desc": "Return nothing.",
+    "ruleKeyword": "return nothing"
+  },
+  {
+    "pattern": "^\\s*(?:yield|generate|produce|emit|spit out|output lazily|lazily produce|send|fire|generate value|lazily yield)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "yield $1",
+    "desc": "Yield statement.",
+    "ruleKeyword": "yield [X]"
+  },
+  {
+    "pattern": "^\\s*(?:call|run|execute|invoke|trigger|fire|launch|use|activate|call the function|run the function|execute the function|invoke the function|use the function|call on|run on|fire off|kick off|hit|ping|apply|call up|dial up|pull in|dispatch)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?:with|passing|using|giving|taking|and pass|and give|using arguments?|using args?|and provide|with argument|with the argument|with args?|passing parameter|passing arguments)?\\s*(.*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1($2)",
+    "desc": "Call a function.",
+    "ruleKeyword": "call [function] with [args]"
+  },
+  {
+    "pattern": "^\\s*(?:create|make|define|build|write|declare)\\s+(?:a\\s+)?(?:lambda|anonymous function|arrow function|inline function|one-liner function|quick function|short function|tiny function|mini function)\\s+(?:called|named)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:that takes?|with|taking)?\\s+([a-zA-Z0-9_,\\s]*)\\s+(?:and|that)\\s+(?:returns?|gives back|outputs?|produces?|results in|evaluates to|computes|yields?|evaluates)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = lambda $2: $3",
+    "desc": "Lambda function.",
+    "ruleKeyword": "create lambda [X] taking [args] returning [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:create|make|define|build|declare|new|design|introduce|establish|write|construct|forge|craft|blueprint)\\s+(?:a\\s+)?(?:class|object type|type|blueprint|model|struct|structure|template|archetype|schema|entity|data type|prototype)\\s+(?:called|named|known as|with name|under the name)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "class $1:",
+    "desc": "Define a class (no inheritance).",
+    "ruleKeyword": "create class [X]"
+  },
+  {
+    "pattern": "^\\s*(?:create|make|define|build|declare|new|design|write|construct|forge|craft|blueprint)\\s+(?:a\\s+)?(?:class|object type|type|blueprint|model)\\s+(?:called|named|known as|with name)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:that extends?|extending|which extends?|inheriting from|that inherits from|inheriting|based on|that is a|subclass of|child of|derived from|that is based on|that is derived from|extending from|that comes from|built on top of|that builds on)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "class $1($2):",
+    "desc": "Define a class with inheritance.",
+    "ruleKeyword": "create class [X] that extends [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:class)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?:\\(([a-zA-Z_][a-zA-Z0-9_]*)\\))?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "class $1($2):",
+    "desc": "Python-style class def passthrough.",
+    "ruleKeyword": "class [X]([Y])"
+  },
+  {
+    "pattern": "^\\s*(?:constructor|init|initialiser|initializer|setup|set up|__init__|the constructor|start up|kick off|on create|on creation|on new|on init|on start|on launch|setup function|init function|class initializer|class constructor)\\s+(?:with|taking|that takes?|using|with params?|with args?|with arguments?|accepting|requiring)?\\s*([a-zA-Z0-9_,\\s]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "def __init__(self, $1):",
+    "desc": "Class constructor.",
+    "ruleKeyword": "constructor with [args]"
+  },
+  {
+    "pattern": "^\\s*(?:set|store|save|initialise|initialize|assign|give|put|make|let|write)\\s+(?:self\\.)?([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:to|=|as|to be|equal to|equals|:=|pointing to|holding)?\\s*(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "self.$1 = $2",
+    "desc": "Set a self attribute.",
+    "ruleKeyword": "set self.[X] to [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:create|make|build|instantiate|make an instance of|new instance of|new object of|spawn|construct|get an instance of|get a new|build a new|produce a new|make a new|forge a new|craft a new)\\s+(?:an?\\s+)?(?:instance of\\s+|object of\\s+|new\\s+)?([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:called|named|and call it|and name it|and store it in|saving to|stored in|in variable|in|as)?\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?:with|using|passing|taking)?\\s*(.*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$2 = $1($3)",
+    "desc": "Instantiate a class.",
+    "ruleKeyword": "create an instance of [Class] called [X]"
+  },
+  {
+    "pattern": "^\\s*(?:make|create|new|declare|define|give me|i want|initialize|set up|start|build|prepare|set|establish|form|assemble|instantiate|allocate)\\s+(?:a\\s+|an?\\s+)?(?:empty\\s+)?(?:list|array|collection|sequence|group|set of items|bunch|pile|stack|queue|bucket|bag|series|row|vector|tensor|tuple)\\s+(?:called|named|known as|labelled|labeled|with name)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = []",
+    "desc": "Create empty list.",
+    "ruleKeyword": "create empty list [X]"
+  },
+  {
+    "pattern": "^\\s*(?:make|create|new|declare|define|give me|i want|initialize|set up|build|forge|craft)\\s+(?:a\\s+)?(?:list|array|collection|sequence)\\s+(?:called|named)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?:=|containing|with|of|that has|holding|that starts with|starting with|filled with|made of|consisting of|made up of|populated with)?\\s*\\[?(.+?)\\]?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = [$2]",
+    "desc": "Create list with values.",
+    "ruleKeyword": "create list [X] = [...]"
+  },
+  {
+    "pattern": "^\\s*(?:add|push|append|insert|put|stick|throw|shove|tack on|add on|chuck|drop|place|include|attach|bolt on|glue on|slap on|pile on|heap on|push onto|throw onto|insert into|inject|feed)\\s+(.+?)\\s+(?:to|onto|into|at the end of|to the end of|at the back of|to the back of|inside|at the tail of|to the tail|at the bottom of|to the bottom|into the list named|to the list named)\\s*(?:(?:the|my|our)\\s+)?(?:list|array|collection|sequence)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$2.append($1)",
+    "desc": "Append to list.",
+    "ruleKeyword": "add [X] to list [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:add|insert|put|stick|shove|place|inject|force|slide)\\s+(.+?)\\s+(?:at|at position|at index|at the position|at place|into position|into index|at spot|at location|positioned at)\\s+(\\d+|[a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:in|of|into|inside|from the start of|within|inside the list|of the list)\\s*(?:(?:the|my|our)\\s+)?(?:list|array|collection)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$3.insert($2, $1)",
+    "desc": "Insert into list at index.",
+    "ruleKeyword": "add [X] at index [N] in [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:remove|delete|take out|take away|drop|get rid of|kill|obliterate|purge|erase|eliminate|bin|toss|throw away|discard|lose|ditch|strip out|cut out|pull out|pluck out|yank out|wipe|scratch|knock out|weed out|discard from)\\s+(.+?)\\s+(?:from|out of|in|from the|from inside|within|off of|inside the list|from the list)\\s*(?:(?:the|my|our)\\s+)?(?:list|array|collection|sequence)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$2.remove($1)",
+    "desc": "Remove item from list.",
+    "ruleKeyword": "remove [X] from list [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:pop|pop off|pop the last|remove the last|take the last|grab the last|pull the last|yank the last|lift the last|strip the last|pop from|extract the last|eject the last|eject)\\s+(?:item|element|value|thing|one|member)?\\s*(?:from|in|of|off|off of|inside)?\\s*(?:(?:the|my|our)\\s+)?(?:list|array|collection|sequence)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1.pop()",
+    "desc": "Pop last item from list.",
+    "ruleKeyword": "pop from list [X]"
+  },
+  {
+    "pattern": "^\\s*(?:sort|order|arrange|organise|organize|sort out|line up|rank|put in order|sequence|alphabetize|sort list)\\s*(?:(?:the|my|our)\\s+)?(?:list|array|collection|sequence)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1.sort()",
+    "desc": "Sort list in place.",
+    "ruleKeyword": "sort list [X]"
+  },
+  {
+    "pattern": "^\\s*(?:sort|order|arrange|organize|organise)\\s*(?:(?:the|my|our)\\s+)?(?:list|array|collection|sequence)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:in reverse|backwards|descending|in descending order|from biggest to smallest|from largest to smallest|from high to low|high to low|biggest first|largest first|reverse order|in reverse order|backward|downwards|from maximum to minimum)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1.sort(reverse=True)",
+    "desc": "Sort list in descending order.",
+    "ruleKeyword": "sort list [X] in reverse"
+  },
+  {
+    "pattern": "^\\s*(?:reverse|flip|invert|backwards|turn around|turn back|flip around|go backwards|turn it around|mirror|reverse the order of)\\s*(?:(?:the|my|our)\\s+)?(?:list|array|collection|sequence)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1.reverse()",
+    "desc": "Reverse list in place.",
+    "ruleKeyword": "reverse list [X]"
+  },
+  {
+    "pattern": "^\\s*(?:empty|clear|reset|wipe|wipe out|flush|blank|nuke|clear out|erase|clean|clean out|zero out|purge|gut|hollow out|trash|dump|blow out|drain|evacuate)\\s*(?:(?:the|my|our)\\s+)?(?:list|array|collection|sequence)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1.clear()",
+    "desc": "Clear list.",
+    "ruleKeyword": "empty list [X]"
+  },
+  {
+    "pattern": "^\\s*(?:get|find|fetch|retrieve|read|grab|access|look up|check|tell me|show me|what is|how long|size of|how big|determine the size of)\\s+(?:the\\s+)?(?:length|size|count|number of items|how many items|how many things|how long|how big|total items|total elements|item count|element count|number of elements|occupancy|cardinality)\\s*(?:of|in|from|inside)?\\s*(?:(?:the|my|our)\\s+)?(?:list|array|collection|string|sequence|set|dict|dictionary)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "len($1)",
+    "desc": "Get length.",
+    "ruleKeyword": "get length of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:how many|how long is|what is the length of|what's the length of|size of|count of|length of|how much|how big is|how big is the|how long is the|what is the size of|what's the size of)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\??\\s*$",
+    "flags": "i",
+    "replace": "print(len($1))",
+    "desc": "Print length.",
+    "ruleKeyword": "how many [X]?"
+  },
+  {
+    "pattern": "^\\s*(?:get|fetch|access|grab|read|look up|find|retrieve|give me|show me|tell me)\\s+(?:the\\s+)?(?:first|1st|initial|head|front|beginning)\\s+(?:item|element|value|thing|one|entry|member|object)?\\s+(?:from|in|of|inside)?\\s*(?:(?:the|my|our)\\s+)?(?:list|array|sequence)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1[0]",
+    "desc": "Access first element.",
+    "ruleKeyword": "get first item from [X]"
+  },
+  {
+    "pattern": "^\\s*(?:get|fetch|access|grab|read|look up|find|retrieve|give me|show me|tell me)\\s+(?:the\\s+)?(?:last|final|end|tail|bottom|ultimate)\\s+(?:item|element|value|thing|one|entry|member|object)?\\s+(?:from|in|of|inside)?\\s*(?:(?:the|my|our)\\s+)?(?:list|array|sequence)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1[-1]",
+    "desc": "Access last element.",
+    "ruleKeyword": "get last item from [X]"
+  },
+  {
+    "pattern": "^\\s*(?:get|fetch|access|grab|read|look up|find|retrieve|give me|show me|tell me)\\s+(?:the\\s+)?(?:second|2nd|next)\\s+(?:item|element|value|thing|one|entry|member)?\\s+(?:from|in|of|inside)?\\s*(?:(?:the|my|our)\\s+)?(?:list|array|sequence)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1[1]",
+    "desc": "Access second element.",
+    "ruleKeyword": "get second item from [X]"
+  },
+  {
+    "pattern": "^\\s*(?:get|fetch|access|grab|read|look up|find|retrieve|give me|show me|tell me)\\s+(?:the\\s+)?(?:third|3rd)\\s+(?:item|element|value|thing|one|entry|member)?\\s+(?:from|in|of|inside)?\\s*(?:(?:the|my|our)\\s+)?(?:list|array|sequence)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1[2]",
+    "desc": "Access third element.",
+    "ruleKeyword": "get third item from [X]"
+  },
+  {
+    "pattern": "^\\s*(?:slice|cut|chop|take a slice of|get a slice of|get a portion of|get part of|sub-array|sub-list|portion of|section of|piece of|bit of|chunk of|excerpt from|extract slice of|crop)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:from|starting at|starting from|beginning at|beginning from|from index|from position)\\s+(\\d+|[a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:to|until|up to|through|ending at|ending on|up to index|to index|to position|stopping before)\\s+(\\d+|[a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1[$2:$3]",
+    "desc": "Slice.",
+    "ruleKeyword": "slice [X] from [A] to [B]"
+  },
+  {
+    "pattern": "^\\s*(?:join|combine|merge|concatenate|glue|stick together|chain|link|connect|mash|smash|fuse|blend|bind|tie|bolt|knit|weave|pool|coalesce|amalgamate)\\s+(?:the\\s+)?(?:lists?|arrays?|collections?|sequences?)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:and|with|,|&|\\+|together with)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 + $2",
+    "desc": "Concatenate two lists.",
+    "ruleKeyword": "join list [X] and [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:join|join together|combine|concatenate|glue|join into one|put together|assemble|stitch|string together|link together)\\s+(?:all\\s+)?(?:items?|elements?|members?|values?)?\\s*(?:of|in|from)?\\s*(?:(?:the|my|our)\\s+)?(?:list|array|collection|sequence)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:with\\s+separator|separated by|with|using separator|glued with|joined with|gluing|using|delimited by|divided by|split by|with delimiter|interspersed with)\\s+['\"](.+?)['\"]\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "\"$2\".join($1)",
+    "desc": "Join list with separator.",
+    "ruleKeyword": "join list [X] with separator \"[Y]\""
+  },
+  {
+    "pattern": "^\\s*(?:join|combine|concatenate|glue|join together|put together|merge together|fuse)\\s+(?:all\\s+)?(?:items?|elements?|members?)?\\s*(?:of|in|from)?\\s*(?:(?:the|my|our)\\s+)?(?:list|array|collection)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?:into a string|into one|as string|as one string|together|to form a string)?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "\"\".join($1)",
+    "desc": "Join list (no separator).",
+    "ruleKeyword": "join list [X] into a string"
+  },
+  {
+    "pattern": "^\\s*(?:split|break apart|split up|divide|chop up|cut up|separate|divide up|partition|segment|break into|crack into|bust into|cut into|cleave|rupture|dissect|fragment)\\s+(?:(?:the|my|our)\\s+)?(?:string|text)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:by|on|at|using|with|splitting on|splitting by|using delimiter|on delimiter|delimited by|divided by|based on|around|separated by)\\s+['\"](.+?)['\"]\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1.split(\"$2\")",
+    "desc": "Split string by delimiter.",
+    "ruleKeyword": "split [X] by \"[Y]\""
+  },
+  {
+    "pattern": "^\\s*(?:split|break apart|split up|divide|tokenize|chop up)\\s+(?:(?:the|my|our)\\s+)?(?:string|text)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:by spaces?|on spaces?|at spaces?|into words?|by whitespace|on whitespace|by gaps?|on gaps?|into tokens?|into parts?|into pieces?|on blanks?|by blanks?|using whitespace|splitting on spaces)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1.split()",
+    "desc": "Split on whitespace.",
+    "ruleKeyword": "split [X] by spaces"
+  },
+  {
+    "pattern": "^\\s*(?:extend|add all|append all|merge into|add all items of|add all elements of|absorb|take in all|incorporate|consume|pull in all|ingest|swallow|annex|amalgamate)\\s+(?:(?:the|my|our)\\s+)?(?:list|array|collection)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:with|using|from|to include|from list|from array|by adding items of)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1.extend($2)",
+    "desc": "Extend list with another list.",
+    "ruleKeyword": "extend list [X] with [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:get|find|retrieve|fetch|what is|print|show|display|compute|calculate|reveal)\\s+(?:the\\s+)?(?:max|maximum|biggest|largest|highest|greatest|top|peak|ceiling|apex|pinnacle|vertex)\\s+(?:value\\s+)?(?:in|of|from)\\s*(?:(?:the|my|our)\\s+)?(?:list|array|collection|sequence)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print(max($1))",
+    "desc": "Get max.",
+    "ruleKeyword": "get max of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:get|find|retrieve|fetch|what is|print|show|display|compute|calculate|reveal)\\s+(?:the\\s+)?(?:min|minimum|smallest|tiniest|lowest|least|fewest|bottom|floor|base|nadir|minimum value)\\s+(?:value\\s+)?(?:in|of|from)\\s*(?:(?:the|my|our)\\s+)?(?:list|array|collection|sequence)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print(min($1))",
+    "desc": "Get min.",
+    "ruleKeyword": "get min of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:get|find|calculate|compute|print|what is|show|display|total|sum up|add up)\\s+(?:the\\s+)?(?:sum|total|add all|add up all|total of all|sum of all|sum total|grand total|total up|all added up|added together|aggregate value)\\s+(?:of\\s+)?(?:the\\s+)?(?:items?|values?|elements?|numbers?)?\\s*(?:in|of|from)?\\s*(?:(?:the|my|our)\\s+)?(?:list|array|collection|sequence)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print(sum($1))",
+    "desc": "Sum list.",
+    "ruleKeyword": "get sum of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:get|find|calculate|compute|print|what is|show|display|determine|evaluate)\\s+(?:the\\s+)?(?:average|mean|avg|arithmetic mean|expected value)\\s+(?:of\\s+)?(?:the\\s+)?(?:items?|values?|elements?|numbers?)?\\s*(?:in|of|from)?\\s*(?:(?:the|my|our)\\s+)?(?:list|array|collection|sequence)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print(sum($1) / len($1))",
+    "desc": "Calculate average.",
+    "ruleKeyword": "get average of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:deduplicate|remove duplicates|remove duplicate items|remove dups|dedup|unique items|make unique|get unique|uniquify|dedupe|remove repeated|remove repeats|no duplicates in|remove doubles from|clean duplicates from)\\s*(?:from\\s+)?(?:(?:the|my|our)\\s+)?(?:list|array|collection|sequence)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = list(set($1))",
+    "desc": "Remove duplicates.",
+    "ruleKeyword": "deduplicate list [X]"
+  },
+  {
+    "pattern": "^\\s*(?:flatten|flatten out|flatten the nested|flatten nested|make flat|unpack nested|collapse|unwrap|unroll|spread out|dissolve nesting of)\\s*(?:(?:the|my|our)\\s+)?(?:list|array|collection)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = [item for sublist in $1 for item in sublist]",
+    "desc": "Flatten nested list.",
+    "ruleKeyword": "flatten list [X]"
+  },
+  {
+    "pattern": "^\\s*(?:make|create|new|declare|define|give me|i want|initialize|set up|build|establish|prepare|instantiate)\\s+(?:a\\s+|an?\\s+)?(?:empty\\s+)?(?:dict|dictionary|map|hash|hash map|hash table|object|key.?value store|lookup|lookup table|associative array|mapping|table|record|registry|directory)\\s+(?:called|named|known as|labelled|labeled|with name)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = {}",
+    "desc": "Create empty dict.",
+    "ruleKeyword": "create dict [X]"
+  },
+  {
+    "pattern": "^\\s*(?:add|set|put|store|save|insert|assign|map|give|create|establish|register|record|log|place|drop|chuck|stick|write|throw|bind|link)\\s+(?:key\\s+)?['\"]?([a-zA-Z0-9_\\-\\.]+)['\"]?\\s+(?:to|=|as|=>|maps to|with value|:|->,|pointing to|with the value|assigned to|paired with|linked to|connecting to|set to|holding|containing|associated with|anchored to)\\s+(.+?)\\s+(?:in|into|inside|to|within|in the|of the|on|under|at|for|inside the dictionary|inside the map)\\s*(?:(?:the|my|our)\\s+)?(?:dict|dictionary|map|table|record|hash|hashmap)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$3[\"$1\"] = $2",
+    "desc": "Set a dict key.",
+    "ruleKeyword": "add key [K] = [V] in dict [D]"
+  },
+  {
+    "pattern": "^\\s*(?:get|find|fetch|retrieve|read|grab|access|look up|check|tell me|show me|what is|extract|pull|take|read out|read from|pluck|extract value for key)\\s+(?:the\\s+)?(?:value of\\s+)?(?:key\\s+)?['\"]?([a-zA-Z0-9_\\-\\.]+)['\"]?\\s+(?:from|in|inside|of|out of|within|inside the dictionary|from the dictionary)\\s*(?:(?:the|my|our)\\s+)?(?:dict|dictionary|map|table|record|hash|hashmap)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print($2[\"$1\"])",
+    "desc": "Get value from dict.",
+    "ruleKeyword": "get key [K] from dict [D]"
+  },
+  {
+    "pattern": "^\\s*(?:remove|delete|drop|take out|erase|get rid of|pop|destroy|kill|purge|strip|wipe|clear|forget|unset|unmap|unregister|deregister|discard key)\\s+(?:key\\s+)?['\"]?([a-zA-Z0-9_\\-\\.]+)['\"]?\\s+(?:from|in|out of|inside|within|inside the dictionary|from the dictionary)\\s*(?:(?:the|my|our)\\s+)?(?:dict|dictionary|map|table|record|hash|hashmap)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "del $2[\"$1\"]",
+    "desc": "Delete dict key.",
+    "ruleKeyword": "remove key [K] from dict [D]"
+  },
+  {
+    "pattern": "^\\s*(?:get|print|show|list|output|display|dump|log|retrieve|fetch)\\s*(?:all\\s+)?(?:(?:the|my|our)\\s+)?(?:keys?|all keys?|list of keys|dictionary keys)\\s+(?:from|in|of|inside|within|inside the dictionary|from the dictionary)\\s*(?:(?:the|my|our)\\s+)?(?:dict|dictionary|map|table|record|hash|hashmap)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print($1.keys())",
+    "desc": "Print keys.",
+    "ruleKeyword": "get keys of dict [X]"
+  },
+  {
+    "pattern": "^\\s*(?:get|print|show|list|output|display|dump|log|retrieve|fetch)\\s*(?:all\\s+)?(?:(?:the|my|our)\\s+)?(?:values?|all values?|list of values|dictionary values)\\s+(?:from|in|of|inside|within|inside the dictionary|from the dictionary)\\s*(?:(?:the|my|our)\\s+)?(?:dict|dictionary|map|table|record|hash|hashmap)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print($1.values())",
+    "desc": "Print values.",
+    "ruleKeyword": "get values of dict [X]"
+  },
+  {
+    "pattern": "^\\s*(?:merge|combine|update|join|mix|blend|add all from|fuse|incorporate|absorb|take from|pull from|assimilate)\\s*(?:(?:the|my|our)\\s+)?(?:dict|dictionary|map|table|hash|hashmap)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:with|and|into|from|absorbing|by incorporating values from)\\s*(?:(?:the|my|our)\\s+)?(?:dict|dictionary|map|table|hash|hashmap)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1.update($2)",
+    "desc": "Merge dicts.",
+    "ruleKeyword": "merge dict [X] with [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:safely get|get or default|get with default|get or use|get or return|get|fetch|retrieve|access|grab|read|lookup with default)\\s+(?:key\\s+)?['\"]?([a-zA-Z0-9_\\-\\.]+)['\"]?\\s+(?:from|in|inside|of|from the dictionary|inside the dictionary)\\s*(?:(?:the|my|our)\\s+)?(?:dict|dictionary|map|table|hash|hashmap)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:or|with default|defaulting to|otherwise|falling back to|or else|or use|or return|if missing use|if not found use|and use default value of)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$2.get(\"$1\", $3)",
+    "desc": "Get dict value with default.",
+    "ruleKeyword": "get key [K] from dict [D] or [default]"
+  },
+  {
+    "pattern": "^\\s*(?:make|create|new|declare|define|give me|i want|initialize|build|forge|craft|instantiate)\\s+(?:a\\s+|an?\\s+)?(?:empty\\s+)?(?:set|unique collection|unique list|bag|unique set|unordered set|mathematical set)\\s+(?:called|named|known as|labelled|labeled|with name)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = set()",
+    "desc": "Create empty set.",
+    "ruleKeyword": "create set [X]"
+  },
+  {
+    "pattern": "^\\s*(?:add|insert|put|include|throw|toss|stick|shove|drop|place|push|inject|feed|slap)\\s+(.+?)\\s+(?:to|into|in|inside|inside the set|to the set)\\s*(?:(?:the|my|our)\\s+)?(?:set|unique collection|unique list|unordered set)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$2.add($1)",
+    "desc": "Add to set.",
+    "ruleKeyword": "add [X] to set [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:remove|delete|discard|take out|drop|bin|lose|ditch|purge|erase|get rid of|yank|strip|remove from set)\\s+(.+?)\\s+(?:from|out of|off of|inside the set|from the set)\\s*(?:(?:the|my|our)\\s+)?(?:set|unique collection|unordered set)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$2.discard($1)",
+    "desc": "Discard from set.",
+    "ruleKeyword": "remove [X] from set [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:union|union of|combine sets?|merge sets?|all items from both|everything in both|everything in either|unify sets|join sets)\\s*(?:(?:the|my|our)\\s+)?(?:sets?)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:and|with|,|&|\\+|together with)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 | $2",
+    "desc": "Set union.",
+    "ruleKeyword": "union of [X] and [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:intersection|intersection of|common items|items in both|shared items|overlap of|in common|what both have|shared between|in both|intersect sets)\\s*(?:(?:the|my|our)\\s+)?(?:sets?)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:and|with|,|&|overlapping with)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 & $2",
+    "desc": "Set intersection.",
+    "ruleKeyword": "intersection of [X] and [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:difference|difference of|items? only in|items? not in both|subtract set|set minus|only in|not in the other|not shared with|excluding|subtract set from set)\\s*(?:(?:the|my|our)\\s+)?(?:sets?)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:and|with|minus|not in|,)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 - $2",
+    "desc": "Set difference.",
+    "ruleKeyword": "difference of [X] and [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:uppercase|upcase|make uppercase|convert to uppercase|make upper|upper case|to upper|toupper|to uppercase|capitalize all|caps|all caps|shout|all uppercase|make it upper|go uppercase|uppercase it|upper-case|ucase|UPPER|shout string|uppercase string)\\s*(?:(?:the|my|our)\\s+)?(?:string|text)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = $1.upper()",
+    "desc": "Uppercase.",
+    "ruleKeyword": "uppercase [X]"
+  },
+  {
+    "pattern": "^\\s*(?:lowercase|downcase|make lowercase|convert to lowercase|make lower|lower case|to lower|tolower|to lowercase|uncap|uncapitalize|all lowercase|make it lower|go lowercase|lowercase it|lower-case|lcase|whisper string|lowercase string)\\s*(?:(?:the|my|our)\\s+)?(?:string|text)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = $1.lower()",
+    "desc": "Lowercase.",
+    "ruleKeyword": "lowercase [X]"
+  },
+  {
+    "pattern": "^\\s*(?:capitalize|title case|make title|to title|title case|title-case|titlecase|make each word uppercase|capitalize each word|capitalize every word|title string|titlecase string)\\s*(?:(?:the|my|our)\\s+)?(?:string|text)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = $1.title()",
+    "desc": "Title case.",
+    "ruleKeyword": "capitalize [X]"
+  },
+  {
+    "pattern": "^\\s*(?:capitalize the first|capitalise the first|make the first letter uppercase|first letter uppercase|ucfirst|capitalize first letter|capitalise first letter|cap the first letter|capitalize string start)\\s+(?:of\\s+)?(?:(?:the|my|our)\\s+)?(?:string|text|letter)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = $1.capitalize()",
+    "desc": "Capitalize first letter.",
+    "ruleKeyword": "capitalize first letter of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:trim|strip|remove whitespace|remove spaces|clean up|clean|remove leading and trailing|remove trailing and leading|strip whitespace|strip spaces|trim whitespace|trim spaces|strip it|trim it|clean spaces|strip boundaries of)\\s*(?:(?:the|my|our)\\s+)?(?:string|text)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = $1.strip()",
+    "desc": "Strip whitespace.",
+    "ruleKeyword": "trim [X]"
+  },
+  {
+    "pattern": "^\\s*(?:replace|swap|substitute|find and replace|change|swap out|exchange|convert|switch substring)\\s+['\"]?(.+?)['\"]?\\s+(?:with|for|to|by|=>|using|as|replacing with)\\s+['\"]?(.+?)['\"]?\\s+(?:in|inside|within|in the string|in the text|in the variable|of|from)\\s*(?:(?:the|my|our)\\s+)?(?:string|text)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$3 = $3.replace(\"$1\", \"$2\")",
+    "desc": "Replace in string.",
+    "ruleKeyword": "replace [X] with [Y] in [Z]"
+  },
+  {
+    "pattern": "^\\s*(?:does|check if|see if|find out if|test if|verify if|determine if)\\s*(?:(?:the|my|our)\\s+)?(?:string|text)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:starts with|begins with|starts|begins|opens with|leads with|comes from|is preceded by|has prefix|starts with substring)\\s+['\"]?(.+?)['\"]?\\??\\s*$",
+    "flags": "i",
+    "replace": "print($1.startswith(\"$2\"))",
+    "desc": "Starts with.",
+    "ruleKeyword": "does [X] start with [Y]?"
+  },
+  {
+    "pattern": "^\\s*(?:does|check if|see if|find out if|test if|verify if|determine if)\\s*(?:(?:the|my|our)\\s+)?(?:string|text)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:ends with|ends|finishes with|concludes with|terminates with|closes with|comes from|is followed by|closes on|has suffix|ends with substring)\\s+['\"]?(.+?)['\"]?\\??\\s*$",
+    "flags": "i",
+    "replace": "print($1.endswith(\"$2\"))",
+    "desc": "Ends with.",
+    "ruleKeyword": "does [X] end with [Y]?"
+  },
+  {
+    "pattern": "^\\s*(?:does|check if|see if|find out if|test if|determine if)\\s*(?:(?:the|my|our)\\s+)?(?:string|text)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:contains?|has|includes?|holds?|has got|has the|have|possesses?|features?|carries?|has substring|contains substring)\\s+['\"]?(.+?)['\"]?\\??\\s*$",
+    "flags": "i",
+    "replace": "print(\"$2\" in $1)",
+    "desc": "String contains.",
+    "ruleKeyword": "does [X] contain [Y]?"
+  },
+  {
+    "pattern": "^\\s*(?:find|search for|look for|locate|where is|position of|index of|search|locate substring in)\\s+['\"]?(.+?)['\"]?\\s+(?:in|inside|within|in the string|in the text|of|from)\\s*(?:(?:the|my|our)\\s+)?(?:string|text)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print($2.find(\"$1\"))",
+    "desc": "Find in string.",
+    "ruleKeyword": "find [X] in string [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:reverse|flip|backwards|invert|mirror|read backwards|reverse string in-place)\\s*(?:(?:the|my|our)\\s+)?(?:string|text)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = $1[::-1]",
+    "desc": "Reverse string.",
+    "ruleKeyword": "reverse string [X]"
+  },
+  {
+    "pattern": "^\\s*(?:ask|prompt|request|get input|take input|read input|get|ask for|query the user for|ask the user|get from user|get user input|get user|ask user|take from user|receive|get response|get answer|get reply|prompt the user for|receive input from user for)\\s+(?:(?:the|my|our)\\s+)?(?:user\\s+)?(?:for\\s+)?['\"]?(.+?)['\"]?\\s+(?:and save|and store|and put|and assign|and set it|save it|store it|and write|and keep|and register|and record|and stash|and stash it)\\s+(?:it\\s+)?(?:to|in|as|into|under|in variable|in a variable|into variable|into a variable)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$2 = input(\"$1: \")",
+    "desc": "User input to variable.",
+    "ruleKeyword": "ask user for [X] and save to [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:ask|prompt|request|get|take|read|query)\\s+(?:for\\s+)?['\"]?(.+?)['\"]?\\s+(?:and save|save|store|put|and store|and write|and assign)\\s+(?:to|in|as|into|inside|to variable)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$2 = input(\"$1: \")",
+    "desc": "Short-form input.",
+    "ruleKeyword": "ask for [X] save to [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:get|read|ask|take|prompt|query)\\s+(?:an?\\s+)?(?:integer|int|number|whole number|digit)\\s+(?:from|from the user|from user|from input)\\s+(?:with prompt|asking|saying|prompt|requesting)?\\s*['\"]?(.+?)['\"]?\\s+(?:and save|and store|save it|and put it|and assign it|store in|and save to|and write to|and record in)\\s+(?:it\\s+)?(?:to|in|as|into|variable)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$2 = int(input(\"$1: \"))",
+    "desc": "User input as integer.",
+    "ruleKeyword": "get integer from user [prompt] and save to [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:read a line|readline|read line|get a line|grab a line|read input|get input|take input|capture a line)\\s+(?:from|into|and store in|save to|inside|to)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = input()",
+    "desc": "Read a line.",
+    "ruleKeyword": "read a line into [X]"
+  },
+  {
+    "pattern": "^\\s*(?:import|use|bring in|include|load|require|load in|bring in the|pull in|add the|use the|get the|grab the|fetch the|inject|take in|pull up|load up|use module|use library|access|enable|activate|include the|import the|load the|bring the|require the|import library|use package|import package)\\s+(?:(?:the|my|our)\\s+)?([a-zA-Z_][a-zA-Z0-9_.]*)\\s*(?:library|module|package|lib|mod|pkg|extension|plugin|addon|add-on)?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import $1",
+    "desc": "Import a module.",
+    "ruleKeyword": "import [module]"
+  },
+  {
+    "pattern": "^\\s*(?:import|use|bring in|include|load|require|pull in)\\s+(?:(?:the|my|our)\\s+)?([a-zA-Z_][a-zA-Z0-9_.]*)\\s*(?:library|module|package|lib|mod)?\\s+(?:and call it|as|and rename it to|and alias it as|abbreviated as|shortened to|named as|with alias|as alias|alias it|aliased as|aliased to|referring to it as|referring to as|nickname|nickname it|under the alias|under the name)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import $1 as $2",
+    "desc": "Import with alias.",
+    "ruleKeyword": "import [module] as [alias]"
+  },
+  {
+    "pattern": "^\\s*(?:from|get from|take from|use from|load from|import from|grab from|pull from|extract from|use something from|get something from|require from)\\s+([a-zA-Z_][a-zA-Z0-9_.]*)\\s+(?:import|take|use|load|bring|get|grab|pull|extract|get the|take the|use the|borrow|use only|load the)\\s+(?:(?:the|my|our)\\s+)?(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "from $1 import $2",
+    "desc": "From module import.",
+    "ruleKeyword": "from [module] import [X]"
+  },
+  {
+    "pattern": "^\\s*(?:import|use|bring in|include|load|require|pull in)\\s+(?:everything from|all from|all of|the entire|all of the|all things from|\\*\\s+from|everything in|all contents of|the whole library of)\\s+([a-zA-Z_][a-zA-Z0-9_.]*)\\s*(?:library|module|package|lib|mod)?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "from $1 import *",
+    "desc": "Import everything from module.",
+    "ruleKeyword": "import everything from [module]"
+  },
+  {
+    "pattern": "^\\s*(?:try|try to|try to do|try doing|attempt|try this|try the following|have a go at|give it a shot|attempt to|give it a try|let's try|have a shot at|take a shot at|see if you can|see if this works|commence try block|begin try)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "try:",
+    "desc": "Try block.",
+    "ruleKeyword": "try"
+  },
+  {
+    "pattern": "^\\s*(?:if there is an error|if an error occurs|if it fails|if something goes wrong|on error|catch|except|except for|except in case|catch error|catch exception|handle error|on exception|if an exception|when there's an error|when an error happens|when error|catch any error|catch all errors|catch everything|except any exception|if anything goes wrong|if that breaks|if that crashes|if it crashes|if it breaks|if it blows up|if it explodes|if anything blows up|if it doesn't work|when something fails|if something fails|if that fails|when anything goes wrong|in case of error|in case of failure|handle failure|on failure|if that errors|when that errors|when errors happen|if there's a problem|on problem|handle problem|trap error|trap exception|on generic error|catch generic error|if execution fails)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "except Exception as e:",
+    "desc": "Generic except.",
+    "ruleKeyword": "if there is an error"
+  },
+  {
+    "pattern": "^\\s*(?:if there is a value error|if value error|catch value error|on value error|handle value error|if invalid value|if the value is wrong|if the value is bad|if bad value|if wrong value|on invalid value|on bad value|on wrong value|trap value error|except value error)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "except ValueError as e:",
+    "desc": "ValueError except.",
+    "ruleKeyword": "if there is a value error"
+  },
+  {
+    "pattern": "^\\s*(?:if there is a type error|if type error|catch type error|on type error|handle type error|if the type is wrong|if wrong type|on wrong type|trap type error|except type error)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "except TypeError as e:",
+    "desc": "TypeError except.",
+    "ruleKeyword": "if there is a type error"
+  },
+  {
+    "pattern": "^\\s*(?:if there is a zero division error|if divide by zero|if dividing by zero|catch divide by zero|on zero division|if division by zero|on division by zero|if divided by zero|except zero division|trap division by zero)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "except ZeroDivisionError as e:",
+    "desc": "ZeroDivisionError except.",
+    "ruleKeyword": "if divide by zero"
+  },
+  {
+    "pattern": "^\\s*(?:if there is a key error|if key error|catch key error|on key error|handle key error|if the key is not found|if key not found|if key is missing|on missing key|if key doesn't exist|if key doesnt exist|if no such key|trap key error|except key error)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "except KeyError as e:",
+    "desc": "KeyError except.",
+    "ruleKeyword": "if there is a key error"
+  },
+  {
+    "pattern": "^\\s*(?:if there is an index error|if index error|catch index error|on index error|handle index error|if index out of bounds|if out of bounds|if the index is out of range|if index out of range|on index out of bounds|on out of bounds|if index too large|if index too high|if index too big|trap index error|except index error)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "except IndexError as e:",
+    "desc": "IndexError except.",
+    "ruleKeyword": "if there is an index error"
+  },
+  {
+    "pattern": "^\\s*(?:if there is a file not found error|if file not found|if file doesnt exist|if file doesn't exist|catch file not found|on file not found|if the file is missing|if file is missing|on missing file|if no such file|if file isn't there|if file is absent|except file not found|trap missing file error)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "except FileNotFoundError as e:",
+    "desc": "FileNotFoundError except.",
+    "ruleKeyword": "if file not found"
+  },
+  {
+    "pattern": "^\\s*(?:finally|always do|always run|always execute|no matter what|regardless|run this anyway|do this anyway|at the end always|cleanup|clean up|always clean up|always tidy up|always|at the end|in any case|whatever happens|regardless of outcome|always run this|run this in any case|do this either way|execute finally|begin finally|on block completion)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "finally:",
+    "desc": "Finally block.",
+    "ruleKeyword": "finally"
+  },
+  {
+    "pattern": "^\\s*(?:raise|throw|trigger|fire|signal|raise an error|throw an error|raise exception|throw exception|raise a|throw a|signal a|produce an error|generate an error|cause an error|create an error|emit an error|send an error|launch an error|produce error|dispatch error)\\s+(?:an?\\s+)?([a-zA-Z]+(?:Error|Exception)?)(?:\\s*(?:\\(\"?(.+?)\"?\\)))?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "raise $1(\"$2\")",
+    "desc": "Raise an exception.",
+    "ruleKeyword": "raise [Error](\"message\")"
+  },
+  {
+    "pattern": "^\\s*(?:raise|throw|trigger|create|generate|make)\\s+(?:an?\\s+)?error\\s+(?:saying|with message|with|that says|saying that|with text|with the message|with msg|message|carrying message)\\s+['\"](.+?)['\"]\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "raise Exception(\"$1\")",
+    "desc": "Raise generic Exception with message.",
+    "ruleKeyword": "raise error saying \"[msg]\""
+  },
+  {
+    "pattern": "^\\s*(?:assert|make sure|ensure|verify|confirm|guarantee|check that|require|demand|insist|insist that|validate|need|it must be|there must be|require that|guaranty)\\s+(.+?)(?:\\s*[,;]\\s*(?:otherwise|or raise|or throw|or error with|or fail with|or print|or show|or say|else raise error saying|else fail with message)\\s+['\"]?(.+?)['\"]?)?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "assert $1, \"$2\"",
+    "desc": "Assert.",
+    "ruleKeyword": "assert [condition]"
+  },
+  {
+    "pattern": "^\\s*(?:print|log|output|show|display|report|spit out|reveal)\\s+(?:the\\s+)?(?:error|exception|error message|the exception|the error|exception message|what went wrong|why it failed|the failure|the problem|the issue|caught exception|caught error)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print(e)",
+    "desc": "Print caught exception.",
+    "ruleKeyword": "print the error"
+  },
+  {
+    "pattern": "^\\s*(?:open|read|load|load from|read from|open and read|read the contents of|get the contents of|read the file|open the file|load the file|slurp|ingest|bring in from file|pull from file|get from file|load data from file)\\s*(?:(?:the|my|our)\\s+)?(?:file|text file|file at|path|filepath)?\\s*['\"]?([^'\"\\s]+)['\"]?\\s+(?:and save|and store|save|store|and put it|and assign it|and read into|into|as|and call it|and name it|to variable|inside variable)\\s+(?:it\\s+)?(?:to|in|as|into|in variable|inside)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "with open(\"$1\", \"r\") as f:\n    $2 = f.read()",
+    "desc": "Read file into variable.",
+    "ruleKeyword": "read file \"[path]\" into [X]"
+  },
+  {
+    "pattern": "^\\s*(?:write|save|write to|write out to|output to|save to|dump to|save into|write into|store in file|put in file|output to file|write out to file|send to file|write it to|save it to|write data to|dump data to|pour into file|export to file)\\s*(?:(?:the|my|our)\\s+)?(?:file|text file|path|filepath)?\\s*['\"]?([^'\"\\s]+)['\"]?\\s+(?:with|the text|writing|the content|the value|the data|the contents|content|using|from|from variable|from the variable|holding data of)?\\s+(?:of\\s+)?([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "with open(\"$1\", \"w\") as f:\n    f.write($2)",
+    "desc": "Write to file.",
+    "ruleKeyword": "write to file \"[path]\" with [X]"
+  },
+  {
+    "pattern": "^\\s*(?:append|add to|append to|add onto|write to|write more to|add to the end of|append to the end of|continue writing to|extend the file|add to the file|tack onto|add content to file|append content to file)\\s*(?:(?:the|my|our)\\s+)?(?:file|text file|path|filepath)?\\s*['\"]?([^'\"\\s]+)['\"]?\\s+(?:with|the text|the content|the value|the data|the contents|content|using|from|representing variable)?\\s+(?:of\\s+)?([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "with open(\"$1\", \"a\") as f:\n    f.write($2)",
+    "desc": "Append to file.",
+    "ruleKeyword": "append to file \"[path]\" with [X]"
+  },
+  {
+    "pattern": "^\\s*(?:read lines?|get lines?|load lines?|read all lines?|read file lines?|read the lines?|get all lines?|load all lines?|get every line|read every line|lines? from|all lines? from|load file as lines)\\s*(?:(?:from|of|in|from the|of the)\\s+)?(?:(?:the|my|our)\\s+)?(?:file|text file|path|filepath)?\\s*['\"]?([^'\"\\s]+)['\"]?\\s+(?:into|and save to|and store in|and put in|save to|as|to variable)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "with open(\"$1\", \"r\") as f:\n    $2 = f.readlines()",
+    "desc": "Read file lines.",
+    "ruleKeyword": "read lines from file \"[path]\" into [X]"
+  },
+  {
+    "pattern": "^\\s*(?:check if|does|see if|test if|verify if|does the|is there a|is there|exists?|file exists|locate file)\\s*(?:(?:the|my|our)\\s+)?(?:file|path|folder|directory|filepath)?\\s*['\"]?([^'\"\\s]+)['\"]?\\s+(?:exists?|is there|is present|is a file|exists on disk|is on disk|can be found|is around|is accessible|is available|exist)\\??\\s*$",
+    "flags": "i",
+    "replace": "import os\nprint(os.path.exists(\"$1\"))",
+    "desc": "Check if file exists.",
+    "ruleKeyword": "does file \"[path]\" exist?"
+  },
+  {
+    "pattern": "^\\s*(?:delete|remove|erase|obliterate|destroy|kill|get rid of|trash|bin|nuke|wipe|purge|eliminate|remove the file|delete the file|erase the file|nuke file|wipe file from disk)\\s*(?:(?:the|my|our)\\s+)?(?:file|path|filepath)?\\s*['\"]?([^'\"\\s]+)['\"]?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import os\nos.remove(\"$1\")",
+    "desc": "Delete a file.",
+    "ruleKeyword": "delete file \"[path]\""
+  },
+  {
+    "pattern": "^\\s*(?:list|show|display|get|print|see what's in|see what is in|whats in|what's in|what is in|show me what's in|show me whats in|list folder|list directory|list contents)\\s*(?:(?:the|my|our)\\s+)?(?:files?|directory contents?|contents of directory|the directory|folder contents?|contents of folder|the folder)?\\s*(?:in|of|at|from|inside|directory path)?\\s*['\"]?([^'\"\\s]+)['\"]?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import os\nprint(os.listdir(\"$1\"))",
+    "desc": "List directory.",
+    "ruleKeyword": "list files in \"[path]\""
+  },
+  {
+    "pattern": "^\\s*(?:make|create|mkdir|make directory|create directory|make folder|create folder|new folder|new directory|add folder|add directory|build directory|build folder|make the folder|make the directory|provision folder)\\s*(?:(?:a|the|my|our)\\s+)?(?:directory|folder|dir)?\\s*['\"]?([^'\"\\s]+)['\"]?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import os\nos.makedirs(\"$1\", exist_ok=True)",
+    "desc": "Create a directory.",
+    "ruleKeyword": "create directory \"[path]\""
+  },
+  {
+    "pattern": "^\\s*(?:wait|pause|sleep|halt|freeze|stop for|delay|hold on|hold up|hang on|chill|idle|rest|snooze|hang|sit|sit there|sit still|stand by|hold|hold still|wait a moment|be patient|take a break|take a pause|do nothing for|kill|kill time|waste|waste time|be idle|idle for|wait around|sleep for|pause for|wait for|rest for|hang for|chill for|idle for|nap for|suspend for)\\s+(?:for\\s+)?(\\d+(?:\\.\\d+)?)\\s+(?:seconds?|secs?|s)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import time\ntime.sleep($1)",
+    "desc": "Sleep for N seconds.",
+    "ruleKeyword": "wait for [N] seconds"
+  },
+  {
+    "pattern": "^\\s*(?:wait|pause|sleep|delay|hold|chill|idle|rest|hang|nap|suspend)\\s+(?:for\\s+)?(\\d+(?:\\.\\d+)?)\\s+(?:milliseconds?|ms|millis?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import time\ntime.sleep($1 / 1000)",
+    "desc": "Sleep for N milliseconds.",
+    "ruleKeyword": "wait for [N] milliseconds"
+  },
+  {
+    "pattern": "^\\s*(?:wait|pause|sleep|delay|hold|chill|idle|rest|hang|suspend)\\s+(?:for\\s+)?(\\d+(?:\\.\\d+)?)\\s+(?:minutes?|mins?|m)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import time\ntime.sleep($1 * 60)",
+    "desc": "Sleep for N minutes.",
+    "ruleKeyword": "wait for [N] minutes"
+  },
+  {
+    "pattern": "^\\s*(?:get|fetch|retrieve|what is|print|show|display|get the|what's the|whats the|tell me|give me|output|calculate|reveal)\\s+(?:the\\s+)?(?:current time|time|current datetime|datetime|the time|what time is it|now|current date|date|today's date|today|the date today|current timestamp)\\??\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import datetime\nprint(datetime.datetime.now())",
+    "desc": "Get current datetime.",
+    "ruleKeyword": "get current time"
+  },
+  {
+    "pattern": "^\\s*(?:set|make|let|give|assign|change|turn|mark|put|update|write|store|register)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:to|as|=|equal to|to be|to the value|to value)?\\s+(?:true|yes|on|enabled|correct|right|yep|yup|yeah|1|positive|valid|real|good|ok|okay|active|set|confirmed|checked|done|affirmative)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = True",
+    "desc": "Set variable to True.",
+    "ruleKeyword": "set [X] to true"
+  },
+  {
+    "pattern": "^\\s*(?:set|make|let|give|assign|change|turn|mark|put|update|write|store|register)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:to|as|=|equal to|to be|to the value|to value)?\\s+(?:false|no|off|disabled|incorrect|wrong|nope|nah|0|negative|invalid|fake|bad|inactive|unset|unchecked|not done|negative|void|denied)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = False",
+    "desc": "Set variable to False.",
+    "ruleKeyword": "set [X] to false"
+  },
+  {
+    "pattern": "^\\s*(?:set|make|let|give|assign|change|put|update|write|store|register)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:to|as|=|equal to|to be)?\\s+(?:nothing|null|nil|none|empty|blank|undefined|no value|no data|zero|absent|void|nada|zilch|zip|null value|null pointer|no reference|not set|nothing at all|nullified)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = None",
+    "desc": "Set variable to None.",
+    "ruleKeyword": "set [X] to None"
+  },
+  {
+    "pattern": "^\\s*(?:flip|toggle|negate|invert|switch|reverse|not|turn around|switch around|swap|go the other way|do the opposite|turn off if on|turn on if off|opposite of|toggle boolean value of)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = not $1",
+    "desc": "Toggle boolean.",
+    "ruleKeyword": "toggle [X]"
+  },
+  {
+    "pattern": "^\\s*(?:comment|note|remark|note that|annotation|#|//|--|rem|remark:|note:|fyi|btw|for the record|just noting|also|ps|p\\.s|p\\.s\\.|annotate code|insert comment|add comment)\\s*[:]?\\s*(.+)$",
+    "flags": "i",
+    "replace": "# $1",
+    "desc": "Comment.",
+    "ruleKeyword": "comment: [text]"
+  },
+  {
+    "pattern": "^\\s*(?:todo|to do|fixme|fix me|hack|note to self|remember to|dont forget|don't forget|remember|bug|workaround|fix this|needs fixing|to be done|to be fixed|wip|work in progress|needs work|incomplete|placeholder|tbd|to be determined|revisit|come back to this|later|do this later|fix later|action item|task to do)\\s*[:]?\\s*(.*)$",
+    "flags": "i",
+    "replace": "# TODO: $1",
+    "desc": "TODO comment.",
+    "ruleKeyword": "todo: [text]"
+  },
+  {
+    "pattern": "^\\s*-{3,}\\s*$",
+    "flags": "",
+    "replace": "# ---",
+    "desc": "Section separator.",
+    "ruleKeyword": "--- (separator)"
+  },
+  {
+    "pattern": "^\\s*={3,}\\s*$",
+    "flags": "",
+    "replace": "# ===",
+    "desc": "Double separator.",
+    "ruleKeyword": "=== (separator)"
+  },
+  {
+    "pattern": "^\\s*(?:do nothing|pass|skip|noop|no-op|placeholder|leave empty|empty block|nothing here|blank|no op|no operation|ignore this|empty|nothing|zilch|nada|void|leave it|leave this|skip this block|nothing to see here|move on|carry on|proceed|continue without action|just pass|just skip|do absolutely nothing|pass through)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "pass",
+    "desc": "pass statement.",
+    "ruleKeyword": "do nothing / pass"
+  },
+  {
+    "pattern": "^\\s*(?:exit|quit|stop|end|abort|terminate|kill|die|bye|shutdown|shut down|close the program|exit the program|stop the program|quit the program|halt the program|end the program|finish|finish up|wrap up|call it quits|stop everything|end everything|terminate the script|shut it down|exit with|quit with|stop with code|die with code|bail out|abort process|terminate runner)\\s*(?:(?:the\\s+)?(?:program|script|app|application|process|everything))?\\s*(?:with exit code|with code|code|and exit|and quit|exit code|returning)?\\s*(\\d+)?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import sys\nsys.exit($1)",
+    "desc": "Exit program.",
+    "ruleKeyword": "exit / quit"
+  },
+  {
+    "pattern": "^\\s*(?:delete|del|remove|destroy|kill|unset|drop|get rid of|free|nuke|obliterate|clear|wipe|delete variable|purge variable)\\s+(?:(?:the\\s+)?(?:variable|var|name))?\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "del $1",
+    "desc": "Delete variable.",
+    "ruleKeyword": "delete variable [X]"
+  },
+  {
+    "pattern": "^\\s*(?:clear|clear the screen|cls|clear screen|wipe screen|wipe the screen|clean the screen|clean screen|terminal clear|reset terminal|clear terminal|clear the terminal|wipe terminal|wipe the terminal|reset screen|nuke terminal screen|flush terminal screen)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import os\nos.system('cls' if os.name == 'nt' else 'clear')",
+    "desc": "Clear terminal screen.",
+    "ruleKeyword": "clear the screen"
+  },
+  {
+    "pattern": "^\\s*(?:square root|sqrt|root|square root of|√|the square root of|root of|root|math sqrt|get square root)\\s*(?:of\\s+)?([a-zA-Z_][a-zA-Z0-9_]*|\\d+(?:\\.\\d+)?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import math\nprint(math.sqrt($1))",
+    "desc": "Square root.",
+    "ruleKeyword": "square root of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:floor|round down|floor of|round to lower|go lower|floor it|lower bound|lower bound of|floor value|math floor)\\s*(?:of\\s+)?([a-zA-Z_][a-zA-Z0-9_]*|\\d+(?:\\.\\d+)?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import math\nprint(math.floor($1))",
+    "desc": "Floor.",
+    "ruleKeyword": "floor of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:ceil|ceiling|round up|ceiling of|go higher|ceil it|upper bound|upper bound of|ceiling value|round to upper|math ceil)\\s*(?:of\\s+)?([a-zA-Z_][a-zA-Z0-9_]*|\\d+(?:\\.\\d+)?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import math\nprint(math.ceil($1))",
+    "desc": "Ceiling.",
+    "ruleKeyword": "ceiling of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:log|logarithm|natural log|ln|log of|natural log of|ln of|math log)\\s*(?:of\\s+)?([a-zA-Z_][a-zA-Z0-9_]*|\\d+(?:\\.\\d+)?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import math\nprint(math.log($1))",
+    "desc": "Natural log.",
+    "ruleKeyword": "log of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:log10|log base 10|log base ten|log 10 of|log-ten of|log₁₀|log base-10|math log10)\\s*(?:of\\s+)?([a-zA-Z_][a-zA-Z0-9_]*|\\d+(?:\\.\\d+)?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import math\nprint(math.log10($1))",
+    "desc": "Log base 10.",
+    "ruleKeyword": "log base 10 of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:sin|sine|sin of|the sine of|the sin of|math sin)\\s*(?:of\\s+)?([a-zA-Z_][a-zA-Z0-9_]*|\\d+(?:\\.\\d+)?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import math\nprint(math.sin($1))",
+    "desc": "Sine.",
+    "ruleKeyword": "sin of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:cos|cosine|cos of|the cosine of|the cos of|math cos)\\s*(?:of\\s+)?([a-zA-Z_][a-zA-Z0-9_]*|\\d+(?:\\.\\d+)?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import math\nprint(math.cos($1))",
+    "desc": "Cosine.",
+    "ruleKeyword": "cos of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:tan|tangent|tan of|the tangent of|the tan of|math tan)\\s*(?:of\\s+)?([a-zA-Z_][a-zA-Z0-9_]*|\\d+(?:\\.\\d+)?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import math\nprint(math.tan($1))",
+    "desc": "Tangent.",
+    "ruleKeyword": "tan of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:pi|π|math\\.pi|the value of pi|what is pi|pi value|give me pi|constant pi)\\??\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import math\nprint(math.pi)",
+    "desc": "Print pi.",
+    "ruleKeyword": "pi"
+  },
+  {
+    "pattern": "^\\s*(?:random number|random int|random integer|random|generate a random number|generate random|pick a random number|roll a|roll|roll dice|dice roll|random between|pick a number between|choose a number between|get a random|give me a random|grab a random|randomize between|generate random int from)\\s+(?:between|from)\\s+(\\d+)\\s+(?:and|to|through|up to)\\s+(\\d+)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import random\nprint(random.randint($1, $2))",
+    "desc": "Random integer between A and B.",
+    "ruleKeyword": "random number between [A] and [B]"
+  },
+  {
+    "pattern": "^\\s*(?:random number|random float|random decimal|random|generate a random|pick a random|give me a random|get a random|random float between 0 and 1|normalized random)\\s*(?:between 0 and 1|from 0 to 1|0 to 1|between zero and one|0 and 1)?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import random\nprint(random.random())",
+    "desc": "Random float 0–1.",
+    "ruleKeyword": "random number"
+  },
+  {
+    "pattern": "^\\s*(?:shuffle|randomise|randomize|mix up|mix|scramble|jumble|mess up|disorder|reorder randomly|randomise the order|randomize the order|put in random order|shuffle the|randomly shuffle)\\s*(?:(?:the|my|our)\\s+)?(?:list|array|collection|sequence)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import random\nrandom.shuffle($1)",
+    "desc": "Shuffle list.",
+    "ruleKeyword": "shuffle list [X]"
+  },
+  {
+    "pattern": "^\\s*(?:pick|choose|select|get|grab|take|sample|randomly pick|randomly choose|randomly select|randomly get|pick a|choose a|select a|take a|grab a|extract a random item from)\\s+(?:a )?(?:random\\s+)?(?:item|element|value|thing|one|entry|member)?\\s+(?:from|out of|in|from the|of the|off of|inside the list)\\s*(?:(?:the|my|our)\\s+)?(?:list|array|collection|sequence)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import random\nprint(random.choice($1))",
+    "desc": "Pick random item from list.",
+    "ruleKeyword": "pick a random item from [X]"
+  },
+  {
+    "pattern": "^\\s*(?:list of|build a list of|create a list of|make a list of|get a list of|generate a list of|collect|gather)\\s+(.+?)\\s+(?:for each|for every|for all|for|from each|from every|from all|going through|iterating over)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:in|from|inside|of|within|contained in|over|across)\\s+(.+?)\\s*(?:\\s+(?:if|where|when|that|which|only if|only when|but only if|but only when|filtering by|filtered by|matching|where it|when it|if it)\\s+(.+?))?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "[$1 for $2 in $3 if $4]",
+    "desc": "List comprehension.",
+    "ruleKeyword": "list of [expr] for each [x] in [iterable] if [condition]"
+  },
+  {
+    "pattern": "^\\s*(?:filter|keep only|keep|select only|only keep|sieve|pick out|select|weed out|prune|trim to|retain only|filter list items where)\\s+(?:items?|elements?|values?|things?|entries?)?\\s*(?:\\s+(?:where|when|that|which|if|that are|that have|where the))?\\s+(.+?)\\s+(?:from|in|out of|from the|off of|inside the list)\\s*(?:(?:the|my|our)\\s+)?(?:list|array|collection)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "[x for x in $2 if $1]",
+    "desc": "Filter list comprehension.",
+    "ruleKeyword": "filter items where [condition] from [X]"
+  },
+  {
+    "pattern": "^\\s*(?:map|apply|transform|convert|run|apply function|apply a function|apply to each|run on each|process each|transform each|convert each|map over)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:to each|to all|to every|over|across|on each|on every|on all|to each item in|to every item in|to each element in|to all elements in|to all items in|across each|over each|across all|over all)\\s*(?:(?:item|element|value|thing|entry|member)\\s+)?(?:(?:in|of|from)\\s+)?(?:(?:the|my|our)\\s+)?(?:list|array|collection)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "list(map($1, $2))",
+    "desc": "Map function over list.",
+    "ruleKeyword": "map [function] to each item in [X]"
+  },
+  {
+    "pattern": "^\\s*(?:debug|inspect|dump|examine|spy on|peek at|look at|investigate|describe|info on|info about|check|what is|what's|tell me about|show me|look up|analyse|analyze|investigate|probe|watch|observe|monitor|trace|report on|report|see|diagnose|get info on variable)\\s+(?:(?:the\\s+)?(?:variable|var|value of)?\\s+)?([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\??\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print(f\"$1 = {$1} (type: {type($1).__name__})\")",
+    "desc": "Debug-print variable.",
+    "ruleKeyword": "debug [X]"
+  },
+  {
+    "pattern": "^\\s*(?:print all|show all|display all|dump all|list all|log all|output all|print all variables|show all variables|list all variables|what are all the variables|what is in scope|dump scope|show scope|dump locals|show locals|reveal scope|print local namespace)\\s*(?:local\\s+)?(?:variables?|vars?|names?|attributes?|members?)?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print(locals())",
+    "desc": "Print all locals.",
+    "ruleKeyword": "print all variables"
+  },
+  {
+    "pattern": "^\\s*(?:breakpoint|debugger|set breakpoint|pause debugger|drop to debugger|pdb|start debugger|launch debugger|start pdb|open debugger|activate debugger|trigger debugger|break here|stop here for debugging|pause here|insert breakpoint|debug breakpoint)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "breakpoint()",
+    "desc": "Breakpoint.",
+    "ruleKeyword": "breakpoint"
+  },
+  {
+    "pattern": "^\\s*(?:help|get help|show help|help for|documentation for|describe|what can|what does|how does|how do i use|how to use|explain|explain how to use|manual for|man page for|reference for|fetch documentation of)\\s*(?:(?:function|method|class|module)\\s+)?([a-zA-Z_][a-zA-Z0-9_.]*)\\s*\\??\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "help($1)",
+    "desc": "Print help.",
+    "ruleKeyword": "help [X]"
+  },
+  {
+    "pattern": "^\\s*(?:decorate|add decorator|use decorator|apply decorator|with decorator|mark as|annotate with|add the|annotate|tag|tag with|wrap with|add wrapper|use wrapper|decorate with|using decorator|add python decorator)\\s+@?([a-zA-Z_][a-zA-Z0-9_.]*)\\s*(?:decorator)?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "@$1",
+    "desc": "Apply decorator.",
+    "ruleKeyword": "decorate with @[X]"
+  },
+  {
+    "pattern": "^\\s*(?:make|mark|declare|annotate|label|turn into|make it a|make this a|this is a|define as|set as)\\s*(?:(?:this\\s+)?(?:function|method))?\\s+(?:as a |as |as an )?(?:static method|static|staticmethod|a static method|a static function)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "@staticmethod",
+    "desc": "@staticmethod.",
+    "ruleKeyword": "make this a static method"
+  },
+  {
+    "pattern": "^\\s*(?:make|mark|declare|annotate|label|turn into|make it a|make this a|this is a|define as|set as)\\s*(?:(?:this\\s+)?(?:function|method))?\\s+(?:as a |as |as an )?(?:class method|classmethod|a class method|a class function)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "@classmethod",
+    "desc": "@classmethod.",
+    "ruleKeyword": "make this a class method"
+  },
+  {
+    "pattern": "^\\s*(?:make|mark|declare|annotate|label|turn into|make it a|make this a|this is a|define as|set as)\\s*(?:(?:this\\s+)?(?:function|method|attribute))?\\s+(?:as a |as |as an )?(?:property|getter|attribute getter|read-only attribute|computed attribute|a property)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "@property",
+    "desc": "@property.",
+    "ruleKeyword": "make this a property"
+  },
+  {
+    "pattern": "^\\s*(?:cache|memoize|cache this|memoize this|lru cache|lru_cache|cache results|cache the result|cache results of this|cache this function|use a cache|add a cache|memorize|add caching|add memoization|enable caching|enable memoization|memoize function results)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "from functools import lru_cache\n@lru_cache(maxsize=None)",
+    "desc": "LRU cache.",
+    "ruleKeyword": "cache this function"
+  },
+  {
+    "pattern": "^\\s*(?:hello world|say hello|print hello world|print hello|say hi|hi world|greet the world|first program|classic hello|hello|the classic|start here|test print|ping|test output|execute hello world)\\s*[!]?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print(\"Hello, World!\")",
+    "desc": "Hello World.",
+    "ruleKeyword": "hello world"
+  },
+  {
+    "pattern": "^\\s*(?:fizzbuzz|fizz buzz|fizz-buzz|the fizzbuzz|write fizzbuzz|do fizzbuzz|classic fizzbuzz|fizzbuzz challenge|fizz-buzz challenge|run fizzbuzz algorithm)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "for i in range(1, 101):\n    if i % 15 == 0: print('FizzBuzz')\n    elif i % 3 == 0: print('Fizz')\n    elif i % 5 == 0: print('Buzz')\n    else: print(i)",
+    "desc": "FizzBuzz.",
+    "ruleKeyword": "fizzbuzz"
+  },
+  {
+    "pattern": "^\\s*(?:run if main|main guard|if main|if __main__|only run if main|entry point|program entry|run this file|start here|main block|the main|if this is main|if this is the main file|main check|the entry point|if main script module)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "if __name__ == \"__main__\":",
+    "desc": "Main guard.",
+    "ruleKeyword": "run if main"
+  },
+  {
+    "pattern": "^\\s*(?:what is|calculate|compute|work out|figure out|evaluate|solve|show me|give me|tell me|output|print|find|solve math equation)\\s+(.+?)\\??\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print($1)",
+    "desc": "Evaluate and print expression.",
+    "ruleKeyword": "what is [expression]?"
+  },
+  {
+    "pattern": "^\\s*(?:ternary|inline if|one-line if|short if|shorthand if|conditional value|conditional expression|conditional|short conditional|mini if|micro if|tiny if|quick if|one line ternary value)\\s+(.+?)\\s+(?:if|when|in case|provided)\\s+(.+?)\\s+(?:else|otherwise|if not|or)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 if $2 else $3",
+    "desc": "Ternary expression.",
+    "ruleKeyword": "[X] if [condition] else [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:i don't know|idk|dunno|not sure|what should i write|i have no idea|no idea|blank|help|???|hmm|er|um|uh|uhhh|idk what to put here|what goes here|placeholder here|what do i put|i'm lost|im lost|no clue|no idea what to write|stuck|i am confused|clueless)\\s*\\??\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "pass  # TODO: implement this",
+    "desc": "IDK placeholder.",
+    "ruleKeyword": "i don't know / idk"
+  },
+  {
+    "pattern": "^\\s*(?:prit|pritn|prnt|prrint|pirnt|pint|prtin|prtin|prin|p\\b)\\s+(.+?)\\s*[;]?\\s*$",
+    "flags": "i",
+    "replace": "print($1)",
+    "desc": "Typo print.",
+    "ruleKeyword": "typo print"
+  },
+  {
+    "pattern": "^\\s*(?:retun|reutrn|reeturn|retern|retrn|retrun|retun|reutrn|rerun|retun|retrn|rturn|rtun)\\s+(.+)$",
+    "flags": "i",
+    "replace": "return $1",
+    "desc": "Typo return.",
+    "ruleKeyword": "typo return"
+  },
+  {
+    "pattern": "^\\s*(?:improt|imoprt|imprt|imoort|imort|imoprt|ipmort|impor|imprort|ipomrt)\\s+([a-zA-Z_][a-zA-Z0-9_.]*)\\s*$",
+    "flags": "i",
+    "replace": "import $1",
+    "desc": "Typo import.",
+    "ruleKeyword": "typo import"
+  },
+  {
+    "pattern": "^\\s*(?:iff|iif|fi|iff\\s|iif\\s|fi\\s)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "if $1:",
+    "desc": "Typo if.",
+    "ruleKeyword": "typo if"
+  },
+  {
+    "pattern": "^\\s*(?:fro|forr|fo|fore|for\\s+ecah|for\\s+each\\s+each|foreeach|foreahc)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+in\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "for $1 in $2:",
+    "desc": "Typo for loop.",
+    "ruleKeyword": "typo for"
+  },
+  {
+    "pattern": "^\\s*(?:funtion|functon|fnuction|fnction|fucntion|funciton|fnc|funct|fucntion|fnuciton|functiom|fuction|funtcion|fnuction|fnc\\s)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?:\\(([^)]*)\\))?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "def $1($2):",
+    "desc": "Typo function.",
+    "ruleKeyword": "typo function"
+  },
+  {
+    "pattern": "^\\s*(?:whlie|whle|wile|wihl|whiel|whi|whiel|whil\\b)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "while $1:",
+    "desc": "Typo while.",
+    "ruleKeyword": "typo while"
+  },
+  {
+    "pattern": "^\\s*(?:lne|lenght|lengt|legth|lenth|lngth|lengt|lenfth|ength|lenghth)\\s+(?:of\\s+)?([a-zA-Z_][a-zA-Z0-9_]*)\\s*$",
+    "flags": "i",
+    "replace": "len($1)",
+    "desc": "Typo len.",
+    "ruleKeyword": "typo len"
+  },
+  {
+    "pattern": "^\\s*(?:apend|apeend|apend|appned|appedn|apppend|appned|appned|apned|aapend)\\s+(.+?)\\s+(?:to|onto|into)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*$",
+    "flags": "i",
+    "replace": "$2.append($1)",
+    "desc": "Typo append.",
+    "ruleKeyword": "typo append"
+  },
+  {
+    "pattern": "^\\s*(?:calss|clas|clss|claas|classs|clas\\b|classs|cllass|clas\\b)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?:\\(([^)]*)\\))?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "class $1($2):",
+    "desc": "Typo class.",
+    "ruleKeyword": "typo class"
+  },
+  {
+    "pattern": "^\\s*(?:exept|excpet|execpt|excetpt|excepts|expt|exetp|exepct|ecxept|excpet|excecpt)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "except Exception as e:",
+    "desc": "Typo except.",
+    "ruleKeyword": "typo except"
+  },
+  {
+    "pattern": "^\\s*(?:brk|brak|braek|brreak|breeak|breake|brake|berak|brek|breka)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "break",
+    "desc": "Typo break.",
+    "ruleKeyword": "typo break"
+  },
+  {
+    "pattern": "^\\s*(?:contiue|contniue|contnue|contiinue|continuee|contine|coninue|continuue|cotnniue|conttinue|ocntinue|conitinue)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "continue",
+    "desc": "Typo continue.",
+    "ruleKeyword": "typo continue"
+  },
+  {
+    "pattern": "^\\s*(?:reutrn|reeturn|retern|retrn|retrun|retun|rturn)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "return",
+    "desc": "Typo return (no value).",
+    "ruleKeyword": "typo return nothing"
+  },
+  {
+    "pattern": "^\\s*(?:passs|paass|passe|paas|pasz|pas\\b|pss|pasg)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "pass",
+    "desc": "Typo pass.",
+    "ruleKeyword": "typo pass"
+  },
+  {
+    "pattern": "^\\s*(?:yiled|yeild|yileld|yeld|yeld|yeild|yiield|yeilds)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "yield $1",
+    "desc": "Typo yield.",
+    "ruleKeyword": "typo yield"
+  },
+  {
+    "pattern": "^\\s*(?:match|check|test|find|search|see if|check if|does it match|regex match|test regex|match regex|apply regex|run regex|try regex|use regex|scan with regex)\\s*(?:(?:the\\s+)?(?:regex|pattern|regular expression|regexp|expression|rule))?\\s*['\"](.+?)['\"]\\s+(?:in|against|on|within|inside|over|to|to match|on the string|in the string|in the text)\\s*(?:(?:the|my|our)\\s+)?(?:string|text)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import re\nprint(re.search(\"$1\", $2))",
+    "desc": "Regex search.",
+    "ruleKeyword": "match regex \"[pattern]\" in [X]"
+  },
+  {
+    "pattern": "^\\s*(?:find all|get all|extract all|find all matches|get all matches|all matches|all occurrences|every match|every occurrence|extract regex matches)\\s*(?:(?:of|for)\\s+)?(?:(?:the\\s+)?(?:regex|pattern|regular expression|regexp))?\\s*['\"](.+?)['\"]\\s+(?:in|from|within|inside|in the string|in the text|of|over)\\s*(?:(?:the|my|our)\\s+)?(?:string|text)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import re\nprint(re.findall(\"$1\", $2))",
+    "desc": "Regex findall.",
+    "ruleKeyword": "find all matches of regex \"[pattern]\" in [X]"
+  },
+  {
+    "pattern": "^\\s*(?:regex replace|replace regex|sub|substitute|regex sub|replace pattern|replace matches|regex swap|swap using regex|do a regex replace|do a regex sub|regex clean patterns)\\s+['\"](.+?)['\"]\\s+(?:with|for|by|using|=>|replacing with|replacing by|to)\\s+['\"](.+?)['\"]\\s+(?:in|inside|within|in the string|in the text|of|over)\\s*(?:(?:the|my|our)\\s+)?(?:string|text)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import re\n$3 = re.sub(\"$1\", \"$2\", $3)",
+    "desc": "Regex sub.",
+    "ruleKeyword": "regex replace \"[pattern]\" with \"[repl]\" in [X]"
+  },
+  {
+    "pattern": "^\\s*(?:parse|decode|load|read|parse json|decode json|from json|convert from json|deserialise|deserialize|read json|interpret json|turn json into|convert json to|unmarshal json)\\s+(?:json\\s+)?(?:from\\s+)?([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:into|and save to|and store in|and put in|save to|to|as|stored in)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import json\n$2 = json.loads($1)",
+    "desc": "Parse JSON.",
+    "ruleKeyword": "parse json from [X] into [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:serialise|serialize|encode|dump|stringify|convert to json|to json|turn to json|make json|jsonify|to json string|turn into json|output as json|export as json|make it json|write as json|marshal json)\\s*(?:json\\s+)?([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:into|and save to|to|and store in|save to|as|and put in|storing in|stored in)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import json\n$2 = json.dumps($1)",
+    "desc": "Serialize to JSON.",
+    "ruleKeyword": "serialize [X] to json into [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:pretty print|pretty-print|format|nicely print|beautify|format json|print json nicely|print json pretty|pretty json|json pretty print|nicely formatted json|format the json|make json readable|beautify json structure)\\s+(?:json\\s+)?([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?:as json|in json format)?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import json\nprint(json.dumps($1, indent=2))",
+    "desc": "Pretty-print JSON.",
+    "ruleKeyword": "pretty print json [X]"
+  },
+  {
+    "pattern": "^\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s+and\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*=\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*,\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s*$",
+    "flags": "i",
+    "replace": "$1, $2 = $3, $4",
+    "desc": "Tuple unpacking passthrough.",
+    "ruleKeyword": "[a] and [b] = [c], [d]"
+  },
+  {
+    "pattern": "^\\s*(?:zip|combine|pair up|pair together|interleave|zip together|pair|pair off|fuse lists together)\\s*(?:(?:lists?|arrays?|collections?|sequences?))?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:and|with|,|&)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "list(zip($1, $2))",
+    "desc": "Zip two lists.",
+    "ruleKeyword": "zip [X] and [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:all|all of|check if all|are all|every|every item in|every element in|all items in|all elements in|all of them|each one|all must be|they all|verify all items are true in)\\s*(?:(?:items?|elements?|values?|things?)?)?\\s*(?:(?:in|from|of)\\s+)?(?:(?:the|my|our)\\s+)?(?:list|array|collection)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:are|is)?\\s*(?:true|truthy|set|match|satisfy|valid|positive|there)\\s*\\??\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print(all($1))",
+    "desc": "all().",
+    "ruleKeyword": "all items in [X] are true?"
+  },
+  {
+    "pattern": "^\\s*(?:any|any of|check if any|is any|some|some of|at least one|any item in|any element in|any of them|at least one is|one of them|verify at least one item is true in)\\s*(?:(?:items?|elements?|values?)?)?\\s*(?:(?:in|from|of)\\s+)?(?:(?:the|my|our)\\s+)?(?:list|array|collection)?\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:are|is)?\\s*(?:true|truthy|set|match|satisfy|valid|positive|there)\\s*\\??\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print(any($1))",
+    "desc": "any().",
+    "ruleKeyword": "any item in [X] is true?"
+  },
+  {
+    "pattern": "^\\s*(?:run|execute|eval|evaluate|compute|calculate|do|go|fire|launch|run this|execute this|do this|inline eval)\\s*:\\s*(.+)$",
+    "flags": "i",
+    "replace": "$1",
+    "desc": "Inline code passthrough.",
+    "ruleKeyword": "run: [raw python]"
+  },
+  {
+    "pattern": "^\\s*(?:python|py|code|raw|exec|>>>|\\$|python code|raw python|raw code|pure python|execute this|direct code execution)\\s*:\\s*(.+)$",
+    "flags": "i",
+    "replace": "$1",
+    "desc": "Raw python passthrough.",
+    "ruleKeyword": "python: [raw python]"
+  },
+  {
+    "pattern": "^\\s*(?:greatest common divisor|gcd|highest common factor|hcf|get gcd|find gcd of|calculate gcd of)\\s*(?:of|for)?\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:and|with|,)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import math\nprint(math.gcd($1, $2))",
+    "desc": "Math GCD operation.",
+    "ruleKeyword": "gcd of [X] and [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:least common multiple|lcm|find lcm of|calculate lcm of|get lcm)\\s*(?:of|for)?\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:and|with|,)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import math\nprint(math.lcm($1, $2))",
+    "desc": "Math LCM operation.",
+    "ruleKeyword": "lcm of [X] and [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:factorial|factorial of|find factorial|calculate factorial|get factorial of|math factorial)\\s*(?:of|for)?\\s+([a-zA-Z_][a-zA-Z0-9_]*|\\d+)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import math\nprint(math.factorial($1))",
+    "desc": "Math factorial.",
+    "ruleKeyword": "factorial of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:base64 encode|b64encode|convert to base64|base64 string of|encode base64|b64 encode value)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import base64\nprint(base64.b64encode($1.encode()).decode())",
+    "desc": "Base64 encode a string.",
+    "ruleKeyword": "base64 encode [X]"
+  },
+  {
+    "pattern": "^\\s*(?:base64 decode|b64decode|decode base64|convert from base64|b64 decode value)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import base64\nprint(base64.b64decode($1.encode()).decode())",
+    "desc": "Base64 decode a string.",
+    "ruleKeyword": "base64 decode [X]"
+  },
+  {
+    "pattern": "^\\s*(?:url encode|urlencode|percent encode|escape url|convert to url safe string)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import urllib.parse\nprint(urllib.parse.quote($1))",
+    "desc": "URL encode string.",
+    "ruleKeyword": "url encode [X]"
+  },
+  {
+    "pattern": "^\\s*(?:url decode|urldecode|percent decode|unescape url|convert from url safe string)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import urllib.parse\nprint(urllib.parse.unquote($1))",
+    "desc": "URL decode string.",
+    "ruleKeyword": "url decode [X]"
+  },
+  {
+    "pattern": "^\\s*(?:get env|getenv|get environment variable|read environment variable|lookup env var)\\s+['\"]?([a-zA-Z_][a-zA-Z0-9_]*)['\"]?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import os\nprint(os.environ.get(\"$1\"))",
+    "desc": "Get environment variable.",
+    "ruleKeyword": "getenv [X]"
+  },
+  {
+    "pattern": "^\\s*(?:set env|setenv|set environment variable|write environment variable|set env var)\\s+['\"]?([a-zA-Z_][a-zA-Z0-9_]*)['\"]?\\s+(?:to|as|=|:=)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import os\nos.environ[\"$1\"] = str($2)",
+    "desc": "Set environment variable.",
+    "ruleKeyword": "setenv [X] to [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:get keys|keys of dictionary|keys from dict|list keys of dict)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print(list($1.keys()))",
+    "desc": "Return list of dictionary keys.",
+    "ruleKeyword": "get keys of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:get values|values of dictionary|values from dict|list values of dict)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print(list($1.values()))",
+    "desc": "Return list of dictionary values.",
+    "ruleKeyword": "get values of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:get dictionary items|items of dictionary|items from dict|list items of dict)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print(list($1.items()))",
+    "desc": "Return dictionary key-value items list.",
+    "ruleKeyword": "get items of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:is digit|check if numeric|does string contain only digits|is numeric string)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print($1.isdigit())",
+    "desc": "Check if string contains only digits.",
+    "ruleKeyword": "is digit [X]"
+  },
+  {
+    "pattern": "^\\s*(?:is alpha|check if alphabetical|does string contain only letters|is alphabetic string)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print($1.isalpha())",
+    "desc": "Check if string contains only letters.",
+    "ruleKeyword": "is alpha [X]"
+  },
+  {
+    "pattern": "^\\s*(?:is alphanumeric|is alnum|check if alphanumeric|does string contain letters and numbers)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print($1.isalnum())",
+    "desc": "Check if string contains letters and numbers.",
+    "ruleKeyword": "is alphanumeric [X]"
+  },
+  {
+    "pattern": "^\\s*(?:make list from range|list from range|create range list|generate range list|range to list)\\s+(\\d+|[a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:to|up to|until)\\s+(\\d+|[a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "list(range($1, $2))",
+    "desc": "Create a list from a numeric range.",
+    "ruleKeyword": "range list [A] to [B]"
+  },
+  {
+    "pattern": "^\\s*(?:is subset|check if subset|is subset of|is set subset of)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:of|in|within)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print($1.issubset($2))",
+    "desc": "Check if set is a subset of another set.",
+    "ruleKeyword": "is [X] subset of [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:is superset|check if superset|is superset of|is set superset of)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:of|over|covering)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print($1.issuperset($2))",
+    "desc": "Check if set is a superset of another set.",
+    "ruleKeyword": "is [X] superset of [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:symmetric difference|symmetric difference of|xor of sets|unshared items between sets|items in one set or another but not both)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:and|with)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 ^ $2",
+    "desc": "Symmetric difference of two sets.",
+    "ruleKeyword": "symmetric difference of [X] and [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:get current working directory|cwd|get working directory|print working directory|pwd|get current folder)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import os\nprint(os.getcwd())",
+    "desc": "Get current working directory.",
+    "ruleKeyword": "get current working directory"
+  },
+  {
+    "pattern": "^\\s*(?:change directory|chdir|change folder|set working directory|cd)\\s+['\"]?([^'\"\\s]+)['\"]?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import os\nos.chdir(\"$1\")",
+    "desc": "Change working directory.",
+    "ruleKeyword": "change directory to \"[path]\""
+  },
+  {
+    "pattern": "^\\s*(?:get file size|file size of|how large is file|check size of file)\\s+['\"]?([^'\"\\s]+)['\"]?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import os\nprint(os.path.getsize(\"$1\"))",
+    "desc": "Get size of a file in bytes.",
+    "ruleKeyword": "file size of \"[path]\""
+  },
+  {
+    "pattern": "^\\s*(?:get absolute path|absolute path of|resolve absolute path|resolve path|abspath of)\\s+['\"]?([^'\"\\s]+)['\"]?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import os\nprint(os.path.abspath(\"$1\"))",
+    "desc": "Resolve absolute path of file or directory.",
+    "ruleKeyword": "absolute path of \"[path]\""
+  },
+  {
+    "pattern": "^\\s*(?:get file extension|file extension of|get extension of file|extension of file)\\s+['\"]?([^'\"\\s]+)['\"]?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import os\nprint(os.path.splitext(\"$1\")[1])",
+    "desc": "Get the file extension of a path.",
+    "ruleKeyword": "file extension of \"[path]\""
+  },
+  {
+    "pattern": "^\\s*(?:get parent directory|parent directory of|get folder path of file|dirname of)\\s+['\"]?([^'\"\\s]+)['\"]?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import os\nprint(os.path.dirname(\"$1\"))",
+    "desc": "Get the parent directory name of a file path.",
+    "ruleKeyword": "parent directory of \"[path]\""
+  },
+  {
+    "pattern": "^\\s*(?:check if directory|is directory|is folder|check if path is folder)\\s+['\"]?([^'\"\\s]+)['\"]?\\??\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import os\nprint(os.path.isdir(\"$1\"))",
+    "desc": "Check if a path is a directory.",
+    "ruleKeyword": "is directory \"[path]\"?"
+  },
+  {
+    "pattern": "^\\s*(?:check if file|is file|check if path is file)\\s+['\"]?([^'\"\\s]+)['\"]?\\??\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import os\nprint(os.path.isfile(\"$1\"))",
+    "desc": "Check if a path is a regular file.",
+    "ruleKeyword": "is file \"[path]\"?"
+  },
+  {
+    "pattern": "^\\s*(?:copy file|duplicate file|copy file from|clone file)\\s+['\"]?([^'\"\\s]+)['\"]?\\s+(?:to|into|as)\\s+['\"]?([^'\"\\s]+)['\"]?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import shutil\nshutil.copy(\"$1\", \"$2\")",
+    "desc": "Copy a file from source to destination.",
+    "ruleKeyword": "copy file \"[src]\" to \"[dst]\""
+  },
+  {
+    "pattern": "^\\s*(?:move file|rename file|rename directory|move directory|move file from|relocate path)\\s+['\"]?([^'\"\\s]+)['\"]?\\s+(?:to|into|as)\\s+['\"]?([^'\"\\s]+)['\"]?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import shutil\nshutil.move(\"$1\", \"$2\")",
+    "desc": "Move or rename a file or directory.",
+    "ruleKeyword": "move file \"[src]\" to \"[dst]\""
+  },
+  {
+    "pattern": "^\\s*(?:get standard deviation|std dev of|standard deviation of|sd of list|calculate standard deviation)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import statistics\nprint(statistics.stdev($1))",
+    "desc": "Calculate standard deviation of numeric list.",
+    "ruleKeyword": "standard deviation of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:get variance|variance of|calculate variance|var of list)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import statistics\nprint(statistics.variance($1))",
+    "desc": "Calculate variance of numeric list.",
+    "ruleKeyword": "variance of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:get median|median of|calculate median|median value of list)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import statistics\nprint(statistics.median($1))",
+    "desc": "Calculate median of numeric list.",
+    "ruleKeyword": "median of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:get mode|mode of|calculate mode|most common value of list)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import statistics\nprint(statistics.mode($1))",
+    "desc": "Calculate mode of numeric list.",
+    "ruleKeyword": "mode of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:http get request|http get|web fetch url|download html from url|web get|get html of url|fetch webpage content)\\s+['\"]?([^'\"\\s]+)['\"]?\\s+(?:and save to|save to|and store in|into)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import urllib.request\nwith urllib.request.urlopen(\"$1\") as response:\n    $2 = response.read().decode()",
+    "desc": "Send standard HTTP GET request.",
+    "ruleKeyword": "http get request \"[url]\" into [X]"
+  },
+  {
+    "pattern": "^\\s*(?:http post request|http post|send payload to url|post data to url|web post)\\s+['\"]?([^'\"\\s]+)['\"]?\\s+(?:with data|with payload|passing data)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:and save to|save to|and store in|into)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import urllib.request\nimport urllib.parse\nreq_data = urllib.parse.urlencode($2).encode()\nwith urllib.request.urlopen(\"$1\", data=req_data) as response:\n    $3 = response.read().decode()",
+    "desc": "Send standard HTTP POST request.",
+    "ruleKeyword": "http post request \"[url]\" with [data] into [X]"
+  },
+  {
+    "pattern": "^\\s*(?:get runtime platform|get os platform|check current operating system|operating system type|os platform)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import sys\nprint(sys.platform)",
+    "desc": "Print current operating system platform.",
+    "ruleKeyword": "get runtime platform"
+  },
+  {
+    "pattern": "^\\s*(?:get python version|python version number|check python version|runtime version)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import sys\nprint(sys.version)",
+    "desc": "Print current python runtime version.",
+    "ruleKeyword": "get python version"
+  },
+  {
+    "pattern": "^\\s*(?:generate random uuid|get random uuid|new uuid|make a uuid|generate unique identifier|uuid4)\\s+(?:and save to|and store in|save to|into)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import uuid\n$1 = str(uuid.uuid4())",
+    "desc": "Generate random UUIDv4 string.",
+    "ruleKeyword": "generate random uuid into [X]"
+  },
+  {
+    "pattern": "^\\s*(?:get md5 hash|md5 hash of|calculate md5|md5 checksum of string)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import hashlib\nprint(hashlib.md5($1.encode()).hexdigest())",
+    "desc": "Calculate MD5 hash of string variable.",
+    "ruleKeyword": "get md5 hash of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:get sha256 hash|sha256 hash of|calculate sha256|sha256 checksum of string)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import hashlib\nprint(hashlib.sha256($1.encode()).hexdigest())",
+    "desc": "Calculate SHA-256 hash of string variable.",
+    "ruleKeyword": "get sha256 hash of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:get sha1 hash|sha1 hash of|calculate sha1|sha1 checksum of string)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import hashlib\nprint(hashlib.sha1($1.encode()).hexdigest())",
+    "desc": "Calculate SHA-1 hash of string variable.",
+    "ruleKeyword": "get sha1 hash of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:bitwise and|bit and|and bits of)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:with|and)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 & $2",
+    "desc": "Bitwise AND operation.",
+    "ruleKeyword": "bitwise and [X] and [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:bitwise or|bit or|or bits of)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:with|and)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 | $2",
+    "desc": "Bitwise OR operation.",
+    "ruleKeyword": "bitwise or [X] and [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:bitwise xor|bit xor|xor bits of)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:with|and)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 ^ $2",
+    "desc": "Bitwise XOR operation.",
+    "ruleKeyword": "bitwise xor [X] and [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:bitwise not|bit not|invert bits of|ones complement of)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "~$1",
+    "desc": "Bitwise NOT operation.",
+    "ruleKeyword": "bitwise not [X]"
+  },
+  {
+    "pattern": "^\\s*(?:shift left|bitwise shift left|bit shift left|shift bits left)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:by|amount)\\s+(\\d+|[a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 << $2",
+    "desc": "Bitwise left shift.",
+    "ruleKeyword": "shift left [X] by [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:shift right|bitwise shift right|bit shift right|shift bits right)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:by|amount)\\s+(\\d+|[a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 >> $2",
+    "desc": "Bitwise right shift.",
+    "ruleKeyword": "shift right [X] by [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:parse xml|decode xml|read xml string|xml parser)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:into|and save to|to|and store in)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import xml.etree.ElementTree as ET\n$2 = ET.fromstring($1)",
+    "desc": "Parse XML string into Element object.",
+    "ruleKeyword": "parse xml [X] into [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:read csv|parse csv file|load csv|read csv file)\\s+['\"]?([^'\"\\s]+)['\"]?\\s+(?:into|and save to|and store in|to)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import csv\nwith open(\"$1\", mode='r', newline='') as f:\n    $2 = list(csv.reader(f))",
+    "desc": "Read CSV file directly into nested list.",
+    "ruleKeyword": "read csv \"[path]\" into [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:write csv|save csv file|dump csv|write csv file)\\s+['\"]?([^'\"\\s]+)['\"]?\\s+(?:with data|writing|using data from)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import csv\nwith open(\"$1\", mode='w', newline='') as f:\n    writer = csv.writer(f)\n    writer.writerows($2)",
+    "desc": "Write nested list data into CSV file.",
+    "ruleKeyword": "write csv \"[path]\" with [X]"
+  },
+  {
+    "pattern": "^\\s*(?:is leap year|check leap year|leap year check|is year leap)\\s+([a-zA-Z_][a-zA-Z0-9_]*|\\d+)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import calendar\nprint(calendar.isleap($1))",
+    "desc": "Check if a year is a leap year.",
+    "ruleKeyword": "is leap year [X]"
+  },
+  {
+    "pattern": "^\\s*(?:get month calendar|print calendar for month|calendar of month)\\s+([a-zA-Z_][a-zA-Z0-9_]*|\\d+)\\s+(?:of year|year|and)\\s+([a-zA-Z_][a-zA-Z0-9_]*|\\d+)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import calendar\nprint(calendar.month($2, $1))",
+    "desc": "Print text calendar for specific month and year.",
+    "ruleKeyword": "get calendar of [month] [year]"
+  },
+  {
+    "pattern": "^\\s*(?:get command line arguments|get cli args|cli arguments|command arguments|arguments passed to script|sys argv)\\s+(?:into|and save to|save to|to)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import sys\n$1 = sys.argv",
+    "desc": "Store standard CLI arguments in variable.",
+    "ruleKeyword": "get cli args into [X]"
+  },
+  {
+    "pattern": "^\\s*(?:convert string to bytes|encode string|string to bytes of|encode to utf8)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = $1.encode('utf-8')",
+    "desc": "Encode string to UTF-8 bytes in-place.",
+    "ruleKeyword": "convert string [X] to bytes"
+  },
+  {
+    "pattern": "^\\s*(?:convert bytes to string|decode bytes|bytes to string of|decode to utf8)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = $1.decode('utf-8')",
+    "desc": "Decode UTF-8 bytes to string in-place.",
+    "ruleKeyword": "convert bytes [X] to string"
+  },
+  {
+    "pattern": "^\\s*(?:deep copy|make deep copy of|clone deeply|completely duplicate variable)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:into|and save to|save to|to)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import copy\n$2 = copy.deepcopy($1)",
+    "desc": "Create standard deep copy of an object.",
+    "ruleKeyword": "deep copy [X] into [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:shallow copy|make shallow copy of|clone variable|duplicate variable)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:into|and save to|save to|to)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import copy\n$2 = copy.copy($1)",
+    "desc": "Create standard shallow copy of an object.",
+    "ruleKeyword": "shallow copy [X] into [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:check if substring present|does string contain|is substring inside|search substring)\\s+['\"]?(.+?)['\"]?\\s+(?:in|inside|of)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print(\"$1\" in $2)",
+    "desc": "Check string containment directly.",
+    "ruleKeyword": "is substring \"[val]\" in [X]"
+  },
+  {
+    "pattern": "^\\s*(?:count occurrences|count frequency of|count how many times|count occurrences of)\\s+['\"]?(.+?)['\"]?\\s+(?:appears in|in|inside|of)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print($2.count(\"$1\"))",
+    "desc": "Count substring occurrences in a string.",
+    "ruleKeyword": "count occurrences of \"[val]\" in [X]"
+  },
+  {
+    "pattern": "^\\s*(?:is upper|check if uppercase|is string uppercase|does string contain only capital letters)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print($1.isupper())",
+    "desc": "Check if string is all uppercase.",
+    "ruleKeyword": "is upper [X]"
+  },
+  {
+    "pattern": "^\\s*(?:is lower|check if lowercase|is string lowercase|does string contain only lower case letters)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print($1.islower())",
+    "desc": "Check if string is all lowercase.",
+    "ruleKeyword": "is lower [X]"
+  },
+  {
+    "pattern": "^\\s*(?:is space|check if whitespace|does string contain only whitespace)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print($1.isspace())",
+    "desc": "Check if string is all whitespace.",
+    "ruleKeyword": "is space [X]"
+  },
+  {
+    "pattern": "^\\s*(?:is title|check if titlecase|is string titlecase)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print($1.istitle())",
+    "desc": "Check if string matches titlecase format.",
+    "ruleKeyword": "is title [X]"
+  },
+  {
+    "pattern": "^\\s*(?:zfill|pad with zeros|zero pad string|pad string start with zeros|pad zero)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:to width|by|width|to)\\s+(\\d+|[a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = $1.zfill($2)",
+    "desc": "Pad start of string with zeros.",
+    "ruleKeyword": "zero pad [X] to width [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:pad string left|ljust|align left with width|pad left with char)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:to width|by|width)\\s+(\\d+|[a-zA-Z_][a-zA-Z0-9_]*)\\s*(?:using char|with char|char|using)?\\s*['\"]?(.+?)?['\"]?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = $1.ljust($2, \"$3\" if \"$3\" else ' ')",
+    "desc": "Left justify a string to a specific width.",
+    "ruleKeyword": "pad left [X] to [Y] with [Z]"
+  },
+  {
+    "pattern": "^\\s*(?:pad string right|rjust|align right with width|pad right with char)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:to width|by|width)\\s+(\\d+|[a-zA-Z_][a-zA-Z0-9_]*)\\s*(?:using char|with char|char|using)?\\s*['\"]?(.+?)?['\"]?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = $1.rjust($2, \"$3\" if \"$3\" else ' ')",
+    "desc": "Right justify a string to a specific width.",
+    "ruleKeyword": "pad right [X] to [Y] with [Z]"
+  },
+  {
+    "pattern": "^\\s*(?:center string|centre string|align center|center align with width|pad center with char)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:to width|by|width)\\s+(\\d+|[a-zA-Z_][a-zA-Z0-9_]*)\\s*(?:using char|with char|char|using)?\\s*['\"]?(.+?)?['\"]?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = $1.center($2, \"$3\" if \"$3\" else ' ')",
+    "desc": "Center string content to a specific width.",
+    "ruleKeyword": "center [X] to [Y] with [Z]"
+  },
+  {
+    "pattern": "^\\s*(?:convert string to list of chars|string to character list|split string to chars|chars of string)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = list($1)",
+    "desc": "Convert string directly to character list in-place.",
+    "ruleKeyword": "convert [X] to char list"
+  },
+  {
+    "pattern": "^\\s*(?:add days to datetime|add days to date|add days|timedelta days)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:by|amount|value)\\s+(\\d+|[a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import datetime\n$1 += datetime.timedelta(days=int($2))",
+    "desc": "Add days to datetime variable in-place.",
+    "ruleKeyword": "add [Y] days to date [X]"
+  },
+  {
+    "pattern": "^\\s*(?:add hours to datetime|add hours to date|add hours|timedelta hours)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:by|amount|value)\\s+(\\d+|[a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import datetime\n$1 += datetime.timedelta(hours=int($2))",
+    "desc": "Add hours to datetime variable in-place.",
+    "ruleKeyword": "add [Y] hours to date [X]"
+  },
+  {
+    "pattern": "^\\s*(?:add minutes to datetime|add minutes to date|add minutes|timedelta minutes)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:by|amount|value)\\s+(\\d+|[a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import datetime\n$1 += datetime.timedelta(minutes=int($2))",
+    "desc": "Add minutes to datetime variable in-place.",
+    "ruleKeyword": "add [Y] minutes to date [X]"
+  },
+  {
+    "pattern": "^\\s*(?:add seconds to datetime|add seconds to date|add seconds|timedelta seconds)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:by|amount|value)\\s+(\\d+|[a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import datetime\n$1 += datetime.timedelta(seconds=int($2))",
+    "desc": "Add seconds to datetime variable in-place.",
+    "ruleKeyword": "add [Y] seconds to date [X]"
+  },
+  {
+    "pattern": "^\\s*(?:get date difference|difference between dates|subtract dates|days between dates|date difference of)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:and|with|minus)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print(abs(($1 - $2).days))",
+    "desc": "Print difference between two dates in days.",
+    "ruleKeyword": "date difference of [X] and [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:format datetime|format date|convert date to string|datetime to string|strftime format)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:using pattern|with pattern|using format|format)\\s+['\"](.+?)['\"]\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print($1.strftime(\"$2\"))",
+    "desc": "Print formatted date/time string with strftime.",
+    "ruleKeyword": "format date [X] using \"[pattern]\""
+  },
+  {
+    "pattern": "^\\s*(?:parse datetime|convert string to date|string to date|strptime format|parse date string)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:using pattern|with pattern|using format|format)\\s+['\"](.+?)['\"]\\s+(?:into|and save to|save to|to)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import datetime\n$3 = datetime.datetime.strptime($1, \"$2\")",
+    "desc": "Parse string into datetime object using strptime.",
+    "ruleKeyword": "parse date string [X] with \"[pattern]\" into [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:get day of week|day of week|get weekday of date|what weekday is date|weekday index of)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print($1.weekday())",
+    "desc": "Print weekday index of date (0=Monday, 6=Sunday).",
+    "ruleKeyword": "weekday of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:get epoch timestamp|unix timestamp of|convert date to timestamp|get epoch of date)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print($1.timestamp())",
+    "desc": "Print standard UNIX epoch timestamp of datetime.",
+    "ruleKeyword": "unix timestamp of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:from epoch timestamp|timestamp to datetime|parse timestamp|datetime from epoch)\\s+([a-zA-Z_][a-zA-Z0-9_]*|\\d+)\\s+(?:into|and save to|save to|to)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import datetime\n$2 = datetime.datetime.fromtimestamp(float($1))",
+    "desc": "Create datetime object from standard epoch timestamp.",
+    "ruleKeyword": "datetime from timestamp [X] into [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:copy file path|copy file paths|find matching files|glob pattern|find files with glob)\\s+['\"]?([^'\"\\s]+)['\"]?\\s+(?:into|and save to|save to|to)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import glob\n$2 = glob.glob(\"$1\")",
+    "desc": "Search file paths using glob pattern match.",
+    "ruleKeyword": "glob files \"[pattern]\" into [X]"
+  },
+  {
+    "pattern": "^\\s*(?:get temporary directory|get temp dir|temp directory path|sys temp folder)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import tempfile\nprint(tempfile.gettempdir())",
+    "desc": "Print path of current system temporary directory.",
+    "ruleKeyword": "get standard temp dir"
+  },
+  {
+    "pattern": "^\\s*(?:make temporary file|create temp file|generate temp file|tempfile creation)\\s+(?:into|and save to|save to|to)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import tempfile\n$1 = tempfile.NamedTemporaryFile(delete=False).name",
+    "desc": "Create temporary file and save absolute path.",
+    "ruleKeyword": "create temp file into [X]"
+  },
+  {
+    "pattern": "^\\s*(?:json write file|serialize json to file|dump json to file|write json file)\\s+['\"]?([^'\"\\s]+)['\"]?\\s+(?:with data|writing|using data from)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import json\nwith open(\"$1\", 'w') as f:\n    json.dump($2, f)",
+    "desc": "Serialize and write python object directly to JSON file.",
+    "ruleKeyword": "write json file \"[path]\" with [X]"
+  },
+  {
+    "pattern": "^\\s*(?:json read file|deserialize json from file|load json from file|read json file)\\s+['\"]?([^'\"\\s]+)['\"]?\\s+(?:into|and save to|save to|to)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import json\nwith open(\"$1\", 'r') as f:\n    $2 = json.load(f)",
+    "desc": "Read and deserialize JSON file directly to python object.",
+    "ruleKeyword": "read json file \"[path]\" into [X]"
+  },
+  {
+    "pattern": "^\\s*(?:is inf|check if infinity|is value infinite|is infinity value|math isinf)\\s+([a-zA-Z_][a-zA-Z0-9_]*|\\d+(?:\\.\\d+)?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import math\nprint(math.isinf($1))",
+    "desc": "Check if a numeric value is infinite.",
+    "ruleKeyword": "is infinity [X]"
+  },
+  {
+    "pattern": "^\\s*(?:is nan|check if nan|is not a number|is nan value|math isnan)\\s+([a-zA-Z_][a-zA-Z0-9_]*|\\d+(?:\\.\\d+)?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "import math\nprint(math.isnan($1))",
+    "desc": "Check if a numeric float is NaN.",
+    "ruleKeyword": "is nan [X]"
+  },
+  {
+    "pattern": "^\\s*(?:get greatest absolute value|find maximum absolute|max absolute in list|highest absolute value)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print(max(abs(x) for x in $1))",
+    "desc": "Find and print maximum absolute value in a numeric list.",
+    "ruleKeyword": "max absolute of list [X]"
+  },
+  {
+    "pattern": "^\\s*(?:get list slice step|slice list with step|slice list steps|slice step)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:from|starting at|beginning at)\\s+(\\d+|[a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:to|until|up to)\\s+(\\d+|[a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:by step|stepping by|step|by|with step)\\s+(\\d+|[a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1[$2:$3:$4]",
+    "desc": "Take a list slice with custom step increment.",
+    "ruleKeyword": "slice [X] from [A] to [B] step [C]"
+  },
+  {
+    "pattern": "^\\s*(?:remove nested sublists|remove lists|remove items of type list|remove lists from list)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = [x for x in $1 if not isinstance(x, list)]",
+    "desc": "Filter out nested list objects from list in-place.",
+    "ruleKeyword": "remove sublists from [X]"
+  },
+  {
+    "pattern": "^\\s*(?:is subset of list|check if sublist|is list sublist of|is sublist)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:in|of|contained in)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print(all(elem in $2 for elem in $1))",
+    "desc": "Check if all items of list are present in target list.",
+    "ruleKeyword": "is list [X] sublist of [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:is string empty|is text empty|is empty string|check if string blank)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "print(len($1.strip()) == 0)",
+    "desc": "Check if string contains only whitespace or is empty.",
+    "ruleKeyword": "is string empty [X]"
+  },
+  {
+    "pattern": "^\\s*(?:make string list|split string to lines|convert multiline to list|string lines to list)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = $1.splitlines()",
+    "desc": "Split string on newlines into a list of lines in-place.",
+    "ruleKeyword": "split lines of [X]"
+  },
+  {
+    "pattern": "^\\s*(?:filter truthy values|remove falsy values|clean falsy|filter empty elements of list)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = list(filter(None, $1))",
+    "desc": "Remove falsy or empty elements from a list in-place.",
+    "ruleKeyword": "filter falsy from list [X]"
+  },
+  {
+    "pattern": "^\\s*(?:sort dict by key|sort dictionary keys|order dictionary by key)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = dict(sorted($1.items()))",
+    "desc": "Sort dictionary elements by their keys in-place.",
+    "ruleKeyword": "sort dict [X] by key"
+  }
+]
