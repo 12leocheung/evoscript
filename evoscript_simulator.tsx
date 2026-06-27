@@ -13,7 +13,7 @@ const BLACKLISTED_RULE_KEYWORDS = new Set([
   'list files in directory',
   'show files in "[path]"',
   'show directory "[path]"',
-  'add X to Y',        // prevents a.append(5) false positive
+  'add X to Y',
 ]);
 
 const getRuleScore = (rule: any): number => {
@@ -34,6 +34,38 @@ const getRuleScore = (rule: any): number => {
   score += groupCount * 100;
   score += pattern.length * 0.1;
   return score;
+};
+
+// Pre-process a line BEFORE sending to the rules engine.
+// Handles patterns that rules.json gets wrong due to greedy matching.
+const preProcessLine = (line: string): string | null => {
+  const t = line.trim();
+
+  // "alternatively/else if X is not the same as Y then Z"
+  const elifNotMatch = t.match(/^(?:alternatively|alternately|else if|otherwise if)\s+if\s+(.+?)\s+(?:is not the same as|is not equal to|!=|isn't|isnt)\s+(.+?)\s+then\s+(.+)$/i);
+  if (elifNotMatch) return `elif ${elifNotMatch[1].trim()} != ${elifNotMatch[2].trim()}: ${elifNotMatch[3].trim()}`;
+
+  // "alternatively/else if X is the same as Y then Z"
+  const elifEqMatch = t.match(/^(?:alternatively|alternately|else if|otherwise if)\s+if\s+(.+?)\s+(?:is the same as|is equal to|==)\s+(.+?)\s+then\s+(.+)$/i);
+  if (elifEqMatch) return `elif ${elifEqMatch[1].trim()} == ${elifEqMatch[2].trim()}: ${elifEqMatch[3].trim()}`;
+
+  // "alternatively/else if X is bigger/greater than Y then Z"
+  const elifGtMatch = t.match(/^(?:alternatively|alternately|else if|otherwise if)\s+if\s+(.+?)\s+(?:is bigger than|is greater than|is more than|>)\s+(.+?)\s+then\s+(.+)$/i);
+  if (elifGtMatch) return `elif ${elifGtMatch[1].trim()} > ${elifGtMatch[2].trim()}: ${elifGtMatch[3].trim()}`;
+
+  // "alternatively/else if X is smaller/less than Y then Z"
+  const elifLtMatch = t.match(/^(?:alternatively|alternately|else if|otherwise if)\s+if\s+(.+?)\s+(?:is smaller than|is less than|<)\s+(.+?)\s+then\s+(.+)$/i);
+  if (elifLtMatch) return `elif ${elifLtMatch[1].trim()} < ${elifLtMatch[2].trim()}: ${elifLtMatch[3].trim()}`;
+
+  // "alternatively/otherwise then Z" → "else: Z"
+  const elseMatch = t.match(/^(?:alternatively|alternately|otherwise)\s+(?:then\s+)?(.+)$/i);
+  if (elseMatch) return `else: ${elseMatch[1].trim()}`;
+
+  // "add X to Y" → "Y += X"
+  const addMatch = t.match(/^(?:add|increase|plus)\s+(.+?)\s+(?:to|onto|into)\s+([a-zA-Z_][a-zA-Z0-9_]*)$/i);
+  if (addMatch) return `${addMatch[2].trim()} += ${addMatch[1].trim()}`;
+
+  return null; // no pre-processing needed
 };
 
 export default function App() {
@@ -96,8 +128,6 @@ add 5 to a`
 
       if (isJsonConnected) {
         rawCode.split('\n').forEach((line: string) => {
-          let translatedLine = line;
-          let matched = false;
           if (!line.trim() || line.trim().startsWith('#') || line.trim().startsWith('//')) {
             finalCodeLines.push(line);
             return;
@@ -105,6 +135,21 @@ add 5 to a`
           const indentMatch = line.match(/^(\s*)/);
           const indent = indentMatch ? indentMatch[1] : '';
           const trimmedLine = line.trim();
+
+          // ✅ Pre-process FIRST — catches alternatively/add/elif before rules engine
+          const preProcessed = preProcessLine(trimmedLine);
+          if (preProcessed !== null) {
+            finalCodeLines.push(indent + preProcessed);
+            const key = preProcessed.startsWith('elif') ? 'elif ... then ... (pre-processed)' : preProcessed.startsWith('else') ? 'else: (pre-processed)' : '+= (pre-processed)';
+            if (!currentEvolvedSyntax.some(s => s.keyword === key)) {
+              currentEvolvedSyntax.push({ keyword: key, desc: 'Pre-processed before rules engine.' });
+            }
+            return;
+          }
+
+          // Rules engine
+          let translatedLine = line;
+          let matched = false;
 
           for (const rule of rules) {
             try {
@@ -137,7 +182,7 @@ add 5 to a`
             }
           }
 
-          // Fallback: C-style for loop
+          // C-style for loop fallback
           if (!matched && trimmedLine.match(/^for\s*\(/)) {
             translatedLine = indent + trimmedLine.replace(
               /for\s*\(?(?:let|var|int)?\s*([a-zA-Z_]+)\s*=\s*([^;]+);\s*[^;]+;\s*[^)]+\)?/,
@@ -145,41 +190,6 @@ add 5 to a`
             );
             if (!currentEvolvedSyntax.some(s => s.keyword === 'for(i=0;i<N;i++)')) {
               currentEvolvedSyntax.push({ keyword: 'for(i=0;i<N;i++)', desc: 'Translated C-style for-loop.' });
-            }
-          }
-
-          // Fallback: "add X to Y" → "Y += X"
-          if (!matched) {
-            const addMatch = trimmedLine.match(/^(?:add|increase|bump up|plus)\s+(.+?)\s+(?:to|onto|into)\s+([a-zA-Z_][a-zA-Z0-9_]*)$/i);
-            if (addMatch) {
-              translatedLine = indent + `${addMatch[2]} += ${addMatch[1]}`;
-              if (!currentEvolvedSyntax.some(s => s.keyword === 'add X to Y (fallback)')) {
-                currentEvolvedSyntax.push({ keyword: 'add X to Y (fallback)', desc: 'Add value to variable.' });
-              }
-              matched = true;
-            }
-          }
-
-          // Fallback: "alternatively/else if X (is not) the same as Y then Z"
-          if (!matched) {
-            const elifMatch = trimmedLine.match(/^(?:alternatively|alternately|else|otherwise)\s+if\s+(.+?)\s+(?:is not the same as|is not equal to|!=|isnt)\s+(.+?)\s+then\s+(.+)$/i);
-            if (elifMatch) {
-              translatedLine = indent + `elif ${elifMatch[1]} != ${elifMatch[2]}: ${elifMatch[3]}`;
-              if (!currentEvolvedSyntax.some(s => s.keyword === 'elif X != Y then Z (fallback)')) {
-                currentEvolvedSyntax.push({ keyword: 'elif X != Y then Z (fallback)', desc: 'Else-if not equal one-liner.' });
-              }
-              matched = true;
-            }
-          }
-
-          if (!matched) {
-            const elifEqMatch = trimmedLine.match(/^(?:alternatively|alternately|else|otherwise)\s+if\s+(.+?)\s+(?:is the same as|is equal to|==)\s+(.+?)\s+then\s+(.+)$/i);
-            if (elifEqMatch) {
-              translatedLine = indent + `elif ${elifEqMatch[1]} == ${elifEqMatch[2]}: ${elifEqMatch[3]}`;
-              if (!currentEvolvedSyntax.some(s => s.keyword === 'elif X == Y then Z (fallback)')) {
-                currentEvolvedSyntax.push({ keyword: 'elif X == Y then Z (fallback)', desc: 'Else-if equal one-liner.' });
-              }
-              matched = true;
             }
           }
 
@@ -278,7 +288,6 @@ add 5 to a`
       return str.replace(/['"]/g, '');
     };
 
-    // Assignment operators
     const opMatch = trimmed.match(/^([a-zA-Z_][a-zA-Z0-9_]*)\s*(\+=|-=|\*=|\/=|:=|=)\s*(.+)$/);
     if (opMatch) {
       const varName = opMatch[1];
@@ -292,7 +301,6 @@ add 5 to a`
       return;
     }
 
-    // Print statements
     if (trimmed.startsWith('print(') || trimmed.startsWith('print ')) {
       let expr = '';
       if (trimmed.startsWith('print(')) {
@@ -313,8 +321,7 @@ add 5 to a`
         logs.push(targetVar in variables ? getTypeString(variables[targetVar]) : `NameError: name '${targetVar}' is not defined`);
         return;
       }
-      const evaluated = resolveExprValue(expr);
-      logs.push(String(evaluated));
+      logs.push(String(resolveExprValue(expr)));
       return;
     }
   };
@@ -328,29 +335,46 @@ add 5 to a`
       const variables: Record<string, any> = {};
       logs.push(">>> Starting Execution of EvoScript Symbiote Output...");
 
+      // Track last if result for elif/else chaining
+      let lastConditionMet: boolean | null = null;
+
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
         const trimmed = line.trim();
         if (!trimmed || trimmed.startsWith('#') || trimmed.startsWith('//')) continue;
 
-        // if / elif / else one-liner: "if ...: action" or "elif ...: action"
-        const inlineCondMatch = trimmed.match(/^(if|elif)\s+(.+?):\s+(.+)$/);
-        if (inlineCondMatch) {
-          const [, keyword, condExpr, action] = inlineCondMatch;
-          if (keyword === 'if' || evaluateCondition(condExpr, variables)) {
-            if (keyword === 'if' && evaluateCondition(condExpr, variables)) {
-              executeSingleStatement(action, variables, logs);
-            } else if (keyword === 'elif' && evaluateCondition(condExpr, variables)) {
-              executeSingleStatement(action, variables, logs);
+        // inline: "if/elif ...: action"
+        const inlineMatch = trimmed.match(/^(if|elif|else)\s*(.*?):\s+(.+)$/);
+        if (inlineMatch) {
+          const [, kw, condExpr, action] = inlineMatch;
+          if (kw === 'if') {
+            lastConditionMet = evaluateCondition(condExpr.trim(), variables);
+            if (lastConditionMet) executeSingleStatement(action, variables, logs);
+          } else if (kw === 'elif') {
+            if (!lastConditionMet) {
+              const met = evaluateCondition(condExpr.trim(), variables);
+              if (met) { executeSingleStatement(action, variables, logs); lastConditionMet = true; }
             }
+          } else if (kw === 'else') {
+            if (!lastConditionMet) executeSingleStatement(action, variables, logs);
           }
           continue;
         }
 
-        // Block if/elif
-        const blockCondMatch = trimmed.match(/^(if|elif)\s+(.+?):$/);
-        if (blockCondMatch) {
-          const conditionMet = evaluateCondition(blockCondMatch[2].trim(), variables);
+        // block: "if/elif/else ...:"
+        const blockMatch = trimmed.match(/^(if|elif|else)\s*(.*?):$/);
+        if (blockMatch) {
+          const [, kw, condExpr] = blockMatch;
+          let conditionMet = false;
+          if (kw === 'if') {
+            conditionMet = evaluateCondition(condExpr.trim(), variables);
+            lastConditionMet = conditionMet;
+          } else if (kw === 'elif') {
+            conditionMet = !lastConditionMet && evaluateCondition(condExpr.trim(), variables);
+            if (conditionMet) lastConditionMet = true;
+          } else if (kw === 'else') {
+            conditionMet = !lastConditionMet;
+          }
           let j = i + 1;
           const subLines: string[] = [];
           while (j < lines.length && (lines[j].startsWith('    ') || lines[j].startsWith('\t') || lines[j].trim() === '')) {
@@ -361,6 +385,9 @@ add 5 to a`
           i = j - 1;
           continue;
         }
+
+        // Reset chain on non-conditional lines
+        if (!trimmed.startsWith('elif') && !trimmed.startsWith('else')) lastConditionMet = null;
 
         executeSingleStatement(trimmed, variables, logs);
       }
@@ -383,12 +410,10 @@ add 5 to a`
             <p className="text-xs text-neutral-400">Heuristic Engine &amp; Syntax Symbiote</p>
           </div>
         </div>
-        <div className="flex items-center space-x-3">
-          <span className="flex items-center text-xs bg-neutral-900 border border-neutral-800 rounded-full px-3 py-1 text-neutral-400">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 mr-1.5" />
-            Autopilot Active
-          </span>
-        </div>
+        <span className="flex items-center text-xs bg-neutral-900 border border-neutral-800 rounded-full px-3 py-1 text-neutral-400">
+          <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 mr-1.5" />
+          Autopilot Active
+        </span>
       </header>
 
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 overflow-hidden">
@@ -396,8 +421,7 @@ add 5 to a`
           <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-5 space-y-6">
             <div className="flex items-center justify-between border-b border-neutral-900 pb-4">
               <h2 className="text-sm font-semibold tracking-wide uppercase text-neutral-300 flex items-center">
-                <Activity className="w-4 h-4 mr-2 text-emerald-400" />
-                Symbiote Stats
+                <Activity className="w-4 h-4 mr-2 text-emerald-400" />Symbiote Stats
               </h2>
               <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
             </div>
@@ -420,9 +444,7 @@ add 5 to a`
                 <div className="space-y-3">
                   {insights.map((insight, idx) => (
                     <div key={idx} className={`p-3.5 rounded-xl border text-xs flex items-start ${insight.type === 'debt' ? 'bg-red-950/10 border-red-900/30 text-red-300' : 'bg-emerald-950/10 border-emerald-900/30 text-emerald-300'}`}>
-                      {insight.type === 'debt'
-                        ? <AlertTriangle className="w-4 h-4 mr-2.5 mt-0.5 text-red-400 flex-shrink-0" />
-                        : <Zap className="w-4 h-4 mr-2.5 mt-0.5 text-emerald-400 flex-shrink-0" />}
+                      {insight.type === 'debt' ? <AlertTriangle className="w-4 h-4 mr-2.5 mt-0.5 text-red-400 flex-shrink-0" /> : <Zap className="w-4 h-4 mr-2.5 mt-0.5 text-emerald-400 flex-shrink-0" />}
                       <span>{insight.message}</span>
                     </div>
                   ))}
@@ -437,8 +459,7 @@ add 5 to a`
 
           <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-5 flex-1 flex flex-col min-h-[250px]">
             <h2 className="text-sm font-semibold tracking-wide uppercase text-neutral-300 pb-4 border-b border-neutral-900 flex items-center">
-              <Sparkles className="w-4 h-4 mr-2 text-emerald-400" />
-              Active Translations
+              <Sparkles className="w-4 h-4 mr-2 text-emerald-400" />Active Translations
             </h2>
             <div className="flex-1 overflow-y-auto pt-4 space-y-3 pr-1 max-h-[350px]">
               {evolvedSyntax.map((rule, idx) => (
@@ -500,11 +521,8 @@ add 5 to a`
                 {compiledCode || 'Waiting for input script...'}
               </pre>
               <div className="mt-4 flex justify-end">
-                <button
-                  onClick={runCodeSimulated}
-                  disabled={isRunning || !compiledCode}
-                  className="bg-emerald-500 hover:bg-emerald-400 disabled:bg-neutral-800 disabled:text-neutral-500 text-neutral-950 font-semibold px-4 py-2 rounded-xl text-xs flex items-center transition-all shadow-md shadow-emerald-500/10 disabled:shadow-none"
-                >
+                <button onClick={runCodeSimulated} disabled={isRunning || !compiledCode}
+                  className="bg-emerald-500 hover:bg-emerald-400 disabled:bg-neutral-800 disabled:text-neutral-500 text-neutral-950 font-semibold px-4 py-2 rounded-xl text-xs flex items-center transition-all shadow-md shadow-emerald-500/10 disabled:shadow-none">
                   {isRunning
                     ? <><div className="w-3.5 h-3.5 border-2 border-neutral-950 border-t-transparent rounded-full animate-spin mr-2" />Running Symbiote...</>
                     : <><Play className="w-3.5 h-3.5 mr-2 fill-neutral-950" />Run Code</>}
@@ -517,16 +535,13 @@ add 5 to a`
                 <Terminal className="w-4 h-4 text-emerald-400" />
                 <span className="text-xs font-semibold tracking-wider uppercase text-neutral-400">Execution Output</span>
               </div>
-              <div className="flex-1 bg-neutral-950 rounded-xl p-3.5 font-mono text-xs overflow-y-auto space-y-1 text-emerald-400/90 border border-neutral-900">
+              <div className="flex-1 bg-neutral-950 rounded-xl p-3.5 font-mono text-xs overflow-y-auto space-y-1 border border-neutral-900">
                 {output ? output.map((line, idx) => (
                   <div key={idx} className={
                     line.startsWith('>>>') ? 'text-neutral-500 border-b border-neutral-900/50 pb-1 mb-1' :
-                    line.startsWith('NameError') ? 'text-red-400' :
-                    'text-neutral-300'
+                    line.startsWith('NameError') ? 'text-red-400' : 'text-neutral-300'
                   }>{line}</div>
-                )) : (
-                  <div className="text-neutral-600 italic">No logs. Click Run Code above to simulate program compilation and execution.</div>
-                )}
+                )) : <div className="text-neutral-600 italic">No logs. Click Run Code above to simulate program compilation and execution.</div>}
               </div>
             </div>
           </div>
