@@ -6,6 +6,16 @@ interface StyleProfile { quotes: string; naming: string; }
 interface SyntaxRule { keyword: string; desc: string; }
 interface Insight { type: 'debt' | 'optimization'; message: string; }
 
+// Rules that are too greedy and cause false positives — skip them entirely
+const BLACKLISTED_RULE_KEYWORDS = new Set([
+  'list files in "[path]"',
+  'set self.[X] to [Y]',
+  'list directory "[path]"',
+  'list files in directory',
+  'show files in "[path]"',
+  'show directory "[path]"',
+]);
+
 const getRuleScore = (rule: any): number => {
   let score = 0;
   const keyword = rule.ruleKeyword;
@@ -17,14 +27,9 @@ const getRuleScore = (rule: any): number => {
   if (keyword.includes('file') || keyword.includes('directory') || keyword.includes('json')) score += 1500;
   if (keyword.includes('list') || keyword.includes('dict') || keyword.includes('set')) score += 1000;
   if (keyword.includes('random') || keyword.includes('math') || keyword.includes('date')) score += 1000;
-  // Heavy penalties for rules known to be too greedy
   if (keyword === 'printshowsaydisplaylog X') score -= 8000;
   if (keyword === 'X = Y') score -= 9000;
   if (keyword.includes('bare') || keyword.includes('generic')) score -= 7000;
-  // Extra penalty for os/self/file rules that tend to swallow simple statements
-  if (pattern.includes('os.listdir') || pattern.includes('os.path') || pattern.includes('listdir')) score -= 5000;
-  if (keyword.includes('self.') || keyword.includes('set self')) score -= 4000;
-  if (keyword.includes('list files') || keyword.includes('directory')) score -= 4000;
   const groupCount = (pattern.match(/\(\?!.*?\)|(?:\()/g) || []).length;
   score += groupCount * 100;
   score += pattern.length * 0.1;
@@ -64,8 +69,12 @@ add 5 to a`
       let newInsights: Insight[] = [];
       let currentEvolvedSyntax: SyntaxRule[] = [];
       let finalCodeLines: string[] = [];
+
+      // Filter out blacklisted rules before sorting
       const rules = isJsonConnected
-        ? [...rawRules].sort((a, b) => getRuleScore(b) - getRuleScore(a))
+        ? [...rawRules]
+            .filter((r: any) => !BLACKLISTED_RULE_KEYWORDS.has(r.ruleKeyword))
+            .sort((a: any, b: any) => getRuleScore(b) - getRuleScore(a))
         : [];
 
       const lines = rawCode.split('\n').filter((l: string) => l.trim().length > 0 && !l.trim().startsWith('#') && !l.trim().startsWith('//'));
@@ -124,7 +133,7 @@ add 5 to a`
                 break;
               }
             } catch (ruleError) {
-              console.warn('Engine skipped corrupted rule pattern:', rule.ruleKeyword, ruleError);
+              console.warn('Engine skipped corrupted rule:', rule.ruleKeyword, ruleError);
             }
           }
 
@@ -216,7 +225,7 @@ add 5 to a`
         return `NameError: name '${targetVar}' is not defined`;
       }
 
-      // Handle explicit casts: int(...), float(...), str(...), bool(...)
+      // Handle casts: int(...), float(...), str(...), bool(...)
       const castMatch = str.match(/^(int|float|str|bool)\((.+)\)$/);
       if (castMatch) {
         const inner = resolveExprValue(castMatch[2]);
@@ -260,8 +269,8 @@ add 5 to a`
       let expr = '';
 
       if (trimmed.startsWith('print(')) {
-        // Balanced paren extraction — avoids slicing off inner closing parens
-        const inner = trimmed.slice(6); // after "print("
+        // Balanced paren extraction — correctly handles print(type(b))
+        const inner = trimmed.slice(6);
         let depth = 1, end = inner.length - 1;
         for (let ci = 0; ci < inner.length; ci++) {
           if (inner[ci] === '(') depth++;
@@ -272,12 +281,12 @@ add 5 to a`
         }
         expr = inner.slice(0, end).trim();
       } else {
-        expr = trimmed.slice(6).trim(); // after "print "
+        expr = trimmed.slice(6).trim();
       }
 
       if (!expr) return;
 
-      // Top-level type() check
+      // type() at top level of print
       const typeMatch = expr.match(/^type\((.+)\)$/);
       if (typeMatch) {
         const targetVar = typeMatch[1].trim();
