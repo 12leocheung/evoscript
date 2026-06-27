@@ -41,31 +41,54 @@ const getRuleScore = (rule: any): number => {
 const preProcessLine = (line: string): string | null => {
   const t = line.trim();
 
-  // "alternatively/else if X is not the same as Y then Z"
-  const elifNotMatch = t.match(/^(?:alternatively|alternately|else if|otherwise if)\s+if\s+(.+?)\s+(?:is not the same as|is not equal to|!=|isn't|isnt)\s+(.+?)\s+then\s+(.+)$/i);
-  if (elifNotMatch) return `elif ${elifNotMatch[1].trim()} != ${elifNotMatch[2].trim()}: ${elifNotMatch[3].trim()}`;
+  // Must check "not the same as" / "not equal to" BEFORE "same as" / "equal to"
+  // Use a non-greedy word-boundary approach: LHS is everything up to " is not"
+  const elifNotMatch = t.match(
+    /^(?:alternatively|alternately|else if|otherwise if)\s+if\s+(.+?)\s+(?:is not the same as|is not equal to|!=|isn't|isnt)\s+(.+?)\s+then\s+(.+)$/i
+  );
+  if (elifNotMatch) {
+    return `elif ${elifNotMatch[1].trim()} != ${elifNotMatch[2].trim()}: ${elifNotMatch[3].trim()}`;
+  }
 
-  // "alternatively/else if X is the same as Y then Z"
-  const elifEqMatch = t.match(/^(?:alternatively|alternately|else if|otherwise if)\s+if\s+(.+?)\s+(?:is the same as|is equal to|==)\s+(.+?)\s+then\s+(.+)$/i);
-  if (elifEqMatch) return `elif ${elifEqMatch[1].trim()} == ${elifEqMatch[2].trim()}: ${elifEqMatch[3].trim()}`;
+  const elifEqMatch = t.match(
+    /^(?:alternatively|alternately|else if|otherwise if)\s+if\s+(.+?)\s+(?:is the same as|is equal to|==)\s+(.+?)\s+then\s+(.+)$/i
+  );
+  if (elifEqMatch) {
+    return `elif ${elifEqMatch[1].trim()} == ${elifEqMatch[2].trim()}: ${elifEqMatch[3].trim()}`;
+  }
 
-  // "alternatively/else if X is bigger/greater than Y then Z"
-  const elifGtMatch = t.match(/^(?:alternatively|alternately|else if|otherwise if)\s+if\s+(.+?)\s+(?:is bigger than|is greater than|is more than|>)\s+(.+?)\s+then\s+(.+)$/i);
-  if (elifGtMatch) return `elif ${elifGtMatch[1].trim()} > ${elifGtMatch[2].trim()}: ${elifGtMatch[3].trim()}`;
+  const elifGtMatch = t.match(
+    /^(?:alternatively|alternately|else if|otherwise if)\s+if\s+(.+?)\s+(?:is bigger than|is greater than|is more than|>)\s+(.+?)\s+then\s+(.+)$/i
+  );
+  if (elifGtMatch) {
+    return `elif ${elifGtMatch[1].trim()} > ${elifGtMatch[2].trim()}: ${elifGtMatch[3].trim()}`;
+  }
 
-  // "alternatively/else if X is smaller/less than Y then Z"
-  const elifLtMatch = t.match(/^(?:alternatively|alternately|else if|otherwise if)\s+if\s+(.+?)\s+(?:is smaller than|is less than|<)\s+(.+?)\s+then\s+(.+)$/i);
-  if (elifLtMatch) return `elif ${elifLtMatch[1].trim()} < ${elifLtMatch[2].trim()}: ${elifLtMatch[3].trim()}`;
+  const elifLtMatch = t.match(
+    /^(?:alternatively|alternately|else if|otherwise if)\s+if\s+(.+?)\s+(?:is smaller than|is less than|<)\s+(.+?)\s+then\s+(.+)$/i
+  );
+  if (elifLtMatch) {
+    return `elif ${elifLtMatch[1].trim()} < ${elifLtMatch[2].trim()}: ${elifLtMatch[3].trim()}`;
+  }
 
-  // "alternatively/otherwise then Z" → "else: Z"
-  const elseMatch = t.match(/^(?:alternatively|alternately|otherwise)\s+(?:then\s+)?(.+)$/i);
-  if (elseMatch) return `else: ${elseMatch[1].trim()}`;
+  // bare "alternatively/otherwise then Z" → "else: Z"
+  // Must NOT match if followed by "if" (those are caught above)
+  const elseMatch = t.match(
+    /^(?:alternatively|alternately|otherwise)\s+(?!if\s)(?:then\s+)?(.+)$/i
+  );
+  if (elseMatch) {
+    return `else: ${elseMatch[1].trim()}`;
+  }
 
   // "add X to Y" → "Y += X"
-  const addMatch = t.match(/^(?:add|increase|plus)\s+(.+?)\s+(?:to|onto|into)\s+([a-zA-Z_][a-zA-Z0-9_]*)$/i);
-  if (addMatch) return `${addMatch[2].trim()} += ${addMatch[1].trim()}`;
+  const addMatch = t.match(
+    /^(?:add|increase|plus)\s+(.+?)\s+(?:to|onto|into)\s+([a-zA-Z_][a-zA-Z0-9_]*)$/i
+  );
+  if (addMatch) {
+    return `${addMatch[2].trim()} += ${addMatch[1].trim()}`;
+  }
 
-  return null; // no pre-processing needed
+  return null;
 };
 
 export default function App() {
