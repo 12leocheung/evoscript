@@ -63,105 +63,121 @@ add 5 to a
     return () => clearTimeout(timer);
   }, [code]);
 
-  const analyzeWithHeuristics = (rawCode: string) => {
-    let newInsights: Insight[] = [];
-    let currentEvolvedSyntax: SyntaxRule[] = [];
-    let finalCodeLines: string[] = [];
-    
-    // --- 1. LEARN CODING STYLE ---
-    const lines = rawCode.split('\n').filter((l: string) => l.trim().length > 0 && !l.trim().startsWith('//') && !l.trim().startsWith('#'));
-    
-    if (lines.length > 0) {
-      const singleQuotes = (rawCode.match(/'/g) || []).length;
-      const doubleQuotes = (rawCode.match(/"/g) || []).length;
-      let quoteStyle = 'learning';
-      if (doubleQuotes > singleQuotes) quoteStyle = 'Double (")';
-      else if (singleQuotes > doubleQuotes) quoteStyle = "Single (')";
-      else if (singleQuotes > 0 || doubleQuotes > 0) quoteStyle = 'Mixed';
+const analyzeWithHeuristics = (rawCode: string) => {
+    // 1. Safely extract rules to handle production bundle variations (.default)
+    const rules = Array.isArray(syntaxRulesJSON) 
+      ? syntaxRulesJSON 
+      : (syntaxRulesJSON as any)?.default || [];
+
+    const isJsonConnected = Array.isArray(rules) && rules.length > 0;
+
+    try {
+      let newInsights: Insight[] = [];
+      let currentEvolvedSyntax: SyntaxRule[] = [];
+      let finalCodeLines: string[] = [];
       
-      const snakeCase = (rawCode.match(/\b[a-z]+_[a-z]+\b/g) || []).length;
-      const camelCase = (rawCode.match(/\b[a-z]+[A-Z][a-z]+\b/g) || []).length;
-      let namingStyle = 'learning';
-      if (snakeCase > camelCase) namingStyle = 'snake_case';
-      else if (camelCase > snakeCase) namingStyle = 'camelCase';
-      else if (snakeCase > 0 || camelCase > 0) namingStyle = 'Mixed';
+      // --- 1. LEARN CODING STYLE ---
+      const lines = rawCode.split('\n').filter((l: string) => l.trim().length > 0 && !l.trim().startsWith('//') && !l.trim().startsWith('#'));
+      
+      if (lines.length > 0) {
+        const singleQuotes = (rawCode.match(/'/g) || []).length;
+        const doubleQuotes = (rawCode.match(/"/g) || []).length;
+        let quoteStyle = 'learning';
+        if (doubleQuotes > singleQuotes) quoteStyle = 'Double (")';
+        else if (singleQuotes > doubleQuotes) quoteStyle = "Single (')";
+        else if (singleQuotes > 0 || doubleQuotes > 0) quoteStyle = 'Mixed';
+        
+        const snakeCase = (rawCode.match(/\b[a-z]+_[a-z]+\b/g) || []).length;
+        const camelCase = (rawCode.match(/\b[a-z]+[A-Z][a-z]+\b/g) || []).length;
+        let namingStyle = 'learning';
+        if (snakeCase > camelCase) namingStyle = 'snake_case';
+        else if (camelCase > snakeCase) namingStyle = 'camelCase';
+        else if (snakeCase > 0 || camelCase > 0) namingStyle = 'Mixed';
 
-      setStyleProfile({ quotes: quoteStyle, naming: namingStyle });
+        setStyleProfile({ quotes: quoteStyle, naming: namingStyle });
+      }
+
+      // --- 2. VAST DYNAMIC HEURISTIC TRANSLATION ---
+      if (isJsonConnected) {
+        rawCode.split('\n').forEach(line => {
+          let translatedLine = line;
+          let matched = false;
+
+          if (line.trim() === '' || line.trim().startsWith('//') || line.trim().startsWith('#')) {
+              finalCodeLines.push(line);
+              return;
+          }
+
+          const indentMatch = line.match(/^(\s*)/);
+          const indent = indentMatch ? indentMatch[1] : '';
+          const trimmedLine = line.trim();
+
+          // Using our safely resolved rules reference
+          for (const rule of rules) {
+             const pattern = new RegExp(rule.pattern, rule.flags);
+             if (pattern.test(trimmedLine)) {
+                 let tempTranslation = trimmedLine.replace(pattern, rule.replace);
+                 
+                 if (tempTranslation.includes(': ')) {
+                     let parts = tempTranslation.split(': ');
+                     let leftSide = parts[0];
+                     let rightSide = parts[1];
+                     
+                     for (const nestedRule of rules) {
+                         const nestedPattern = new RegExp(nestedRule.pattern, nestedRule.flags);
+                         if (nestedPattern.test(rightSide)) {
+                             rightSide = rightSide.replace(nestedPattern, nestedRule.replace);
+                         }
+                     }
+                     tempTranslation = leftSide + ': ' + rightSide;
+                 }
+                 
+                 translatedLine = indent + tempTranslation;
+
+                 if (!currentEvolvedSyntax.some(s => s.keyword === rule.ruleKeyword)) {
+                     currentEvolvedSyntax.push({ keyword: rule.ruleKeyword, desc: rule.desc });
+                 }
+                 matched = true;
+                 break;
+             }
+          }
+
+          if (!matched) {
+              if (trimmedLine.match(/for\s*\([^)]+\)/)) {
+                 translatedLine = indent + trimmedLine.replace(/for\s*\(\s*(?:let\s+|var\s+|int\s+)?([a-zA-Z0-9_]+)\s*=\s*(\d+)\s*;\s*\1\s*<\s*(\d+)\s*;\s*\1\+\+\s*\)/g, 'for $1 in range($2, $3):');
+                 if (!currentEvolvedSyntax.some(s => s.keyword === 'for(i=0; i<N; i++)')) {
+                     currentEvolvedSyntax.push({ keyword: 'for(i=0; i<N; i++)', desc: 'Translated C-style for-loop.' });
+                 }
+              }
+          }
+
+          finalCodeLines.push(translatedLine);
+        });
+      } else {
+        finalCodeLines = rawCode.split('\n');
+      }
+
+      let finalCode = finalCodeLines.join('\n');
+
+      if (/\b(var|let|const|int|float|string)\s+([a-zA-Z0-9_]+)\s*=/g.test(finalCode)) {
+        newInsights.push({
+          type: 'optimization',
+          message: 'Static type/JS keyword removed. Python uses dynamic typing.'
+        });
+        finalCode = finalCode.replace(/\b(var|let|const|int|float|string)\s+([a-zA-Z0-9_]+)\s*=/g, '$2 =');
+      }
+
+      setEvolvedSyntax(currentEvolvedSyntax);
+      setInsights(newInsights);
+      setCompiledCode(finalCode);
+
+    } catch (error) {
+      // Catch and print any silent failures directly to your browser inspector
+      console.error("Heuristics Engine encountered an error:", error);
+    } finally {
+      // This block ALWAYS runs, guaranteeing your loading message unfreezes
+      setIsAnalyzing(false);
     }
-
-    // --- 2. VAST DYNAMIC HEURISTIC TRANSLATION ---
-    if (isJsonConnected) {
-      rawCode.split('\n').forEach(line => {
-        let translatedLine = line;
-        let matched = false;
-
-        if (line.trim() === '' || line.trim().startsWith('//') || line.trim().startsWith('#')) {
-            finalCodeLines.push(line);
-            return;
-        }
-
-        const indentMatch = line.match(/^(\s*)/);
-        const indent = indentMatch ? indentMatch[1] : '';
-        const trimmedLine = line.trim();
-
-        for (const rule of syntaxRulesJSON) {
-           const pattern = new RegExp(rule.pattern, rule.flags);
-           if (pattern.test(trimmedLine)) {
-               let tempTranslation = trimmedLine.replace(pattern, rule.replace);
-               
-               if (tempTranslation.includes(': ')) {
-                   let parts = tempTranslation.split(': ');
-                   let leftSide = parts[0];
-                   let rightSide = parts[1];
-                   
-                   for (const nestedRule of syntaxRulesJSON) {
-                       const nestedPattern = new RegExp(nestedRule.pattern, nestedRule.flags);
-                       if (nestedPattern.test(rightSide)) {
-                           rightSide = rightSide.replace(nestedPattern, nestedRule.replace);
-                       }
-                   }
-                   tempTranslation = leftSide + ': ' + rightSide;
-               }
-               
-               translatedLine = indent + tempTranslation;
-
-               if (!currentEvolvedSyntax.some(s => s.keyword === rule.ruleKeyword)) {
-                   currentEvolvedSyntax.push({ keyword: rule.ruleKeyword, desc: rule.desc });
-               }
-               matched = true;
-               break;
-           }
-        }
-
-        if (!matched) {
-            if (trimmedLine.match(/for\s*\([^)]+\)/)) {
-               translatedLine = indent + trimmedLine.replace(/for\s*\(\s*(?:let\s+|var\s+|int\s+)?([a-zA-Z0-9_]+)\s*=\s*(\d+)\s*;\s*\1\s*<\s*(\d+)\s*;\s*\1\+\+\s*\)/g, 'for $1 in range($2, $3):');
-               if (!currentEvolvedSyntax.some(s => s.keyword === 'for(i=0; i<N; i++)')) {
-                   currentEvolvedSyntax.push({ keyword: 'for(i=0; i<N; i++)', desc: 'Translated C-style for-loop.' });
-               }
-            }
-        }
-
-        finalCodeLines.push(translatedLine);
-      });
-    } else {
-      finalCodeLines = rawCode.split('\n');
-    }
-
-    let finalCode = finalCodeLines.join('\n');
-
-    if (/\b(var|let|const|int|float|string)\s+([a-zA-Z0-9_]+)\s*=/g.test(finalCode)) {
-      newInsights.push({
-        type: 'optimization',
-        message: 'Static type/JS keyword removed. Python uses dynamic typing.'
-      });
-      finalCode = finalCode.replace(/\b(var|let|const|int|float|string)\s+([a-zA-Z0-9_]+)\s*=/g, '$2 =');
-    }
-
-    setEvolvedSyntax(currentEvolvedSyntax);
-    setInsights(newInsights);
-    setCompiledCode(finalCode);
-    setIsAnalyzing(false);
   };
 
   // --- Real-time Word Finisher Extraction ---
