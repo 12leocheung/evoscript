@@ -333,6 +333,7 @@ export default function App() {
   const [copiedCompiled, setCopiedCompiled] = useState(false);
   const [activeExample, setActiveExample] = useState(0);
   const [showCommands, setShowCommands] = useState(false);
+  const [jsonConnected, setJsonConnected] = useState<boolean | null>(null);
   const outputRef = useRef<HTMLDivElement>(null);
 
   // ── Translation Engine ──────────────────────────────────────────────────────
@@ -347,6 +348,7 @@ export default function App() {
     })();
 
     const isJsonConnected = rawRules.length > 0;
+    setJsonConnected(isJsonConnected);
 
     try {
       const newInsights: Insight[] = [];
@@ -372,8 +374,52 @@ export default function App() {
         });
       }
 
+      // ── Multi-statement splitter ─────────────────────────────────────────────
+      // Expands each raw line into potentially several logical lines before
+      // the rule engine runs. Handles two cases:
+      //   1. Semicolons:  "set x to 5; print x"      → two separate lines
+      //   2. Bare "then": "set x to 5 then print x"  → split into two lines
+      //      (If/elif/else cases are handled by preProcessLine, left intact)
+      const splitIntoLogicalLines = (raw: string): string[] => {
+        const indent = (raw.match(/^(\s*)/) || ['', ''])[1];
+        const trimmed = raw.trim();
+        if (!trimmed || trimmed.startsWith('#') || trimmed.startsWith('//')) return [raw];
+
+        // Split on semicolons (respecting quoted strings)
+        const semiParts: string[] = [];
+        let buf = '';
+        let inStr: string | null = null;
+        for (let i = 0; i < trimmed.length; i++) {
+          const ch = trimmed[i];
+          if (inStr) { buf += ch; if (ch === inStr) inStr = null; }
+          else if (ch === '"' || ch === "'") { inStr = ch; buf += ch; }
+          else if (ch === ';') { if (buf.trim()) semiParts.push(buf.trim()); buf = ''; }
+          else { buf += ch; }
+        }
+        if (buf.trim()) semiParts.push(buf.trim());
+
+        // For each segment, split on bare "then" that isn't part of an if/elif/otherwise clause
+        const isConditionalLine = /^(?:if|alternatively|alternately|else if|otherwise if|otherwise)\b/i.test(trimmed);
+        const expanded: string[] = [];
+        for (const part of semiParts) {
+          if (!isConditionalLine && /\bthen\b/i.test(part)) {
+            const thenIdx = part.search(/\bthen\b/i);
+            const left = part.slice(0, thenIdx).trim();
+            const right = part.slice(thenIdx + 4).trim();
+            if (left && right && !/^if\b/i.test(left)) {
+              expanded.push(indent + left);
+              expanded.push(indent + right);
+              continue;
+            }
+          }
+          expanded.push(indent + part);
+        }
+        return expanded;
+      };
+
       if (isJsonConnected) {
-        rawCode.split('\n').forEach(line => {
+        const expandedLines = rawCode.split('\n').flatMap(splitIntoLogicalLines);
+        expandedLines.forEach(line => {
           if (!line.trim() || line.trim().startsWith('#') || line.trim().startsWith('//')) {
             finalCodeLines.push(line);
             return;
@@ -722,6 +768,23 @@ export default function App() {
               <BookOpen className="w-3.5 h-3.5" />
               Commands
             </button>
+            <span
+              title={jsonConnected === null ? 'Checking rules.json…' : jsonConnected ? 'rules.json loaded successfully' : 'rules.json failed to load'}
+              className={`hidden sm:flex items-center text-xs border rounded-full px-3 py-1 transition-colors ${
+                jsonConnected === null
+                  ? 'bg-neutral-900 border-neutral-800 text-neutral-500'
+                  : jsonConnected
+                  ? 'bg-emerald-950/30 border-emerald-800/40 text-emerald-400'
+                  : 'bg-red-950/30 border-red-800/40 text-red-400'
+              }`}
+            >
+              <span className={`w-1.5 h-1.5 rounded-full mr-1.5 flex-shrink-0 ${
+                jsonConnected === null ? 'bg-neutral-600 animate-pulse'
+                : jsonConnected ? 'bg-emerald-400 animate-pulse'
+                : 'bg-red-400'
+              }`} />
+              {jsonConnected === null ? 'rules.json…' : jsonConnected ? 'rules.json ✓' : 'rules.json ✗'}
+            </span>
             <span className="hidden sm:flex items-center text-xs bg-neutral-900 border border-neutral-800 rounded-full px-3 py-1 text-neutral-400">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 mr-1.5" />
               Autopilot Active
