@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "vite",
-    "build": "tsc && vite build"
-  },
+      "start": "vite",
+      "build": "tsc && vite build"
+    },
   "keywords": [],
   "author": "",
   "license": "ISC",
