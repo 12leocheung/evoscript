@@ -349,7 +349,7 @@ const CommandsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     <div key={i} className="bg-neutral-900/50 border border-neutral-900 rounded-xl p-3.5 hover:border-neutral-800 transition-colors">
                       <code className="text-sm text-emerald-400 font-mono block mb-1.5">{rule.ruleKeyword}</code>
                       <p className="text-[11px] text-neutral-500 leading-relaxed mb-2">{rule.desc}</p>
-                      <span className="text-[10px] text-neutral-600 font-mono bg-neutral-950 border border-neutral-900 px-2 py-0.5 rounded inline-block">
+                      <span className="text-[10px] text-neutral-600 font-mono bg-neutral-950 border border-neutral-905 px-2 py-0.5 rounded inline-block">
                         → {rule.replace.replace(/\t/g, ' ').slice(0, 80)}{rule.replace.length > 80 ? '…' : ''}
                       </span>
                     </div>
@@ -624,6 +624,76 @@ export default function App() {
           }
         });
         newInsights.push({ type: 'debt', message: 'rules.json failed to load — JSON rules unavailable. Basic patterns still work.' });
+      }
+
+      // ── Brace normaliser ────────────────────────────────────────────────────
+      // Converts C/JS-style brace blocks into Python-indented blocks so the
+      // executor always sees consistent indentation regardless of input style.
+      // Works by tracking brace depth, stripping brackets, and re-indenting.
+      const normaliseBraces = (raw: string[]): string[] => {
+        const out: string[] = [];
+        let depth = 0;
+        const INDENT = '    ';
+        
+        for (let i = 0; i < raw.length; i++) {
+          const line = raw[i];
+          const t = line.trim();
+          if (!t) { out.push(''); continue; }
+
+          // Opening brace on its own line — just increase depth, skip emitting the brace
+          if (t === '{') { 
+            depth++; 
+            continue; 
+          }
+          
+          // Closing brace on its own line — decrease depth, skip emitting the brace
+          if (t === '}') { 
+            depth = Math.max(0, depth - 1); 
+            continue; 
+          }
+
+          // Line ending with { — it's a block header; emit without brace, bump depth
+          if (t.endsWith('{') && !t.endsWith('\\{')) {
+            let header = t.slice(0, -1).trimEnd();
+            // Automatically append colon (:) if it's a structural keyword and lacking one
+            if (/^(?:if|elif|else|while|for|def|class)\b/i.test(header) && !header.endsWith(':')) {
+              header += ':';
+            }
+            out.push(INDENT.repeat(depth) + header);
+            depth++;
+            continue;
+          }
+
+          // Look-ahead to check if the next non-empty line starts a block with {
+          let nextIsBrace = false;
+          for (let j = i + 1; j < raw.length; j++) {
+            const nextTrim = raw[j].trim();
+            if (nextTrim === '{') {
+              nextIsBrace = true;
+              break;
+            }
+            if (nextTrim !== '') {
+              break;
+            }
+          }
+
+          let processedLine = t;
+          if (nextIsBrace) {
+            // Append Python colon helper
+            if (/^(?:if|elif|else|while|for|def|class)\b/i.test(processedLine) && !processedLine.endsWith(':')) {
+              processedLine += ':';
+            }
+          }
+
+          out.push(INDENT.repeat(depth) + processedLine);
+        }
+        return out;
+      };
+
+      // Only run brace normalisation if the translated lines contain bracing symbols
+      const hasBraces = finalCodeLines.some(l => l.trim() === '{' || l.trim() === '}' || l.trimEnd().endsWith('{'));
+      if (hasBraces) {
+        finalCodeLines = normaliseBraces(finalCodeLines);
       }
 
       let finalCode = finalCodeLines.join('\n');
@@ -937,7 +1007,7 @@ export default function App() {
               </div>
               <div className="grid grid-cols-2 gap-2">
                 {[['Quotes', styleProfile.quotes], ['Naming', styleProfile.naming], ['Lines', String(lineCount)], ['Outputs', String(outputLineCount)]].map(([label, val]) => (
-                  <div key={label} className="bg-neutral-950/60 p-2.5 rounded-xl border border-neutral-900">
+                  <div key={label} className="bg-neutral-950/60 p-2.5 rounded-xl border border-neutral-905">
                     <p className="text-[10px] text-neutral-500 uppercase mb-0.5">{label}</p>
                     <p className="text-sm font-medium text-neutral-200 truncate">{val}</p>
                   </div>
@@ -981,7 +1051,7 @@ export default function App() {
               </h2>
               <div className="flex-1 overflow-y-auto space-y-2">
                 {evolvedSyntax.length > 0 ? evolvedSyntax.map((rule, idx) => (
-                  <div key={idx} className="bg-neutral-950/40 border border-neutral-900 p-2.5 rounded-xl hover:border-neutral-800 transition-colors">
+                  <div key={idx} className="bg-neutral-950/40 border border-neutral-905 p-2.5 rounded-xl hover:border-neutral-800 transition-colors">
                     <div className="flex items-center justify-between mb-1">
                       <code className="text-[11px] text-emerald-400 font-mono bg-neutral-950 px-1.5 py-0.5 rounded border border-neutral-800/80 truncate max-w-[150px]">
                         {rule.keyword}
