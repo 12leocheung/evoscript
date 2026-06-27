@@ -47,17 +47,6 @@ print fruits`,
   },
 ];
 
-const BLACKLISTED_RULE_KEYWORDS = new Set([
-  'list files in "[path]"',
-  'set self.[X] to [Y]',
-  'list directory "[path]"',
-  'list files in directory',
-  'show files in "[path]"',
-  'show directory "[path]"',
-  'add X to Y',
-  'subtract X from Y',
-]);
-
 const BUILTIN_COMMANDS = [
   {
     category: 'Conditionals (pre-processed)',
@@ -83,24 +72,24 @@ const BUILTIN_COMMANDS = [
 // ─── Rule Scoring ─────────────────────────────────────────────────────────────
 const getRuleScore = (rule: any): number => {
   let score = 0;
-  const kw = rule.ruleKeyword as string;
-  const pat = rule.pattern as string;
-  if (kw.includes('then') && kw.includes('Z')) score += 10000;
+  const kw: string = rule.ruleKeyword || '';
+  const pat: string = rule.pattern || '';
+  if (kw.includes('then') || kw.includes('[Z]')) score += 10000;
   if (kw.includes('else if') || kw.includes('elif')) score += 5000;
   if (kw.includes('try') || kw.includes('error')) score += 3000;
   if (kw.includes('cast') || kw.includes('type') || kw.includes('isinstance')) score += 2000;
   if (kw.includes('file') || kw.includes('directory') || kw.includes('json')) score += 1500;
   if (kw.includes('list') || kw.includes('dict') || kw.includes('set')) score += 1000;
   if (kw.includes('random') || kw.includes('math') || kw.includes('date')) score += 1000;
-  if (kw === 'printshowsaydisplaylog X') score -= 8000;
-  if (kw === 'X = Y') score -= 9000;
+  if (kw === 'print/show/say/display/log [X]') score -= 8000;
+  if (kw === '[X] = [Y]') score -= 9000;
   if (kw.includes('bare') || kw.includes('generic')) score -= 7000;
-  score += ((pat.match(/\(\?!.*?\)|(?:\()/g) || []).length) * 100;
+  score += ((pat.match(/\((?!\?:)/g) || []).length) * 100;
   score += pat.length * 0.1;
   return score;
 };
 
-// ─── Pre-processor ────────────────────────────────────────────────────────────
+// ─── Pre-processor (handles elif/else/arithmetic before rules engine) ─────────
 const preProcessLine = (t: string): string | null => {
   let m = t.match(/^(?:alternatively|alternately|else if|otherwise if)\s+if\s+(.+?)\s+(?:is not the same as|is not equal to|!=|isn't|isnt)\s+(.+?)\s+then\s+(.+)$/i);
   if (m) return `elif ${m[1].trim()} != ${m[2].trim()}: ${m[3].trim()}`;
@@ -132,8 +121,13 @@ const preProcessLine = (t: string): string | null => {
   return null;
 };
 
-const compilePattern = (pat: string, flags: string): RegExp =>
-  new RegExp(pat.replace(/\?\?\?/g, '??'), flags);
+// ─── FIX 1: compilePattern — was escaping ??? wrong, breaking valid regex ─────
+const compilePattern = (pat: string, flags: string): RegExp => {
+  // Just replace literal ??? with ?? (possessive → greedy fallback)
+  // Do NOT escape — the pattern is already a regex string
+  const sanitized = pat.replace(/\?\?\?/g, '??');
+  return new RegExp(sanitized, flags);
+};
 
 // ─── Commands Reference Modal ─────────────────────────────────────────────────
 const CommandsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
@@ -144,13 +138,11 @@ const CommandsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     ? syntaxRulesJSON as RuleEntry[]
     : (syntaxRulesJSON as any)?.default ?? [];
 
-  const filteredRules = rawRules
-    .filter(r => !BLACKLISTED_RULE_KEYWORDS.has(r.ruleKeyword))
-    .filter(r => {
-      if (!search.trim()) return true;
-      const q = search.toLowerCase();
-      return r.ruleKeyword.toLowerCase().includes(q) || r.desc.toLowerCase().includes(q);
-    });
+  const filteredRules = rawRules.filter(r => {
+    if (!search.trim()) return true;
+    const q = search.toLowerCase();
+    return r.ruleKeyword.toLowerCase().includes(q) || r.desc.toLowerCase().includes(q);
+  });
 
   const grouped: Record<string, RuleEntry[]> = {};
   filteredRules.forEach(r => {
@@ -169,12 +161,12 @@ const CommandsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   })).filter(cat => cat.commands.length > 0);
 
   const totalBuiltin = BUILTIN_COMMANDS.reduce((a, c) => a + c.commands.length, 0);
-  const totalRules = rawRules.filter(r => !BLACKLISTED_RULE_KEYWORDS.has(r.ruleKeyword)).length;
+  const totalRules = rawRules.length;
 
   return (
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
-      style={{ backgroundColor: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(4px)' }}
+      className="fixed inset-0 flex items-center justify-center p-4"
+      style={{ zIndex: 99999, backgroundColor: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(4px)' }}
       onClick={onClose}
     >
       <div
@@ -182,19 +174,16 @@ const CommandsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         style={{ maxHeight: '85vh' }}
         onClick={e => e.stopPropagation()}
       >
-        {/* Modal Header */}
+        {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-900 flex-shrink-0">
           <div className="flex items-center gap-3">
             <BookOpen className="w-5 h-5 text-emerald-400" />
             <div>
               <h2 className="text-base font-semibold text-neutral-100">Commands Reference</h2>
-              <p className="text-[11px] text-neutral-500">All supported EvoScript syntax and alternatives</p>
+              <p className="text-[11px] text-neutral-500">All supported EvoScript syntax and natural language patterns</p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="text-neutral-500 hover:text-neutral-200 transition-colors p-1.5 rounded-lg hover:bg-neutral-900"
-          >
+          <button onClick={onClose} className="text-neutral-500 hover:text-neutral-200 p-1.5 rounded-lg hover:bg-neutral-900 transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -212,10 +201,7 @@ const CommandsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               autoFocus
             />
             {search && (
-              <button
-                onClick={() => setSearch('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300"
-              >
+              <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300">
                 <X className="w-3.5 h-3.5" />
               </button>
             )}
@@ -226,7 +212,7 @@ const CommandsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         <div className="flex border-b border-neutral-900 px-6 flex-shrink-0">
           {[
             { key: 'builtin', label: 'Built-in Patterns', count: totalBuiltin },
-            { key: 'rules', label: 'rules.json', count: totalRules },
+            { key: 'rules', label: `rules.json`, count: totalRules },
           ].map(tab => (
             <button
               key={tab.key}
@@ -247,7 +233,7 @@ const CommandsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           ))}
         </div>
 
-        {/* Scrollable Content */}
+        {/* Content */}
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6 min-h-0">
           {activeTab === 'builtin' ? (
             filteredBuiltins.length > 0 ? filteredBuiltins.map((cat, ci) => (
@@ -266,7 +252,7 @@ const CommandsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                           → {cmd.desc}
                         </span>
                       </div>
-                      <div className="flex items-center gap-2 mt-1.5">
+                      <div className="flex items-center gap-2">
                         <ChevronRight className="w-3 h-3 text-neutral-600 flex-shrink-0" />
                         <code className="text-[11px] text-neutral-500 font-mono">{cmd.example}</code>
                       </div>
@@ -307,12 +293,11 @@ const CommandsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         {/* Footer */}
         <div className="px-6 py-3 border-t border-neutral-900 flex items-center justify-between flex-shrink-0">
           <p className="text-[11px] text-neutral-600">
-            {activeTab === 'builtin' ? `${totalBuiltin} built-in patterns` : `${totalRules} rules loaded from rules.json`}
+            {activeTab === 'builtin'
+              ? `${totalBuiltin} built-in patterns`
+              : `${totalRules} rules loaded from rules.json`}
           </p>
-          <button
-            onClick={onClose}
-            className="text-xs text-neutral-500 hover:text-neutral-300 transition-colors border border-neutral-800 hover:border-neutral-700 px-3 py-1.5 rounded-lg"
-          >
+          <button onClick={onClose} className="text-xs text-neutral-500 hover:text-neutral-300 transition-colors border border-neutral-800 hover:border-neutral-700 px-3 py-1.5 rounded-lg">
             Close
           </button>
         </div>
@@ -321,7 +306,7 @@ const CommandsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   );
 };
 
-// ─── Main Component ───────────────────────────────────────────────────────────
+// ─── Main App ─────────────────────────────────────────────────────────────────
 export default function App() {
   const [code, setCode] = useState(EXAMPLES[0].code);
   const [compiledCode, setCompiledCode] = useState('');
@@ -340,19 +325,27 @@ export default function App() {
   // ── Translation Engine ──────────────────────────────────────────────────────
   const analyzeWithHeuristics = (rawCode: string) => {
     setIsAnalyzing(true);
-    const rawRules = Array.isArray(syntaxRulesJSON) ? syntaxRulesJSON : (syntaxRulesJSON as any)?.default;
-    const isJsonConnected = Array.isArray(rawRules) && rawRules.length > 0;
+
+    // FIX 2: handle both default export shapes from Vite bundler
+    const rawRules: RuleEntry[] = (() => {
+      const r = syntaxRulesJSON as any;
+      if (Array.isArray(r)) return r;
+      if (Array.isArray(r?.default)) return r.default;
+      return [];
+    })();
+
+    const isJsonConnected = rawRules.length > 0;
+
     try {
       const newInsights: Insight[] = [];
       const currentEvolvedSyntax: SyntaxRule[] = [];
       let finalCodeLines: string[] = [];
 
       const rules = isJsonConnected
-        ? [...rawRules]
-            .filter((r: any) => !BLACKLISTED_RULE_KEYWORDS.has(r.ruleKeyword))
-            .sort((a: any, b: any) => getRuleScore(b) - getRuleScore(a))
+        ? [...rawRules].sort((a, b) => getRuleScore(b) - getRuleScore(a))
         : [];
 
+      // Style profiling
       const nonCommentLines = rawCode.split('\n').filter(l => l.trim() && !l.trim().startsWith('#') && !l.trim().startsWith('//'));
       if (nonCommentLines.length > 0) {
         const sq = (rawCode.match(/'/g) || []).length;
@@ -360,8 +353,8 @@ export default function App() {
         setStyleProfile({
           quotes: dq > sq ? 'Double' : sq > dq ? 'Single' : sq > 0 ? 'Mixed' : 'learning',
           naming: (() => {
-            const snake = (rawCode.match(/[a-z_][a-z_0-9]*_[a-z]/g) || []).length;
-            const camel = (rawCode.match(/[a-z][A-Z][a-zA-Z]*/g) || []).length;
+            const snake = (rawCode.match(/\b[a-z]+_[a-z]+\b/g) || []).length;
+            const camel = (rawCode.match(/\b[a-z]+[A-Z][a-z]+\b/g) || []).length;
             return snake > camel ? 'snake_case' : camel > snake ? 'camelCase' : snake > 0 ? 'Mixed' : 'learning';
           })(),
         });
@@ -373,38 +366,51 @@ export default function App() {
             finalCodeLines.push(line);
             return;
           }
+
           const indent = (line.match(/^(\s*)/) || ['', ''])[1];
           const trimmed = line.trim();
 
+          // Pre-processor first (elif/else/arithmetic)
           const pre = preProcessLine(trimmed);
           if (pre !== null) {
             finalCodeLines.push(indent + pre);
-            const key = pre.startsWith('elif') ? 'elif ... (pre-processed)'
+            const key = pre.startsWith('elif') ? 'elif (pre-processed)'
               : pre.startsWith('else') ? 'else: (pre-processed)'
-              : 'arithmetic shorthand (pre-processed)';
+              : 'arithmetic shorthand';
             if (!currentEvolvedSyntax.some(s => s.keyword === key))
-              currentEvolvedSyntax.push({ keyword: key, desc: 'Pre-processed before rules engine.' });
+              currentEvolvedSyntax.push({ keyword: key, desc: 'Handled by pre-processor before rules engine.' });
             return;
           }
 
+          // Rules engine
           let translatedLine = line;
           let matched = false;
+
           for (const rule of rules) {
             try {
               const pattern = compilePattern(rule.pattern, rule.flags);
               if (!pattern.test(trimmed)) continue;
-              let translation = trimmed.replace(pattern, rule.replace);
+
+              let translation = trimmed.replace(compilePattern(rule.pattern, rule.flags), rule.replace);
+
+              // FIX 3: rules use TAB as delimiter for nested substitution, NOT ': '
               if (translation.includes('\t')) {
-                const [left, right] = translation.split('\t');
-                let resolvedRight = right;
+                const tabIdx = translation.indexOf('\t');
+                const left = translation.slice(0, tabIdx);
+                let right = translation.slice(tabIdx + 1);
+                // Resolve the right-hand side through the rules engine too
                 for (const nested of rules) {
                   try {
                     const np = compilePattern(nested.pattern, nested.flags);
-                    if (np.test(resolvedRight)) { resolvedRight = resolvedRight.replace(np, nested.replace); break; }
-                  } catch {}
+                    if (np.test(right)) {
+                      right = right.replace(compilePattern(nested.pattern, nested.flags), nested.replace);
+                      break;
+                    }
+                  } catch { /* skip bad nested rule */ }
                 }
-                translation = left + resolvedRight;
+                translation = left + right;
               }
+
               translatedLine = indent + translation;
               if (!currentEvolvedSyntax.some(s => s.keyword === rule.ruleKeyword))
                 currentEvolvedSyntax.push({ keyword: rule.ruleKeyword, desc: rule.desc });
@@ -415,10 +421,11 @@ export default function App() {
             }
           }
 
+          // C-style for loop fallback
           if (!matched && /^for\s*\(/.test(trimmed)) {
             translatedLine = indent + trimmed.replace(
-              /for\s*\(?(?:let|var|int)?\s*([a-zA-Z_]+)\s*=\s*([^;]+);\s*[^;]+;\s*[^)]+\)?/,
-              'for $1 in range($2, $3)'
+              /for\s*\(\s*(?:let\s+|var\s+|int\s+)?([a-zA-Z0-9_]+)\s*=\s*(\d+)\s*;\s*\1\s*<\s*(\d+)\s*;\s*\1\+\+\s*\)/,
+              'for $1 in range($2, $3):'
             );
             if (!currentEvolvedSyntax.some(s => s.keyword === 'C-style for loop'))
               currentEvolvedSyntax.push({ keyword: 'C-style for loop', desc: 'Translated C/JS for-loop to Python range().' });
@@ -428,15 +435,19 @@ export default function App() {
         });
       } else {
         finalCodeLines = rawCode.split('\n');
+        newInsights.push({ type: 'debt', message: 'rules.json failed to load — check the import path and that the file is valid JSON.' });
       }
 
       let finalCode = finalCodeLines.join('\n');
+
+      // Strip type/var keywords left over
       if (/\b(var|let|const|int|float|string|bool)\s+[a-zA-Z0-9_]+\s*=/.test(finalCode)) {
         newInsights.push({ type: 'optimization', message: 'Type/var keywords stripped — Python uses dynamic typing.' });
         finalCode = finalCode.replace(/\b(var|let|const|int|float|string|bool)\s+([a-zA-Z0-9_]+)\s*=/g, '$2 =');
       }
+
       if (currentEvolvedSyntax.length === 0 && nonCommentLines.length > 0)
-        newInsights.push({ type: 'info', message: 'No natural language patterns detected. Looks like standard Python!' });
+        newInsights.push({ type: 'info', message: 'No natural language patterns found. Looks like valid Python already!' });
 
       setEvolvedSyntax(currentEvolvedSyntax);
       setInsights(newInsights);
@@ -464,11 +475,13 @@ export default function App() {
 
   const resolveValue = (str: string, variables: Record<string, any>): any => {
     const s = str.trim();
+    // type(x)
     const typeMatch = s.match(/^type\((.+)\)$/);
     if (typeMatch) {
       const v = typeMatch[1].trim();
       return v in variables ? getTypeString(variables[v]) : `NameError: '${v}' is not defined`;
     }
+    // cast: int() float() str() bool()
     const castMatch = s.match(/^(int|float|str|bool)\((.+)\)$/);
     if (castMatch) {
       const inner = resolveValue(castMatch[2], variables);
@@ -477,21 +490,25 @@ export default function App() {
       if (castMatch[1] === 'str') return String(inner);
       if (castMatch[1] === 'bool') return !!inner;
     }
+    // len()
     const lenMatch = s.match(/^len\((.+)\)$/);
     if (lenMatch) {
       const v = resolveValue(lenMatch[1], variables);
       return Array.isArray(v) ? v.length : typeof v === 'string' ? v.length : 0;
     }
+    // list/tuple literal
     if ((s.startsWith('[') && s.endsWith(']')) || (s.startsWith('(') && s.endsWith(')'))) {
       const content = s.slice(1, -1).trim();
-      return content ? content.split(',').map(i => resolveValue(i, variables)) : [];
+      return content ? content.split(',').map(i => resolveValue(i.trim(), variables)) : [];
     }
+    // quoted string
     if ((s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'")))
       return s.slice(1, -1);
+    // arithmetic expression
     if (/^[\w\s\+\-\*\/\%\(\)\.]+$/.test(s) && /[\+\-\*\/]/.test(s)) {
       try {
-        const expr = s.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\b/g, (_, name) =>
-          name in variables ? String(variables[name]) : '0'
+        const expr = s.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\b/g, (_, n) =>
+          n in variables ? String(variables[n]) : '0'
         );
         // eslint-disable-next-line no-new-func
         return Function('"use strict"; return (' + expr + ')')();
@@ -524,6 +541,8 @@ export default function App() {
   const executeSingleStatement = (stmt: string, variables: Record<string, any>, logs: ExecutionResult[]) => {
     const t = stmt.trim();
     if (!t || t.startsWith('#') || t.startsWith('//')) return;
+
+    // print()
     if (t.startsWith('print(') || t.startsWith('print ')) {
       let expr = '';
       if (t.startsWith('print(')) {
@@ -539,9 +558,14 @@ export default function App() {
       }
       if (!expr) return;
       const val = resolveValue(expr, variables);
-      logs.push({ line: String(val), type: typeof val === 'string' && val.startsWith('NameError') ? 'error' : 'output' });
+      logs.push({
+        line: String(val),
+        type: typeof val === 'string' && val.startsWith('NameError') ? 'error' : 'output'
+      });
       return;
     }
+
+    // assignment / compound assignment
     const opMatch = t.match(/^([a-zA-Z_][a-zA-Z0-9_]*)\s*(\+=|-=|\*=|\/=|%=|:=|=)\s*(.+)$/);
     if (opMatch) {
       const [, name, op, rhs] = opMatch;
@@ -554,6 +578,8 @@ export default function App() {
       else if (op === '%=') variables[name] = (Number(variables[name]) || 0) % (Number(val) || 1);
       return;
     }
+
+    // list.append()
     const appendMatch = t.match(/^([a-zA-Z_][a-zA-Z0-9_]*)\.append\((.+)\)$/);
     if (appendMatch) {
       const arr = variables[appendMatch[1]];
@@ -578,6 +604,7 @@ export default function App() {
         const trimmed = line.trim();
         if (!trimmed || trimmed.startsWith('#') || trimmed.startsWith('//')) continue;
 
+        // inline: if/elif/else X: action
         const inlineMatch = trimmed.match(/^(if|elif|else)\s*(.*?):\s+(.+)$/);
         if (inlineMatch) {
           const [, kw, cond, action] = inlineMatch;
@@ -594,6 +621,7 @@ export default function App() {
           continue;
         }
 
+        // block: if/elif/else X:\n    body
         const blockMatch = trimmed.match(/^(if|elif|else)\s*(.*?):$/);
         if (blockMatch) {
           const [, kw, cond] = blockMatch;
@@ -618,11 +646,14 @@ export default function App() {
 
       logs.push({ line: '', type: 'divider' });
       logs.push({ line: '>>> Execution completed successfully', type: 'system' });
+
       const varEntries = Object.entries(variables);
       if (varEntries.length > 0) {
         logs.push({ line: '', type: 'divider' });
-        logs.push({ line: '>>> Variable state at exit:', type: 'system' });
-        varEntries.forEach(([k, v]) => logs.push({ line: `    ${k} = ${JSON.stringify(v)}`, type: 'output' }));
+        logs.push({ line: '>>> Variables at exit:', type: 'system' });
+        varEntries.forEach(([k, v]) =>
+          logs.push({ line: `    ${k} = ${JSON.stringify(v)}`, type: 'output' })
+        );
       }
 
       setOutput(logs);
@@ -650,7 +681,6 @@ export default function App() {
   // ── Render ────────────────────────────────────────────────────────────────────
   return (
     <>
-      {/* Portal: renders modal at document.body level, nothing can cover it */}
       {showCommands && createPortal(
         <CommandsModal onClose={() => setShowCommands(false)} />,
         document.body
@@ -672,12 +702,13 @@ export default function App() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            {/* Commands button — always visible */}
             <button
               onClick={() => setShowCommands(true)}
-              className="flex items-center gap-2 text-xs bg-neutral-900 border border-neutral-800 hover:border-emerald-500/40 hover:text-emerald-400 text-neutral-400 rounded-xl px-3 py-2 transition-all"
+              className="flex items-center gap-2 text-xs bg-neutral-900 border border-neutral-800 hover:border-emerald-500/50 hover:text-emerald-400 text-neutral-300 rounded-xl px-3 py-2 transition-all font-medium"
             >
               <BookOpen className="w-3.5 h-3.5" />
-              <span>Commands</span>
+              Commands
             </button>
             <span className="hidden sm:flex items-center text-xs bg-neutral-900 border border-neutral-800 rounded-full px-3 py-1 text-neutral-400">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 mr-1.5" />
@@ -705,7 +736,7 @@ export default function App() {
         </div>
 
         {/* Main Layout */}
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 p-4 overflow-hidden">
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 p-4">
 
           {/* Left Sidebar */}
           <div className="lg:col-span-3 space-y-4 flex flex-col">
@@ -754,7 +785,7 @@ export default function App() {
             </div>
 
             {/* Active Translations */}
-            <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4 flex-1 flex flex-col min-h-0">
+            <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4 flex-1 flex flex-col">
               <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-400 pb-3 mb-3 border-b border-neutral-900 flex items-center">
                 <Sparkles className="w-3.5 h-3.5 mr-1.5 text-emerald-400" />
                 Active Translations
@@ -764,11 +795,11 @@ export default function App() {
                   </span>
                 )}
               </h2>
-              <div className="flex-1 overflow-y-auto space-y-2 pr-0.5">
+              <div className="flex-1 overflow-y-auto space-y-2">
                 {evolvedSyntax.length > 0 ? evolvedSyntax.map((rule, idx) => (
                   <div key={idx} className="bg-neutral-950/40 border border-neutral-900 p-2.5 rounded-xl hover:border-neutral-800 transition-colors">
                     <div className="flex items-center justify-between mb-1">
-                      <code className="text-[11px] text-emerald-400 font-mono bg-neutral-950 px-1.5 py-0.5 rounded border border-neutral-800/80 truncate max-w-[140px]">
+                      <code className="text-[11px] text-emerald-400 font-mono bg-neutral-950 px-1.5 py-0.5 rounded border border-neutral-800/80 truncate max-w-[150px]">
                         {rule.keyword}
                       </code>
                       <span className="text-[9px] text-neutral-600 uppercase font-mono ml-1 flex-shrink-0">matched</span>
@@ -787,7 +818,7 @@ export default function App() {
           {/* Editors */}
           <div className="lg:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-4 min-h-[500px]">
 
-            {/* Input */}
+            {/* Input Editor */}
             <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4 flex flex-col h-full">
               <div className="flex items-center justify-between pb-3 mb-3 border-b border-neutral-900">
                 <div className="flex items-center gap-2">
@@ -796,7 +827,7 @@ export default function App() {
                   <span className="text-[10px] text-neutral-600 font-mono">natural language / python</span>
                 </div>
                 <button
-                  onClick={() => { setCode(''); setOutput(null); }}
+                  onClick={() => { setCode(''); setOutput(null); setActiveExample(-1); }}
                   className="text-neutral-600 hover:text-red-400 transition-colors p-1 rounded"
                   title="Clear"
                 >
@@ -805,7 +836,7 @@ export default function App() {
               </div>
               <textarea
                 className="flex-1 bg-neutral-950/40 border border-neutral-900 rounded-xl p-3.5 text-sm font-mono text-neutral-300 focus:outline-none focus:border-emerald-500/40 resize-none leading-relaxed transition-all placeholder:text-neutral-600"
-                placeholder={`Try writing:\nprint hello world\nmake a variable called x and set it to 10\nif x is greater than 5 then print big\nalternatively then print small\nadd 1 to x`}
+                placeholder={`Try:\nprint hello world\nmake a variable called x and set it to 10\nif x is greater than 5 then print big\nalternatively then print small\nadd 1 to x`}
                 value={code}
                 onChange={e => setCode(e.target.value)}
                 spellCheck={false}
@@ -821,10 +852,10 @@ export default function App() {
               </div>
             </div>
 
-            {/* Right column */}
+            {/* Right Column */}
             <div className="flex flex-col gap-4 h-full">
 
-              {/* Translated Python */}
+              {/* Translated Output */}
               <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4 flex-1 flex flex-col min-h-0">
                 <div className="flex items-center justify-between pb-3 mb-3 border-b border-neutral-900">
                   <div className="flex items-center gap-2">
@@ -841,7 +872,7 @@ export default function App() {
                   </button>
                 </div>
                 <pre className="flex-1 bg-neutral-950/40 border border-neutral-900 rounded-xl p-3.5 text-sm font-mono text-emerald-300/90 overflow-y-auto leading-relaxed select-all min-h-[120px]">
-                  {compiledCode || <span className="text-neutral-600">Waiting for input...</span>}
+                  {compiledCode || <span className="text-neutral-600 not-italic font-sans text-xs">Waiting for input...</span>}
                 </pre>
                 <div className="mt-3 flex justify-end">
                   <button
@@ -856,7 +887,7 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Output */}
+              {/* Execution Output */}
               <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4 flex flex-col" style={{ height: '220px' }}>
                 <div className="flex items-center justify-between pb-3 mb-3 border-b border-neutral-900">
                   <div className="flex items-center gap-2">
@@ -866,17 +897,17 @@ export default function App() {
                   </div>
                   <div className="flex items-center gap-1">
                     {output && (
-                      <button
-                        onClick={() => copyToClipboard(output.filter(l => l.type === 'output').map(l => l.line).join('\n'), 'output')}
-                        className="text-neutral-600 hover:text-neutral-300 transition-colors p-1 rounded"
-                      >
-                        {copiedOutput ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                      </button>
-                    )}
-                    {output && (
-                      <button onClick={() => setOutput(null)} className="text-neutral-600 hover:text-red-400 transition-colors p-1 rounded">
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                      <>
+                        <button
+                          onClick={() => copyToClipboard(output.filter(l => l.type === 'output').map(l => l.line).join('\n'), 'output')}
+                          className="text-neutral-600 hover:text-neutral-300 transition-colors p-1 rounded"
+                        >
+                          {copiedOutput ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                        </button>
+                        <button onClick={() => setOutput(null)} className="text-neutral-600 hover:text-red-400 transition-colors p-1 rounded">
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </>
                     )}
                   </div>
                 </div>
@@ -885,9 +916,9 @@ export default function App() {
                     entry.type === 'divider'
                       ? <div key={idx} className="border-t border-neutral-900 my-1" />
                       : <div key={idx} className={
-                          entry.type === 'system' ? 'text-neutral-600' :
-                          entry.type === 'error' ? 'text-red-400' :
-                          'text-neutral-200'
+                          entry.type === 'system' ? 'text-neutral-600'
+                          : entry.type === 'error' ? 'text-red-400'
+                          : 'text-neutral-200'
                         }>{entry.line}</div>
                   )) : (
                     <div className="text-neutral-600 italic text-center py-4">
