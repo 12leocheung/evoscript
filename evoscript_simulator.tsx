@@ -6,7 +6,6 @@ interface StyleProfile { quotes: string; naming: string; }
 interface SyntaxRule { keyword: string; desc: string; }
 interface Insight { type: 'debt' | 'optimization'; message: string; }
 
-// Rules that are too greedy and cause false positives — skip them entirely
 const BLACKLISTED_RULE_KEYWORDS = new Set([
   'list files in "[path]"',
   'set self.[X] to [Y]',
@@ -14,6 +13,7 @@ const BLACKLISTED_RULE_KEYWORDS = new Set([
   'list files in directory',
   'show files in "[path]"',
   'show directory "[path]"',
+  'add X to Y',        // prevents a.append(5) false positive
 ]);
 
 const getRuleScore = (rule: any): number => {
@@ -45,6 +45,7 @@ show type of b
 print hi
 make a variable called a and set it to 13
 if a is the same as b then print yes
+alternatively if a is not the same as b then print no
 add 5 to a`
   );
   const [compiledCode, setCompiledCode] = useState<string>('');
@@ -70,7 +71,6 @@ add 5 to a`
       let currentEvolvedSyntax: SyntaxRule[] = [];
       let finalCodeLines: string[] = [];
 
-      // Filter out blacklisted rules before sorting
       const rules = isJsonConnected
         ? [...rawRules]
             .filter((r: any) => !BLACKLISTED_RULE_KEYWORDS.has(r.ruleKeyword))
@@ -137,17 +137,52 @@ add 5 to a`
             }
           }
 
-          if (!matched) {
-            if (trimmedLine.match(/^for\s*\(/)) {
-              translatedLine = indent + trimmedLine.replace(
-                /for\s*\(?let|var|int\)?\s*([a-zA-Z_]+)\s*=\s*([^;]+);\s*[^;]+;\s*[^)]+\)?/,
-                'for $1 in range($2, $3)'
-              );
-              if (!currentEvolvedSyntax.some(s => s.keyword === 'for(i=0;i<N;i++)')) {
-                currentEvolvedSyntax.push({ keyword: 'for(i=0;i<N;i++)', desc: 'Translated C-style for-loop.' });
-              }
+          // Fallback: C-style for loop
+          if (!matched && trimmedLine.match(/^for\s*\(/)) {
+            translatedLine = indent + trimmedLine.replace(
+              /for\s*\(?(?:let|var|int)?\s*([a-zA-Z_]+)\s*=\s*([^;]+);\s*[^;]+;\s*[^)]+\)?/,
+              'for $1 in range($2, $3)'
+            );
+            if (!currentEvolvedSyntax.some(s => s.keyword === 'for(i=0;i<N;i++)')) {
+              currentEvolvedSyntax.push({ keyword: 'for(i=0;i<N;i++)', desc: 'Translated C-style for-loop.' });
             }
           }
+
+          // Fallback: "add X to Y" → "Y += X"
+          if (!matched) {
+            const addMatch = trimmedLine.match(/^(?:add|increase|bump up|plus)\s+(.+?)\s+(?:to|onto|into)\s+([a-zA-Z_][a-zA-Z0-9_]*)$/i);
+            if (addMatch) {
+              translatedLine = indent + `${addMatch[2]} += ${addMatch[1]}`;
+              if (!currentEvolvedSyntax.some(s => s.keyword === 'add X to Y (fallback)')) {
+                currentEvolvedSyntax.push({ keyword: 'add X to Y (fallback)', desc: 'Add value to variable.' });
+              }
+              matched = true;
+            }
+          }
+
+          // Fallback: "alternatively/else if X (is not) the same as Y then Z"
+          if (!matched) {
+            const elifMatch = trimmedLine.match(/^(?:alternatively|alternately|else|otherwise)\s+if\s+(.+?)\s+(?:is not the same as|is not equal to|!=|isnt)\s+(.+?)\s+then\s+(.+)$/i);
+            if (elifMatch) {
+              translatedLine = indent + `elif ${elifMatch[1]} != ${elifMatch[2]}: ${elifMatch[3]}`;
+              if (!currentEvolvedSyntax.some(s => s.keyword === 'elif X != Y then Z (fallback)')) {
+                currentEvolvedSyntax.push({ keyword: 'elif X != Y then Z (fallback)', desc: 'Else-if not equal one-liner.' });
+              }
+              matched = true;
+            }
+          }
+
+          if (!matched) {
+            const elifEqMatch = trimmedLine.match(/^(?:alternatively|alternately|else|otherwise)\s+if\s+(.+?)\s+(?:is the same as|is equal to|==)\s+(.+?)\s+then\s+(.+)$/i);
+            if (elifEqMatch) {
+              translatedLine = indent + `elif ${elifEqMatch[1]} == ${elifEqMatch[2]}: ${elifEqMatch[3]}`;
+              if (!currentEvolvedSyntax.some(s => s.keyword === 'elif X == Y then Z (fallback)')) {
+                currentEvolvedSyntax.push({ keyword: 'elif X == Y then Z (fallback)', desc: 'Else-if equal one-liner.' });
+              }
+              matched = true;
+            }
+          }
+
           finalCodeLines.push(translatedLine);
         });
       } else {
@@ -189,8 +224,8 @@ add 5 to a`
     if (expr.includes(' != ')) { const p = expr.split(' != '); return resolveValue(p[0]) != resolveValue(p[1]); }
     if (expr.includes(' >= ')) { const p = expr.split(' >= '); return resolveValue(p[0]) >= resolveValue(p[1]); }
     if (expr.includes(' <= ')) { const p = expr.split(' <= '); return resolveValue(p[0]) <= resolveValue(p[1]); }
-    if (expr.includes(' > ')) { const p = expr.split(' > '); return resolveValue(p[0]) > resolveValue(p[1]); }
-    if (expr.includes(' < ')) { const p = expr.split(' < '); return resolveValue(p[0]) < resolveValue(p[1]); }
+    if (expr.includes(' > '))  { const p = expr.split(' > ');  return resolveValue(p[0]) >  resolveValue(p[1]); }
+    if (expr.includes(' < '))  { const p = expr.split(' < ');  return resolveValue(p[0]) <  resolveValue(p[1]); }
     if (expr.includes(' in ')) {
       const p = expr.split(' in ');
       const el = resolveValue(p[0]);
@@ -216,16 +251,12 @@ add 5 to a`
 
     const resolveExprValue = (valStr: string): any => {
       const str = valStr.trim();
-
-      // Handle type(...) calls
       const typeCallMatch = str.match(/^type\((.+)\)$/);
       if (typeCallMatch) {
         const targetVar = typeCallMatch[1].trim();
         if (targetVar in variables) return getTypeString(variables[targetVar]);
         return `NameError: name '${targetVar}' is not defined`;
       }
-
-      // Handle casts: int(...), float(...), str(...), bool(...)
       const castMatch = str.match(/^(int|float|str|bool)\((.+)\)$/);
       if (castMatch) {
         const inner = resolveExprValue(castMatch[2]);
@@ -234,14 +265,11 @@ add 5 to a`
         if (castMatch[1] === 'str') return String(inner);
         if (castMatch[1] === 'bool') return inner === 'True' || inner === true;
       }
-
-      // Lists/tuples
       if ((str.startsWith('[') && str.endsWith(']')) || (str.startsWith('(') && str.endsWith(')'))) {
         const content = str.slice(1, -1).trim();
         if (!content) return [];
         return content.split(',').map((item: string) => resolveExprValue(item));
       }
-
       if (str in variables) return variables[str];
       if (!isNaN(Number(str))) return Number(str);
       if (str === 'True') return true;
@@ -267,37 +295,24 @@ add 5 to a`
     // Print statements
     if (trimmed.startsWith('print(') || trimmed.startsWith('print ')) {
       let expr = '';
-
       if (trimmed.startsWith('print(')) {
-        // Balanced paren extraction — correctly handles print(type(b))
         const inner = trimmed.slice(6);
         let depth = 1, end = inner.length - 1;
         for (let ci = 0; ci < inner.length; ci++) {
           if (inner[ci] === '(') depth++;
-          else if (inner[ci] === ')') {
-            depth--;
-            if (depth === 0) { end = ci; break; }
-          }
+          else if (inner[ci] === ')') { depth--; if (depth === 0) { end = ci; break; } }
         }
         expr = inner.slice(0, end).trim();
       } else {
         expr = trimmed.slice(6).trim();
       }
-
       if (!expr) return;
-
-      // type() at top level of print
       const typeMatch = expr.match(/^type\((.+)\)$/);
       if (typeMatch) {
         const targetVar = typeMatch[1].trim();
-        if (targetVar in variables) {
-          logs.push(getTypeString(variables[targetVar]));
-        } else {
-          logs.push(`NameError: name '${targetVar}' is not defined`);
-        }
+        logs.push(targetVar in variables ? getTypeString(variables[targetVar]) : `NameError: name '${targetVar}' is not defined`);
         return;
       }
-
       const evaluated = resolveExprValue(expr);
       logs.push(String(evaluated));
       return;
@@ -318,27 +333,33 @@ add 5 to a`
         const trimmed = line.trim();
         if (!trimmed || trimmed.startsWith('#') || trimmed.startsWith('//')) continue;
 
-        if (trimmed.startsWith('if ')) {
-          const ifMatch = trimmed.match(/^if (.+?):\s*(.+)$/);
-          if (ifMatch) {
-            if (evaluateCondition(ifMatch[1].trim(), variables)) {
-              executeSingleStatement(ifMatch[2].trim(), variables, logs);
+        // if / elif / else one-liner: "if ...: action" or "elif ...: action"
+        const inlineCondMatch = trimmed.match(/^(if|elif)\s+(.+?):\s+(.+)$/);
+        if (inlineCondMatch) {
+          const [, keyword, condExpr, action] = inlineCondMatch;
+          if (keyword === 'if' || evaluateCondition(condExpr, variables)) {
+            if (keyword === 'if' && evaluateCondition(condExpr, variables)) {
+              executeSingleStatement(action, variables, logs);
+            } else if (keyword === 'elif' && evaluateCondition(condExpr, variables)) {
+              executeSingleStatement(action, variables, logs);
             }
-            continue;
           }
-          const blockMatch = trimmed.match(/^if (.+?):$/);
-          if (blockMatch) {
-            const conditionMet = evaluateCondition(blockMatch[1].trim(), variables);
-            let j = i + 1;
-            const subLines: string[] = [];
-            while (j < lines.length && (lines[j].startsWith('    ') || lines[j].startsWith('\t') || lines[j].trim() === '')) {
-              if (lines[j].trim()) subLines.push(lines[j].trim());
-              j++;
-            }
-            if (conditionMet) subLines.forEach((s: string) => executeSingleStatement(s, variables, logs));
-            i = j - 1;
-            continue;
+          continue;
+        }
+
+        // Block if/elif
+        const blockCondMatch = trimmed.match(/^(if|elif)\s+(.+?):$/);
+        if (blockCondMatch) {
+          const conditionMet = evaluateCondition(blockCondMatch[2].trim(), variables);
+          let j = i + 1;
+          const subLines: string[] = [];
+          while (j < lines.length && (lines[j].startsWith('    ') || lines[j].startsWith('\t') || lines[j].trim() === '')) {
+            if (lines[j].trim()) subLines.push(lines[j].trim());
+            j++;
           }
+          if (conditionMet) subLines.forEach((s: string) => executeSingleStatement(s, variables, logs));
+          i = j - 1;
+          continue;
         }
 
         executeSingleStatement(trimmed, variables, logs);
