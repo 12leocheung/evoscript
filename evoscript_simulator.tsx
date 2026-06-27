@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Activity, Zap, AlertTriangle, Code2, BrainCircuit, Play,
   Terminal, ShieldCheck, Sparkles, Trash2, Copy, Check, RotateCcw,
@@ -57,7 +58,6 @@ const BLACKLISTED_RULE_KEYWORDS = new Set([
   'subtract X from Y',
 ]);
 
-// Built-in pre-processor commands (shown in the reference modal)
 const BUILTIN_COMMANDS = [
   {
     category: 'Conditionals (pre-processed)',
@@ -152,7 +152,6 @@ const CommandsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       return r.ruleKeyword.toLowerCase().includes(q) || r.desc.toLowerCase().includes(q);
     });
 
-  // Group rules by category (first word of desc or ruleKeyword)
   const grouped: Record<string, RuleEntry[]> = {};
   filteredRules.forEach(r => {
     const cat = r.desc.match(/^([A-Z][a-z]+(?:\s+[a-z]+)?)/)?.[1] ?? 'General';
@@ -169,14 +168,22 @@ const CommandsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     }),
   })).filter(cat => cat.commands.length > 0);
 
+  const totalBuiltin = BUILTIN_COMMANDS.reduce((a, c) => a + c.commands.length, 0);
+  const totalRules = rawRules.filter(r => !BLACKLISTED_RULE_KEYWORDS.has(r.ruleKeyword)).length;
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+      style={{ backgroundColor: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(4px)' }}
+      onClick={onClose}
+    >
       <div
-        className="bg-neutral-950 border border-neutral-800 rounded-2xl w-full max-w-3xl max-h-[85vh] flex flex-col shadow-2xl"
+        className="bg-neutral-950 border border-neutral-800 rounded-2xl w-full max-w-3xl flex flex-col shadow-2xl"
+        style={{ maxHeight: '85vh' }}
         onClick={e => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-900">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-900 flex-shrink-0">
           <div className="flex items-center gap-3">
             <BookOpen className="w-5 h-5 text-emerald-400" />
             <div>
@@ -184,13 +191,16 @@ const CommandsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               <p className="text-[11px] text-neutral-500">All supported EvoScript syntax and alternatives</p>
             </div>
           </div>
-          <button onClick={onClose} className="text-neutral-500 hover:text-neutral-200 transition-colors p-1.5 rounded-lg hover:bg-neutral-900">
+          <button
+            onClick={onClose}
+            className="text-neutral-500 hover:text-neutral-200 transition-colors p-1.5 rounded-lg hover:bg-neutral-900"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Search */}
-        <div className="px-6 py-3 border-b border-neutral-900">
+        <div className="px-6 py-3 border-b border-neutral-900 flex-shrink-0">
           <div className="relative">
             <Search className="w-4 h-4 text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
@@ -198,11 +208,14 @@ const CommandsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               placeholder="Search commands..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full bg-neutral-900 border border-neutral-800 rounded-xl pl-9 pr-4 py-2 text-sm text-neutral-300 placeholder:text-neutral-600 focus:outline-none focus:border-emerald-500/50 transition-colors"
+              className="w-full bg-neutral-900 border border-neutral-800 rounded-xl pl-9 pr-9 py-2 text-sm text-neutral-300 placeholder:text-neutral-600 focus:outline-none focus:border-emerald-500/50 transition-colors"
               autoFocus
             />
             {search && (
-              <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300">
+              <button
+                onClick={() => setSearch('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300"
+              >
                 <X className="w-3.5 h-3.5" />
               </button>
             )}
@@ -210,10 +223,10 @@ const CommandsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-neutral-900 px-6">
+        <div className="flex border-b border-neutral-900 px-6 flex-shrink-0">
           {[
-            { key: 'builtin', label: 'Built-in Patterns', count: BUILTIN_COMMANDS.reduce((a, c) => a + c.commands.length, 0) },
-            { key: 'rules', label: 'rules.json', count: rawRules.filter(r => !BLACKLISTED_RULE_KEYWORDS.has(r.ruleKeyword)).length },
+            { key: 'builtin', label: 'Built-in Patterns', count: totalBuiltin },
+            { key: 'rules', label: 'rules.json', count: totalRules },
           ].map(tab => (
             <button
               key={tab.key}
@@ -234,20 +247,20 @@ const CommandsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           ))}
         </div>
 
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6">
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6 min-h-0">
           {activeTab === 'builtin' ? (
             filteredBuiltins.length > 0 ? filteredBuiltins.map((cat, ci) => (
               <div key={ci}>
                 <h3 className="text-[11px] font-semibold uppercase tracking-widest text-neutral-500 mb-3 flex items-center gap-2">
-                  <span className="w-4 h-px bg-neutral-800" />
+                  <span className="w-4 h-px bg-neutral-800 flex-shrink-0" />
                   {cat.category}
-                  <span className="w-full h-px bg-neutral-900" />
+                  <span className="flex-1 h-px bg-neutral-900" />
                 </h3>
                 <div className="space-y-2">
                   {cat.commands.map((cmd, i) => (
                     <div key={i} className="bg-neutral-900/50 border border-neutral-900 rounded-xl p-3.5 hover:border-neutral-800 transition-colors">
-                      <div className="flex items-start justify-between gap-4 mb-2">
+                      <div className="flex items-start justify-between gap-4 mb-2 flex-wrap">
                         <code className="text-sm text-emerald-400 font-mono leading-relaxed">{cmd.keyword}</code>
                         <span className="text-xs text-neutral-400 font-mono bg-neutral-950 border border-neutral-800 px-2 py-0.5 rounded-lg whitespace-nowrap flex-shrink-0">
                           → {cmd.desc}
@@ -262,13 +275,13 @@ const CommandsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 </div>
               </div>
             )) : (
-              <div className="text-center py-12 text-neutral-600 text-sm">No built-in commands match "{search}"</div>
+              <div className="text-center py-16 text-neutral-600 text-sm">No built-in commands match "{search}"</div>
             )
           ) : (
             Object.keys(grouped).length > 0 ? Object.entries(grouped).map(([cat, rules]) => (
               <div key={cat}>
                 <h3 className="text-[11px] font-semibold uppercase tracking-widest text-neutral-500 mb-3 flex items-center gap-2">
-                  <span className="w-4 h-px bg-neutral-800" />
+                  <span className="w-4 h-px bg-neutral-800 flex-shrink-0" />
                   {cat}
                   <span className="text-[10px] text-neutral-700 font-mono normal-case tracking-normal">({rules.length})</span>
                   <span className="flex-1 h-px bg-neutral-900" />
@@ -276,33 +289,30 @@ const CommandsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 <div className="space-y-2">
                   {rules.map((rule, i) => (
                     <div key={i} className="bg-neutral-900/50 border border-neutral-900 rounded-xl p-3.5 hover:border-neutral-800 transition-colors">
-                      <div className="flex items-start justify-between gap-4 mb-1.5">
-                        <code className="text-sm text-emerald-400 font-mono">{rule.ruleKeyword}</code>
-                      </div>
-                      <p className="text-[11px] text-neutral-500 leading-relaxed">{rule.desc}</p>
-                      <div className="mt-2 flex items-center gap-2">
-                        <span className="text-[10px] text-neutral-600 font-mono bg-neutral-950 border border-neutral-900 px-2 py-0.5 rounded">
-                          → {rule.replace.replace(/\t/g, ' ').slice(0, 60)}{rule.replace.length > 60 ? '…' : ''}
-                        </span>
-                      </div>
+                      <code className="text-sm text-emerald-400 font-mono block mb-1.5">{rule.ruleKeyword}</code>
+                      <p className="text-[11px] text-neutral-500 leading-relaxed mb-2">{rule.desc}</p>
+                      <span className="text-[10px] text-neutral-600 font-mono bg-neutral-950 border border-neutral-900 px-2 py-0.5 rounded inline-block">
+                        → {rule.replace.replace(/\t/g, ' ').slice(0, 80)}{rule.replace.length > 80 ? '…' : ''}
+                      </span>
                     </div>
                   ))}
                 </div>
               </div>
             )) : (
-              <div className="text-center py-12 text-neutral-600 text-sm">No rules match "{search}"</div>
+              <div className="text-center py-16 text-neutral-600 text-sm">No rules match "{search}"</div>
             )
           )}
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-3 border-t border-neutral-900 flex items-center justify-between">
+        <div className="px-6 py-3 border-t border-neutral-900 flex items-center justify-between flex-shrink-0">
           <p className="text-[11px] text-neutral-600">
-            {activeTab === 'builtin'
-              ? `${BUILTIN_COMMANDS.reduce((a, c) => a + c.commands.length, 0)} built-in patterns`
-              : `${rawRules.filter(r => !BLACKLISTED_RULE_KEYWORDS.has(r.ruleKeyword)).length} rules from rules.json`}
+            {activeTab === 'builtin' ? `${totalBuiltin} built-in patterns` : `${totalRules} rules loaded from rules.json`}
           </p>
-          <button onClick={onClose} className="text-xs text-neutral-500 hover:text-neutral-300 transition-colors border border-neutral-800 hover:border-neutral-700 px-3 py-1.5 rounded-lg">
+          <button
+            onClick={onClose}
+            className="text-xs text-neutral-500 hover:text-neutral-300 transition-colors border border-neutral-800 hover:border-neutral-700 px-3 py-1.5 rounded-lg"
+          >
             Close
           </button>
         </div>
@@ -327,6 +337,7 @@ export default function App() {
   const [showCommands, setShowCommands] = useState(false);
   const outputRef = useRef<HTMLDivElement>(null);
 
+  // ── Translation Engine ──────────────────────────────────────────────────────
   const analyzeWithHeuristics = (rawCode: string) => {
     setIsAnalyzing(true);
     const rawRules = Array.isArray(syntaxRulesJSON) ? syntaxRulesJSON : (syntaxRulesJSON as any)?.default;
@@ -442,6 +453,7 @@ export default function App() {
     return () => clearTimeout(t);
   }, [code]);
 
+  // ── Executor ─────────────────────────────────────────────────────────────────
   const getTypeString = (val: any): string => {
     if (val === null || val === undefined) return "<class 'NoneType'>";
     if (typeof val === 'boolean') return "<class 'bool'>";
@@ -527,8 +539,7 @@ export default function App() {
       }
       if (!expr) return;
       const val = resolveValue(expr, variables);
-      const isErr = typeof val === 'string' && val.startsWith('NameError');
-      logs.push({ line: String(val), type: isErr ? 'error' : 'output' });
+      logs.push({ line: String(val), type: typeof val === 'string' && val.startsWith('NameError') ? 'error' : 'output' });
       return;
     }
     const opMatch = t.match(/^([a-zA-Z_][a-zA-Z0-9_]*)\s*(\+=|-=|\*=|\/=|%=|:=|=)\s*(.+)$/);
@@ -607,7 +618,6 @@ export default function App() {
 
       logs.push({ line: '', type: 'divider' });
       logs.push({ line: '>>> Execution completed successfully', type: 'system' });
-
       const varEntries = Object.entries(variables);
       if (varEntries.length > 0) {
         logs.push({ line: '', type: 'divider' });
@@ -637,9 +647,14 @@ export default function App() {
   const lineCount = code.split('\n').length;
   const outputLineCount = output?.filter(l => l.type === 'output').length ?? 0;
 
+  // ── Render ────────────────────────────────────────────────────────────────────
   return (
     <>
-      {showCommands && <CommandsModal onClose={() => setShowCommands(false)} />}
+      {/* Portal: renders modal at document.body level, nothing can cover it */}
+      {showCommands && createPortal(
+        <CommandsModal onClose={() => setShowCommands(false)} />,
+        document.body
+      )}
 
       <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col font-sans">
 
@@ -657,13 +672,12 @@ export default function App() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {/* Commands Reference Button */}
             <button
               onClick={() => setShowCommands(true)}
               className="flex items-center gap-2 text-xs bg-neutral-900 border border-neutral-800 hover:border-emerald-500/40 hover:text-emerald-400 text-neutral-400 rounded-xl px-3 py-2 transition-all"
             >
               <BookOpen className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Commands</span>
+              <span>Commands</span>
             </button>
             <span className="hidden sm:flex items-center text-xs bg-neutral-900 border border-neutral-800 rounded-full px-3 py-1 text-neutral-400">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 mr-1.5" />
@@ -693,8 +707,10 @@ export default function App() {
         {/* Main Layout */}
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 p-4 overflow-hidden">
 
-          {/* Left sidebar */}
+          {/* Left Sidebar */}
           <div className="lg:col-span-3 space-y-4 flex flex-col">
+
+            {/* Style Profile */}
             <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4">
               <div className="flex items-center justify-between pb-3 mb-3 border-b border-neutral-900">
                 <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-400 flex items-center">
@@ -712,6 +728,7 @@ export default function App() {
               </div>
             </div>
 
+            {/* Insights */}
             <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4">
               <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-400 pb-3 mb-3 border-b border-neutral-900 flex items-center">
                 <Zap className="w-3.5 h-3.5 mr-1.5 text-emerald-400" />Insights
@@ -724,7 +741,9 @@ export default function App() {
                       : ins.type === 'info' ? 'bg-blue-950/10 border-blue-900/30 text-blue-300'
                       : 'bg-emerald-950/10 border-emerald-900/30 text-emerald-300'
                     }`}>
-                      {ins.type === 'debt' ? <AlertTriangle className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" /> : <Zap className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />}
+                      {ins.type === 'debt'
+                        ? <AlertTriangle className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
+                        : <Zap className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />}
                       {ins.message}
                     </div>
                   ))}
@@ -734,6 +753,7 @@ export default function App() {
               )}
             </div>
 
+            {/* Active Translations */}
             <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4 flex-1 flex flex-col min-h-0">
               <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-400 pb-3 mb-3 border-b border-neutral-900 flex items-center">
                 <Sparkles className="w-3.5 h-3.5 mr-1.5 text-emerald-400" />
@@ -766,6 +786,8 @@ export default function App() {
 
           {/* Editors */}
           <div className="lg:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-4 min-h-[500px]">
+
+            {/* Input */}
             <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4 flex flex-col h-full">
               <div className="flex items-center justify-between pb-3 mb-3 border-b border-neutral-900">
                 <div className="flex items-center gap-2">
@@ -773,7 +795,11 @@ export default function App() {
                   <span className="text-sm font-medium text-neutral-300">Input</span>
                   <span className="text-[10px] text-neutral-600 font-mono">natural language / python</span>
                 </div>
-                <button onClick={() => { setCode(''); setOutput(null); }} className="text-neutral-600 hover:text-red-400 transition-colors p-1 rounded" title="Clear">
+                <button
+                  onClick={() => { setCode(''); setOutput(null); }}
+                  className="text-neutral-600 hover:text-red-400 transition-colors p-1 rounded"
+                  title="Clear"
+                >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -795,7 +821,10 @@ export default function App() {
               </div>
             </div>
 
+            {/* Right column */}
             <div className="flex flex-col gap-4 h-full">
+
+              {/* Translated Python */}
               <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4 flex-1 flex flex-col min-h-0">
                 <div className="flex items-center justify-between pb-3 mb-3 border-b border-neutral-900">
                   <div className="flex items-center gap-2">
@@ -803,7 +832,11 @@ export default function App() {
                     <span className="text-sm font-medium text-neutral-300">Translated Python</span>
                     {isAnalyzing && <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />}
                   </div>
-                  <button onClick={() => copyToClipboard(compiledCode, 'compiled')} className="text-neutral-600 hover:text-neutral-300 transition-colors p-1 rounded" title="Copy">
+                  <button
+                    onClick={() => copyToClipboard(compiledCode, 'compiled')}
+                    className="text-neutral-600 hover:text-neutral-300 transition-colors p-1 rounded"
+                    title="Copy"
+                  >
                     {copiedCompiled ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                   </button>
                 </div>
@@ -823,6 +856,7 @@ export default function App() {
                 </div>
               </div>
 
+              {/* Output */}
               <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4 flex flex-col" style={{ height: '220px' }}>
                 <div className="flex items-center justify-between pb-3 mb-3 border-b border-neutral-900">
                   <div className="flex items-center gap-2">
@@ -830,9 +864,12 @@ export default function App() {
                     <span className="text-xs font-semibold uppercase tracking-wider text-neutral-400">Output</span>
                     {output && <span className="text-[10px] text-neutral-600 font-mono">{outputLineCount} line{outputLineCount !== 1 ? 's' : ''}</span>}
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
                     {output && (
-                      <button onClick={() => copyToClipboard(output.filter(l => l.type === 'output').map(l => l.line).join('\n'), 'output')} className="text-neutral-600 hover:text-neutral-300 transition-colors p-1 rounded">
+                      <button
+                        onClick={() => copyToClipboard(output.filter(l => l.type === 'output').map(l => l.line).join('\n'), 'output')}
+                        className="text-neutral-600 hover:text-neutral-300 transition-colors p-1 rounded"
+                      >
                         {copiedOutput ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                       </button>
                     )}
