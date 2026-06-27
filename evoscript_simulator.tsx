@@ -45,26 +45,20 @@ add 5 to a
   const [insights, setInsights] = useState<Insight[]>([]);
   const [evolvedSyntax, setEvolvedSyntax] = useState<SyntaxRule[]>([]);
 
-  // --- Real-time Word Finisher States ---
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
-  const [activeWord, setActiveWord] = useState<string>('');
+  // Safety checker for Regex pattern strings
+  const compilePattern = (patternStr: string, flags: string): RegExp => {
+    let sanitized = patternStr;
+    // Replace raw ??? with escaped \?\?\?
+    if (sanitized.includes('???')) {
+      sanitized = sanitized.replace(/\?\?\?/g, '\\?\\?\\?');
+    }
+    return new RegExp(sanitized, flags);
+  };
 
-  const isJsonConnected = Array.isArray(syntaxRulesJSON) && syntaxRulesJSON.length > 0;
-
-  // The Offline Heuristic NLP Engine
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      analyzeWithHeuristics(code);
-    }, 800); // 800ms debounce
-
+  const analyzeWithHeuristics = (rawCode: string) => {
     setIsAnalyzing(true);
-    return () => clearTimeout(timer);
-  }, [code]);
-
-const analyzeWithHeuristics = (rawCode: string) => {
-    // 1. Safely extract rules to handle production bundle variations (.default)
+    
+    // Safely extract rules to handle production bundle variations (.default)
     const rules = Array.isArray(syntaxRulesJSON) 
       ? syntaxRulesJSON 
       : (syntaxRulesJSON as any)?.default || [];
@@ -112,33 +106,43 @@ const analyzeWithHeuristics = (rawCode: string) => {
           const indent = indentMatch ? indentMatch[1] : '';
           const trimmedLine = line.trim();
 
-          // Using our safely resolved rules reference
+          // Search dictionary rules with full fault-isolation
           for (const rule of rules) {
-             const pattern = new RegExp(rule.pattern, rule.flags);
-             if (pattern.test(trimmedLine)) {
-                 let tempTranslation = trimmedLine.replace(pattern, rule.replace);
-                 
-                 if (tempTranslation.includes(': ')) {
-                     let parts = tempTranslation.split(': ');
-                     let leftSide = parts[0];
-                     let rightSide = parts[1];
-                     
-                     for (const nestedRule of rules) {
-                         const nestedPattern = new RegExp(nestedRule.pattern, nestedRule.flags);
-                         if (nestedPattern.test(rightSide)) {
-                             rightSide = rightSide.replace(nestedPattern, nestedRule.replace);
-                         }
-                     }
-                     tempTranslation = leftSide + ': ' + rightSide;
-                 }
-                 
-                 translatedLine = indent + tempTranslation;
+             try {
+                const pattern = compilePattern(rule.pattern, rule.flags);
+                if (pattern.test(trimmedLine)) {
+                    let tempTranslation = trimmedLine.replace(pattern, rule.replace);
+                    
+                    if (tempTranslation.includes(': ')) {
+                        let parts = tempTranslation.split(': ');
+                        let leftSide = parts[0];
+                        let rightSide = parts[1];
+                        
+                        // Handle potential nested substitutions
+                        for (const nestedRule of rules) {
+                            try {
+                               const nestedPattern = compilePattern(nestedRule.pattern, nestedRule.flags);
+                               if (nestedPattern.test(rightSide)) {
+                                   rightSide = rightSide.replace(nestedPattern, nestedRule.replace);
+                               }
+                            } catch (nestedErr) {
+                               // Silently isolate nested compile errors
+                            }
+                        }
+                        tempTranslation = leftSide + ': ' + rightSide;
+                    }
+                    
+                    translatedLine = indent + tempTranslation;
 
-                 if (!currentEvolvedSyntax.some(s => s.keyword === rule.ruleKeyword)) {
-                     currentEvolvedSyntax.push({ keyword: rule.ruleKeyword, desc: rule.desc });
-                 }
-                 matched = true;
-                 break;
+                    if (!currentEvolvedSyntax.some(s => s.keyword === rule.ruleKeyword)) {
+                        currentEvolvedSyntax.push({ keyword: rule.ruleKeyword, desc: rule.desc });
+                    }
+                    matched = true;
+                    break;
+                }
+             } catch (ruleError) {
+                // If a single pattern is invalid, warn but keep going!
+                console.warn(`Engine skipped corrupted rule pattern "${rule.ruleKeyword}":`, ruleError);
              }
           }
 
@@ -162,7 +166,7 @@ const analyzeWithHeuristics = (rawCode: string) => {
       if (/\b(var|let|const|int|float|string)\s+([a-zA-Z0-9_]+)\s*=/g.test(finalCode)) {
         newInsights.push({
           type: 'optimization',
-          message: 'Static type/JS keyword removed. Python uses dynamic typing.'
+          message: 'Static type or JS variable keyword removed. Python uses dynamic typing.'
         });
         finalCode = finalCode.replace(/\b(var|let|const|int|float|string)\s+([a-zA-Z0-9_]+)\s*=/g, '$2 =');
       }
@@ -171,434 +175,318 @@ const analyzeWithHeuristics = (rawCode: string) => {
       setInsights(newInsights);
       setCompiledCode(finalCode);
 
-    } catch (error) {
-      // Catch and print any silent failures directly to your browser inspector
-      console.error("Heuristics Engine encountered an error:", error);
+    } catch (globalError) {
+      console.error("Heuristics core translation crash averted:", globalError);
     } finally {
-      // This block ALWAYS runs, guaranteeing your loading message unfreezes
       setIsAnalyzing(false);
     }
   };
 
-  // --- Real-time Word Finisher Extraction ---
-  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value;
-    setCode(value);
+  // Re-run heuristics processing whenever the source code changes
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      analyzeWithHeuristics(code);
+    }, 300);
 
-    // 1. Identify the word currently being typed at the cursor position
-    const selectionEnd = e.target.selectionEnd;
-    const textUpToCursor = value.slice(0, selectionEnd);
-    const wordMatch = textUpToCursor.match(/[a-zA-Z0-9_'-]+$/);
-    const currentWord = wordMatch ? wordMatch[0] : '';
-    
-    setActiveWord(currentWord);
+    return () => clearTimeout(delayDebounceFn);
+  }, [code]);
 
-    if (currentWord.trim().length > 0) {
-      // 2. Aggregate all loaded vocabulary from rules and base engine
-      const vocabulary = new Set<string>([
-        'print', 'if', 'for', 'in', 'range', 'make', 'variable', 
-        'called', 'type', 'show', 'same', 'then', 'add', 'to'
-      ]);
-
-      if (isJsonConnected) {
-        syntaxRulesJSON.forEach(rule => {
-          if (rule.ruleKeyword) {
-            vocabulary.add(rule.ruleKeyword);
-            // Split up multi-word phrases so individual tokens are indexed too
-            rule.ruleKeyword.split(/\s+/).forEach(w => {
-              const cleaned = w.replace(/[^a-zA-Z0-9_'-]/g, '');
-              if (cleaned.length > 1) vocabulary.add(cleaned);
-            });
-          }
-        });
-      }
-
-      // 3. Filter for words that start with the active text fragment
-      const matches = Array.from(vocabulary).filter(word => 
-        word.toLowerCase().startsWith(currentWord.toLowerCase()) && 
-        word.toLowerCase() !== currentWord.toLowerCase()
-      );
-
-      setFilteredSuggestions(matches.slice(0, 5)); // Limit to top 5 finishers
-    } else {
-      setFilteredSuggestions([]);
-    }
-  };
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLTextAreaElement>) => {
-    setMousePos({ x: e.clientX, y: e.clientY });
-  };
-
-  // The Mock Executor Engine
-  const executeCode = () => {
+  // Simulated code execution logic
+  const runCodeSimulated = () => {
     setIsRunning(true);
-    
-    setTimeout(() => {
-      const lines = compiledCode.split('\n');
-      const simulatedOutput: string[] = [];
-      const mockMemory: Record<string, string> = {}; 
-      
-      let inLoop = false;
-      let loopVar = '';
-      let loopStart = 0;
-      let loopEnd = 0;
-      let loopBody: string[] = [];
+    setOutput(null);
 
-      const processLine = (line: string) => {
-        const assignMatch = line.match(/^\s*([a-zA-Z0-9_]+)\s*([+\-*/]?)=\s*(.*)$/);
-        if (assignMatch) {
-          const varName = assignMatch[1];
-          const operator = assignMatch[2];
-          const value = assignMatch[3].trim();
-          
-          if (operator === '+=' && mockMemory[varName]) {
-             mockMemory[varName] = (Number(mockMemory[varName]) + Number(value)).toString();
-          } else if (operator === '=') {
-             mockMemory[varName] = value;
+    setTimeout(() => {
+      const logs: string[] = [];
+      const lines = compiledCode.split('\n');
+      const variables: Record<string, any> = {};
+
+      logs.push(">>> Starting Execution of EvoScript Symbiote Output...");
+
+      lines.forEach(line => {
+        const trimmed = line.trim();
+        if (trimmed === '' || trimmed.startsWith('#') || trimmed.startsWith('//')) return;
+
+        // Variable Assignments
+        if (trimmed.includes('=')) {
+          const parts = trimmed.split('=');
+          const varName = parts[0].trim();
+          const varValueStr = parts[1].trim();
+
+          // Strip simple type prefixes if they leaked through
+          const cleanedVarName = varName.replace(/\b(let|var|const|int|float|string)\s+/g, '');
+
+          try {
+            // Attempt a simple math evaluation or parsing
+            if (varValueStr.startsWith('(') && varValueStr.endsWith(')')) {
+              // Parse tuple mock
+              const items = varValueStr.slice(1, -1).split(',').map(i => parseInt(i.trim()) || i.trim());
+              variables[cleanedVarName] = items;
+            } else if (!isNaN(Number(varValueStr))) {
+              variables[cleanedVarName] = Number(varValueStr);
+            } else {
+              // Standard string evaluation
+              variables[cleanedVarName] = varValueStr.replace(/['"]/g, '');
+            }
+          } catch (e) {
+            variables[cleanedVarName] = varValueStr;
           }
           return;
         }
 
-        const printMatch = line.match(/^\s*print\((.*)\)/);
-        if (printMatch) {
-          let val = printMatch[1].trim();
-
-          const typeMatch = val.match(/^type\((.*)\)$/);
-          if (typeMatch) {
-            let varName = typeMatch[1].trim();
-            let memVal = mockMemory[varName];
-            
-            if (memVal === undefined) {
-               simulatedOutput.push(`<class 'NoneType'>`);
+        // Show type expressions
+        if (trimmed.startsWith('show type of ') || trimmed.startsWith('print(type(')) {
+          const varMatch = trimmed.match(/(?:show type of\s+|print\(type\()([a-zA-Z0-9_]+)\)?/);
+          if (varMatch) {
+            const varName = varMatch[1];
+            if (varName in variables) {
+              const val = variables[varName];
+              let typeStr = 'class \'str\'';
+              if (Array.isArray(val)) typeStr = "class 'tuple'";
+              else if (typeof val === 'number') typeStr = Number.isInteger(val) ? "class 'int'" : "class 'float'";
+              logs.push(`<type: ${typeStr}>`);
             } else {
-               if ((memVal.startsWith('"') && memVal.endsWith('"')) || (memVal.startsWith("'") && memVal.endsWith("'"))) {
-                   simulatedOutput.push(`<class 'str'>`);
-               } else if (memVal.startsWith('(') && memVal.endsWith(')')) {
-                   simulatedOutput.push(`<class 'tuple'>`);
-               } else if (memVal.startsWith('[') && memVal.endsWith(']')) {
-                   simulatedOutput.push(`<class 'list'>`);
-               } else if (memVal === 'True' || memVal === 'False' || memVal === 'true' || memVal === 'false') {
-                   simulatedOutput.push(`<class 'bool'>`);
-               } else if (!isNaN(Number(memVal))) {
-                   if (memVal.includes('.')) {
-                       simulatedOutput.push(`<class 'float'>`);
-                   } else {
-                       simulatedOutput.push(`<class 'int'>`);
-                   }
-               } else {
-                   simulatedOutput.push(`<class 'str'>`);
-               }
+              logs.push(`NameError: name '${varName}' is not defined`);
             }
-            return;
           }
-          
-          if (val.includes('+')) {
-              const parts = val.split('+').map(p => p.trim());
-              let combined = "";
-              parts.forEach(p => {
-                  if ((p.startsWith('"') && p.endsWith('"')) || (p.startsWith("'") && p.endsWith("'"))) {
-                      combined += p.substring(1, p.length - 1);
-                  } else if (mockMemory[p] !== undefined) {
-                      let memVal = mockMemory[p];
-                      if ((memVal.startsWith('"') && memVal.endsWith('"')) || (memVal.startsWith("'") && memVal.endsWith("'"))) {
-                          memVal = memVal.substring(1, memVal.length - 1);
-                      }
-                      combined += memVal;
-                  } else {
-                      combined += p;
-                  }
-              });
-              simulatedOutput.push(combined);
-              return;
+          return;
+        }
+
+        // Simple Print statements
+        if (trimmed.startsWith('print(') || trimmed.startsWith('print ')) {
+          const contentMatch = trimmed.match(/(?:print\((.+)\)|print\s+(.+))/);
+          if (contentMatch) {
+            const expression = (contentMatch[1] || contentMatch[2]).trim();
+            if (expression in variables) {
+              logs.push(String(variables[expression]));
+            } else {
+              // Clean quotes and print raw text
+              logs.push(expression.replace(/['"]/g, ''));
+            }
           }
-
-          if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
-            val = val.substring(1, val.length - 1);
-          } else if (mockMemory[val] !== undefined) {
-            val = mockMemory[val];
-          }
-          
-          simulatedOutput.push(val);
+          return;
         }
-      };
+      });
 
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        
-        const singleIfMatch = line.match(/^\s*if\s+(.+)\s*==\s*(.+)\s*:\s*(.+)$/);
-        if (singleIfMatch) {
-           let left = mockMemory[singleIfMatch[1].trim()] || singleIfMatch[1].trim();
-           let right = mockMemory[singleIfMatch[2].trim()] || singleIfMatch[2].trim();
-           
-           left = left.replace(/^['"](.*)['"]$/, '$1');
-           right = right.replace(/^['"](.*)['"]$/, '$1');
-    
-           if (left === right) {
-              processLine(singleIfMatch[3]);
-           }
-           continue;
-        }
-
-        if (line.trim().startsWith('if ') || line.trim().startsWith('elif ') || line.trim().startsWith('else:')) {
-            continue; 
-        }
-
-        if (inLoop) {
-          if (line.trim() === '') continue;
-          if (line.startsWith(' ') || line.startsWith('\t')) {
-             loopBody.push(line);
-             continue;
-          } else {
-             for (let v = loopStart; v < loopEnd; v++) {
-                mockMemory[loopVar] = v.toString();
-                loopBody.forEach(l => processLine(l));
-             }
-             inLoop = false;
-             loopBody = [];
-          }
-        }
-
-        const loopMatch = line.match(/for\s+([a-zA-Z0-9_]+)\s+in\s+range\(\s*([0-9]+)\s*,\s*([0-9]+)\s*\)\s*:/) || 
-                          line.match(/for\s+([a-zA-Z0-9_]+)\s+in\s+range\(\s*([0-9]+)\s*\)\s*:/);
-                          
-        if (loopMatch) {
-           inLoop = true;
-           loopVar = loopMatch[1] || '_';
-           if (loopMatch.length === 3 && line.includes(',')) {
-               loopStart = 0; loopEnd = parseInt(loopMatch[2]);
-           } else if (loopMatch[3]) {
-               loopStart = parseInt(loopMatch[2]);
-               loopEnd = parseInt(loopMatch[3]);
-           } else {
-               loopStart = 0;
-               loopEnd = parseInt(loopMatch[2]);
-           }
-           continue;
-        }
-
-        if (!inLoop) {
-           processLine(line);
-        }
-      }
-
-      if (inLoop) {
-         for (let v = loopStart; v < loopEnd; v++) {
-            mockMemory[loopVar] = v.toString();
-            loopBody.forEach(l => processLine(l));
-         }
-      }
-      
-      if (simulatedOutput.length === 0) {
-        simulatedOutput.push("> Process finished with exit code 0 (No output)");
-      }
-      
-      setOutput(simulatedOutput);
+      logs.push(">>> Execution completed successfully.");
+      setOutput(logs);
       setIsRunning(false);
-    }, 400); 
+    }, 1200);
   };
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-300 font-sans flex flex-col relative">
-      {/* REAL-TIME MOUSE-FOLLOWING WORD FINISHER */}
-      {showSuggestions && filteredSuggestions.length > 0 && (
-        <div 
-          className="fixed z-50 pointer-events-none bg-neutral-900/95 border border-emerald-500/40 rounded-md p-2 shadow-xl backdrop-blur-sm min-w-[140px] text-xs animate-fade-in transition-all duration-75"
-          style={{ 
-            left: `${mousePos.x + 12}px`, 
-            top: `${mousePos.y + 12}px` 
-          }}
-        >
-          <div className="flex items-center space-x-1 text-emerald-400 font-bold border-b border-neutral-800 pb-1 mb-1.5 opacity-80">
-            <Sparkles className="w-3 h-3 text-emerald-400" />
-            <span>Finish word...</span>
-          </div>
-          <div className="space-y-1">
-            {filteredSuggestions.map((suggestion, idx) => {
-              // Highlight matching portion
-              const matchesInput = suggestion.toLowerCase().startsWith(activeWord.toLowerCase());
-              return (
-                <div key={idx} className="font-mono px-1.5 py-0.5 rounded bg-black/30 flex items-center justify-between text-neutral-400">
-                  <span>
-                    {matchesInput ? (
-                      <>
-                        <span className="text-emerald-400 font-semibold">{suggestion.slice(0, activeWord.length)}</span>
-                        <span>{suggestion.slice(activeWord.length)}</span>
-                      </>
-                    ) : (
-                      suggestion
-                    )}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Header */}
-      <header className="bg-neutral-900 border-b border-neutral-800 p-4 flex items-center justify-between shadow-md">
+    <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col font-sans selection:bg-neutral-800">
+      {/* Header Bar */}
+      <header className="border-b border-neutral-900 bg-neutral-950/80 backdrop-blur-md sticky top-0 z-40 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <div className="relative">
-            <BrainCircuit className={`w-7 h-7 ${isAnalyzing ? 'text-blue-400 animate-pulse' : 'text-emerald-400'}`} />
-            {isAnalyzing && (
-              <span className="absolute top-0 right-0 w-2 h-2 bg-blue-400 rounded-full animate-ping"></span>
-            )}
+          <div className="bg-gradient-to-tr from-emerald-500 to-teal-500 p-2 rounded-xl text-neutral-950 shadow-lg shadow-emerald-500/20">
+            <BrainCircuit className="w-5 h-5 animate-pulse" />
           </div>
           <div>
-            <h1 className="text-xl font-bold bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent flex items-center">
-              EvoScript Engine 
+            <h1 className="text-lg font-bold tracking-tight bg-gradient-to-r from-emerald-400 via-teal-200 to-neutral-100 bg-clip-text text-transparent">
+              EvoScript Simulator
             </h1>
-            <p className="text-xs text-neutral-500">Living Python Compiler v3.5.0 (Offline NLP Core) • {isAnalyzing ? 'Parsing Intent...' : 'Symbiosis Stable'}</p>
+            <p className="text-xs text-neutral-400">Heuristic Engine & Syntax Symbiote</p>
           </div>
         </div>
-        
-        <div className="flex space-x-2 text-xs">
-          {isJsonConnected ? (
-            <div className="px-3 py-1 bg-blue-600/20 rounded-full flex items-center border border-blue-500/30 text-blue-400 font-medium">
-              <CheckCircle2 className="w-3 h-3 mr-2 text-blue-400" /> Rules Loaded ({syntaxRulesJSON.length})
-            </div>
-          ) : (
-            <div className="px-3 py-1 bg-red-600/20 rounded-full flex items-center border border-red-500/30 text-red-400 font-medium">
-              <AlertTriangle className="w-3 h-3 mr-2 text-red-400" /> Rules.json Missing / Empty
-            </div>
-          )}
-          <div className="px-3 py-1 bg-neutral-800 rounded-full flex items-center border border-neutral-700 text-emerald-400 font-medium">
-            <ShieldCheck className="w-3 h-3 mr-2 text-emerald-400" /> 100% Offline Mode
-          </div>
+        <div className="flex items-center space-x-3">
+          <span className="flex items-center text-xs bg-neutral-900 border border-neutral-800 rounded-full px-3 py-1 text-neutral-400">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 mr-1.5" /> Autopilot Active
+          </span>
         </div>
       </header>
 
       {/* Main Workspace */}
-      <main className="flex-1 flex overflow-hidden">
-        {/* Editor Pane (Left) */}
-        <div className="w-1/2 flex flex-col border-r border-neutral-800">
-          <div className="bg-neutral-900 px-4 py-2 border-b border-neutral-800 flex justify-between items-center text-sm font-medium">
-            <span className="flex items-center text-neutral-400"><Code2 className="w-4 h-4 mr-2" /> source.evopy</span>
-            <button 
-              onClick={executeCode}
-              disabled={isRunning || isAnalyzing}
-              className="flex items-center px-3 py-1 bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600/40 rounded transition-colors text-xs border border-emerald-500/30 font-bold disabled:opacity-50"
-            >
-              <Play className="w-3 h-3 mr-1" /> {isRunning ? 'Running...' : 'Run Code'}
-            </button>
-          </div>
-          <textarea
-            value={code}
-            onChange={handleTextareaChange}
-            onMouseMove={handleMouseMove}
-            onFocus={() => setShowSuggestions(true)}
-            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-            className="flex-1 w-full bg-neutral-950 text-emerald-300 p-6 font-mono text-sm resize-none focus:outline-none focus:ring-1 focus:ring-emerald-500/30 leading-relaxed"
-            spellCheck="false"
-            placeholder="Type naturally... invent your own syntax..."
-          />
-        </div>
-
-        {/* Symbiote & Output Pane (Right) */}
-        <div className="w-1/2 flex flex-col bg-neutral-900 overflow-y-auto">
-          <div className="flex flex-col border-b border-neutral-800 min-h-[30%] max-h-[40%]">
-             <div className="bg-neutral-800/50 px-4 py-2 border-b border-neutral-800 flex items-center text-sm font-medium text-neutral-400 shrink-0">
-              <ChevronRight className="w-4 h-4 mr-1" /> Compiled Python Target
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 overflow-hidden">
+        
+        {/* Left Hand: Style Symbiote and Insights */}
+        <div className="lg:col-span-3 space-y-6 flex flex-col h-full">
+          <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-5 space-y-6">
+            <div className="flex items-center justify-between border-b border-neutral-900 pb-4">
+              <h2 className="text-sm font-semibold tracking-wide uppercase text-neutral-300 flex items-center">
+                <Activity className="w-4 h-4 mr-2 text-emerald-400" /> Symbiote Stats
+              </h2>
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
             </div>
-            <div className="p-6 font-mono text-sm text-blue-300 whitespace-pre-wrap overflow-y-auto flex-1">
-               {isAnalyzing ? (
-                <span className="text-neutral-500 animate-pulse"># Processing NLP Heuristics...</span>
-              ) : (
-                compiledCode || "# Waiting for input..."
+
+            {/* Coding Style profile */}
+            <div className="space-y-4">
+              <h3 className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Style Profile</h3>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-neutral-950/60 p-3 rounded-xl border border-neutral-900">
+                  <p className="text-[10px] text-neutral-500 uppercase">Quotes</p>
+                  <p className="text-sm font-medium text-neutral-200">{styleProfile.quotes}</p>
+                </div>
+                <div className="bg-neutral-950/60 p-3 rounded-xl border border-neutral-900">
+                  <p className="text-[10px] text-neutral-500 uppercase">Variable Naming</p>
+                  <p className="text-sm font-medium text-neutral-200">{styleProfile.naming}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Insights panel */}
+            <div className="space-y-4 pt-2">
+              <h3 className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Dynamic Insights</h3>
+              
+              {insights.length > 0 && (
+                <div className="space-y-3">
+                  {insights.map((insight, idx) => (
+                    <div 
+                      key={idx} 
+                      className={`p-3.5 rounded-xl border text-xs flex items-start ${
+                        insight.type === 'debt' 
+                          ? 'bg-red-950/10 border-red-900/30 text-red-300'
+                          : 'bg-emerald-950/10 border-emerald-900/30 text-emerald-300'
+                      }`}
+                    >
+                      {insight.type === 'debt' 
+                        ? <AlertTriangle className="w-4 h-4 mr-2.5 mt-0.5 text-red-400 flex-shrink-0" />
+                        : <Zap className="w-4 h-4 mr-2.5 mt-0.5 text-emerald-400 flex-shrink-0" />
+                      }
+                      <span>{insight.message}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {insights.length === 0 && !isAnalyzing && (
+                <div className="text-center p-6 text-neutral-600 text-xs border border-dashed border-neutral-900 rounded-xl">
+                  The Heuristic Engine is monitoring your environment.
+                </div>
               )}
             </div>
           </div>
 
-          {/* TERMINAL OUTPUT */}
-          {output !== null && (
-            <div className="flex flex-col border-b border-neutral-800 bg-black min-h-[25%] max-h-[35%]">
-               <div className="bg-neutral-900 px-4 py-2 border-b border-neutral-800 flex items-center text-sm font-medium text-neutral-500 shrink-0 uppercase tracking-wider">
-                <Terminal className="w-4 h-4 mr-2" /> Output Console
-              </div>
-              <div className="p-4 font-mono text-sm text-green-400 whitespace-pre-wrap overflow-y-auto flex-1">
-                {output.map((line, i) => (
-                  <div key={i}>{line}</div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Symbiote Dashboard */}
-          <div className="flex-1 p-6 space-y-6 overflow-y-auto bg-neutral-950 shadow-inner">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-neutral-500 mb-4 flex items-center">
-              <Activity className="w-4 h-4 mr-2 text-blue-500" /> NLP Heuristic Feedback
+          {/* Active Evolved Rules Panel */}
+          <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-5 flex-1 flex flex-col min-h-[250px]">
+            <h2 className="text-sm font-semibold tracking-wide uppercase text-neutral-300 pb-4 border-b border-neutral-900 flex items-center">
+              <Sparkles className="w-4 h-4 mr-2 text-emerald-400" /> Active Translations
             </h2>
-
-            {/* Profile Section */}
-            <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-4">
-              <h3 className="text-xs font-semibold text-neutral-400 mb-3 uppercase flex items-center">
-                <History className="w-3 h-3 mr-2" /> Learned Developer Profile
-              </h3>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div className="bg-neutral-950 p-3 rounded border border-neutral-800/50">
-                  <span className="block text-neutral-500 text-xs mb-1">String Quotes</span>
-                  <span className="font-mono text-blue-400">{styleProfile?.quotes || '...'}</span>
-                </div>
-                <div className="bg-neutral-950 p-3 rounded border border-neutral-800/50">
-                  <span className="block text-neutral-500 text-xs mb-1">Naming Convention</span>
-                  <span className="font-mono text-blue-400">{styleProfile?.naming || '...'}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Evolved Syntax Section */}
-            {evolvedSyntax.length > 0 && (
-              <div className="bg-blue-950/20 border border-blue-900/50 rounded-lg p-4">
-                <h3 className="text-xs font-semibold text-blue-400 mb-3 uppercase flex items-center">
-                  <BrainCircuit className="w-3 h-3 mr-2" /> Heuristics Extracted Rules
-                </h3>
-                <div className="space-y-2">
-                  {evolvedSyntax.map((syn: SyntaxRule, idx: number) => (
-                    <div key={idx} className="flex items-start text-sm">
-                      <CheckCircle2 className="w-4 h-4 text-blue-500 mr-2 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <span className="font-mono text-blue-300 font-bold bg-blue-900/30 px-1 rounded">{syn.keyword}</span>
-                        <p className="text-neutral-400 text-xs mt-1">{syn.desc}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Insights Section */}
-            {insights.length > 0 && (
-              <div className="space-y-3">
-                 <h3 className="text-xs font-semibold text-neutral-400 mb-2 uppercase flex items-center">
-                  <Zap className="w-3 h-3 mr-2" /> Active Insights
-                </h3>
-                {insights.map((insight: Insight, idx: number) => (
-                  <div 
-                    key={idx} 
-                    className={`p-3 rounded-lg border text-sm flex items-start ${
-                      insight.type === 'debt' 
-                        ? 'bg-red-950/20 border-red-900/50 text-red-300'
-                        : 'bg-yellow-950/20 border-yellow-900/50 text-yellow-300'
-                    }`}
-                  >
-                    {insight.type === 'debt' 
-                      ? <AlertTriangle className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" />
-                      : <Zap className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" />
-                    }
-                    <span>{insight.message}</span> 
+            <div className="flex-1 overflow-y-auto pt-4 space-y-3 pr-1 max-h-[350px]">
+              {evolvedSyntax.map((rule, idx) => (
+                <div key={idx} className="bg-neutral-950/40 border border-neutral-900 p-3 rounded-xl space-y-1.5 hover:border-neutral-800 transition-colors">
+                  <div className="flex items-center justify-between">
+                    <code className="text-xs text-emerald-400 font-mono bg-neutral-950 px-2 py-0.5 rounded border border-neutral-800/80">
+                      {rule.keyword}
+                    </code>
+                    <span className="text-[9px] text-neutral-500 uppercase tracking-wider font-mono">Matched</span>
                   </div>
-                ))}
-              </div>
-            )}
-
-            {insights.length === 0 && evolvedSyntax.length === 0 && !isAnalyzing && (
-              <div className="text-center p-8 text-neutral-600 text-sm border border-dashed border-neutral-800 rounded-lg">
-                The Heuristic Engine is dormant.<br/> Write some natural language code to wake it up.
-              </div>
-            )}
+                  <p className="text-xs text-neutral-400 leading-relaxed">{rule.desc}</p>
+                </div>
+              ))}
+              {evolvedSyntax.length === 0 && (
+                <div className="text-center py-10 text-neutral-600 text-xs">
+                  No matches. Write basic natural code like "print hello world" or "make variable count and set to 10" to see automatic rule matching.
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </main>
+
+        {/* Center / Right Hand Side: Workspace Editors */}
+        <div className="lg:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-6 h-full min-h-[500px]">
+          
+          {/* Natural Language Code Editor */}
+          <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-5 flex flex-col h-full">
+            <div className="flex items-center justify-between border-b border-neutral-900 pb-4 mb-4">
+              <div className="flex items-center space-x-2">
+                <Code2 className="w-4 h-4 text-emerald-400" />
+                <span className="text-sm font-medium text-neutral-300">Natural Language Input</span>
+              </div>
+              <span className="text-[10px] text-neutral-500 font-mono">SimulType v1.4</span>
+            </div>
+            
+            <textarea
+              className="flex-1 bg-neutral-950/40 border border-neutral-900 rounded-xl p-4 text-sm font-mono text-neutral-300 focus:outline-none focus:border-emerald-500/50 resize-none leading-relaxed transition-all"
+              placeholder="Write natural language ideas or standard scripts here..."
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              spellCheck={false}
+            />
+          </div>
+
+          {/* Compiled Code Output & Sandbox Terminal */}
+          <div className="space-y-6 flex flex-col h-full">
+            
+            {/* Compiled Output Preview */}
+            <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-5 flex-1 flex flex-col">
+              <div className="flex items-center justify-between border-b border-neutral-900 pb-4 mb-4">
+                <div className="flex items-center space-x-2">
+                  <Sparkles className="w-4 h-4 text-emerald-400" />
+                  <span className="text-sm font-medium text-neutral-300">Heuristic Translation (Python)</span>
+                </div>
+                
+                {isAnalyzing ? (
+                  <div className="flex items-center space-x-2 text-xs text-emerald-400">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                    <span className="font-mono text-[10px]">Processing...</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center space-x-2 text-xs text-neutral-500">
+                    <span className="h-1.5 w-1.5 rounded-full bg-neutral-600"></span>
+                    <span className="font-mono text-[10px]">Waiting for input...</span>
+                  </div>
+                )}
+              </div>
+              
+              <pre className="flex-1 bg-neutral-950/40 border border-neutral-900 rounded-xl p-4 text-sm font-mono text-emerald-300/90 overflow-y-auto leading-relaxed select-all">
+                {compiledCode || "# Waiting for input script..."}
+              </pre>
+
+              <div className="mt-4 flex justify-end">
+                <button
+                  onClick={runCodeSimulated}
+                  disabled={isRunning || !compiledCode}
+                  className="bg-emerald-500 hover:bg-emerald-400 disabled:bg-neutral-800 disabled:text-neutral-500 text-neutral-950 font-semibold px-4 py-2 rounded-xl text-xs flex items-center transition-all shadow-md shadow-emerald-500/10 disabled:shadow-none"
+                >
+                  {isRunning ? (
+                    <>
+                      <div className="w-3.5 h-3.5 border-2 border-neutral-950 border-t-transparent rounded-full animate-spin mr-2"></div>
+                      Running Symbiote...
+                    </>
+                  ) : (
+                    <>
+                      <Play className="w-3.5 h-3.5 mr-2 fill-neutral-950" />
+                      Run Code
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Output simulated terminal */}
+            <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-5 h-[200px] flex flex-col">
+              <div className="flex items-center space-x-2 pb-3 mb-3 border-b border-neutral-900">
+                <Terminal className="w-4 h-4 text-emerald-400" />
+                <span className="text-xs font-semibold tracking-wider uppercase text-neutral-400">Execution Output</span>
+              </div>
+              <div className="flex-1 bg-neutral-950 rounded-xl p-3.5 font-mono text-xs overflow-y-auto space-y-1 text-emerald-400/90 border border-neutral-900">
+                {output ? (
+                  output.map((line, idx) => (
+                    <div 
+                      key={idx} 
+                      className={
+                        line.startsWith('>>>') 
+                          ? 'text-neutral-500 border-b border-neutral-900/50 pb-1 mb-1' 
+                          : line.startsWith('NameError') 
+                            ? 'text-red-400' 
+                            : 'text-neutral-300'
+                      }
+                    >
+                      {line}
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-neutral-600 italic">No logs. Click "Run Code" above to simulate program compilation and execution.</div>
+                )}
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
     </div>
   );
 }
