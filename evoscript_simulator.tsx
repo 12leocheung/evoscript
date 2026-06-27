@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Activity, Zap, AlertTriangle, Code2, BrainCircuit, Play,
-  Terminal, ShieldCheck, Sparkles, Trash2, Copy, Check, RotateCcw
+  Terminal, ShieldCheck, Sparkles, Trash2, Copy, Check, RotateCcw,
+  BookOpen, X, Search, ChevronRight
 } from 'lucide-react';
 import syntaxRulesJSON from './rules.json';
 
@@ -10,6 +11,7 @@ interface StyleProfile { quotes: string; naming: string; }
 interface SyntaxRule { keyword: string; desc: string; }
 interface Insight { type: 'debt' | 'optimization' | 'info'; message: string; }
 interface ExecutionResult { line: string; type: 'system' | 'output' | 'error' | 'divider'; }
+interface RuleEntry { ruleKeyword: string; desc: string; pattern: string; replace: string; flags: string; }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const EXAMPLES = [
@@ -55,6 +57,29 @@ const BLACKLISTED_RULE_KEYWORDS = new Set([
   'subtract X from Y',
 ]);
 
+// Built-in pre-processor commands (shown in the reference modal)
+const BUILTIN_COMMANDS = [
+  {
+    category: 'Conditionals (pre-processed)',
+    commands: [
+      { keyword: 'alternatively if X is not the same as Y then Z', desc: 'elif X != Y: Z', example: 'alternatively if a is not the same as b then print no' },
+      { keyword: 'alternatively if X is the same as Y then Z', desc: 'elif X == Y: Z', example: 'alternatively if score is the same as 100 then print perfect' },
+      { keyword: 'alternatively if X is bigger than Y then Z', desc: 'elif X > Y: Z', example: 'alternatively if age is bigger than 18 then print adult' },
+      { keyword: 'alternatively if X is smaller than Y then Z', desc: 'elif X < Y: Z', example: 'alternatively if score is smaller than 50 then print fail' },
+      { keyword: 'alternatively then Z / otherwise then Z', desc: 'else: Z', example: 'otherwise then print unknown' },
+    ],
+  },
+  {
+    category: 'Arithmetic (pre-processed)',
+    commands: [
+      { keyword: 'add X to Y', desc: 'Y += X', example: 'add 5 to score' },
+      { keyword: 'subtract X from Y', desc: 'Y -= X', example: 'subtract 10 from health' },
+      { keyword: 'multiply Y by X', desc: 'Y *= X', example: 'multiply score by 2' },
+      { keyword: 'divide Y by X', desc: 'Y /= X', example: 'divide total by 4' },
+    ],
+  },
+];
+
 // ─── Rule Scoring ─────────────────────────────────────────────────────────────
 const getRuleScore = (rule: any): number => {
   let score = 0;
@@ -76,50 +101,215 @@ const getRuleScore = (rule: any): number => {
 };
 
 // ─── Pre-processor ────────────────────────────────────────────────────────────
-// Handles patterns that rules.json gets wrong. Runs BEFORE the rules engine.
 const preProcessLine = (t: string): string | null => {
-  // elif: not equal
   let m = t.match(/^(?:alternatively|alternately|else if|otherwise if)\s+if\s+(.+?)\s+(?:is not the same as|is not equal to|!=|isn't|isnt)\s+(.+?)\s+then\s+(.+)$/i);
   if (m) return `elif ${m[1].trim()} != ${m[2].trim()}: ${m[3].trim()}`;
 
-  // elif: equal
   m = t.match(/^(?:alternatively|alternately|else if|otherwise if)\s+if\s+(.+?)\s+(?:is the same as|is equal to|==)\s+(.+?)\s+then\s+(.+)$/i);
   if (m) return `elif ${m[1].trim()} == ${m[2].trim()}: ${m[3].trim()}`;
 
-  // elif: greater than
   m = t.match(/^(?:alternatively|alternately|else if|otherwise if)\s+if\s+(.+?)\s+(?:is bigger than|is greater than|is more than|>)\s+(.+?)\s+then\s+(.+)$/i);
   if (m) return `elif ${m[1].trim()} > ${m[2].trim()}: ${m[3].trim()}`;
 
-  // elif: less than
   m = t.match(/^(?:alternatively|alternately|else if|otherwise if)\s+if\s+(.+?)\s+(?:is smaller than|is less than|<)\s+(.+?)\s+then\s+(.+)$/i);
   if (m) return `elif ${m[1].trim()} < ${m[2].trim()}: ${m[3].trim()}`;
 
-  // else (bare — must NOT be followed by "if")
   m = t.match(/^(?:alternatively|alternately|otherwise)\s+(?!if\s)(?:then\s+)?(.+)$/i);
   if (m) return `else: ${m[1].trim()}`;
 
-  // add X to Y → Y += X
   m = t.match(/^(?:add|increase|plus)\s+(.+?)\s+(?:to|onto|into)\s+([a-zA-Z_][a-zA-Z0-9_]*)$/i);
   if (m) return `${m[2].trim()} += ${m[1].trim()}`;
 
-  // subtract X from Y → Y -= X
   m = t.match(/^(?:subtract|decrease|minus|remove)\s+(.+?)\s+from\s+([a-zA-Z_][a-zA-Z0-9_]*)$/i);
   if (m) return `${m[2].trim()} -= ${m[1].trim()}`;
 
-  // multiply Y by X → Y *= X
   m = t.match(/^multiply\s+([a-zA-Z_][a-zA-Z0-9_]*)\s+by\s+(.+)$/i);
   if (m) return `${m[1].trim()} *= ${m[2].trim()}`;
 
-  // divide Y by X → Y /= X
   m = t.match(/^divide\s+([a-zA-Z_][a-zA-Z0-9_]*)\s+by\s+(.+)$/i);
   if (m) return `${m[1].trim()} /= ${m[2].trim()}`;
 
   return null;
 };
 
-// ─── Safe RegExp Compiler ─────────────────────────────────────────────────────
 const compilePattern = (pat: string, flags: string): RegExp =>
   new RegExp(pat.replace(/\?\?\?/g, '??'), flags);
+
+// ─── Commands Reference Modal ─────────────────────────────────────────────────
+const CommandsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+  const [search, setSearch] = useState('');
+  const [activeTab, setActiveTab] = useState<'builtin' | 'rules'>('builtin');
+
+  const rawRules: RuleEntry[] = Array.isArray(syntaxRulesJSON)
+    ? syntaxRulesJSON as RuleEntry[]
+    : (syntaxRulesJSON as any)?.default ?? [];
+
+  const filteredRules = rawRules
+    .filter(r => !BLACKLISTED_RULE_KEYWORDS.has(r.ruleKeyword))
+    .filter(r => {
+      if (!search.trim()) return true;
+      const q = search.toLowerCase();
+      return r.ruleKeyword.toLowerCase().includes(q) || r.desc.toLowerCase().includes(q);
+    });
+
+  // Group rules by category (first word of desc or ruleKeyword)
+  const grouped: Record<string, RuleEntry[]> = {};
+  filteredRules.forEach(r => {
+    const cat = r.desc.match(/^([A-Z][a-z]+(?:\s+[a-z]+)?)/)?.[1] ?? 'General';
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push(r);
+  });
+
+  const filteredBuiltins = BUILTIN_COMMANDS.map(cat => ({
+    ...cat,
+    commands: cat.commands.filter(c => {
+      if (!search.trim()) return true;
+      const q = search.toLowerCase();
+      return c.keyword.toLowerCase().includes(q) || c.desc.toLowerCase().includes(q) || c.example.toLowerCase().includes(q);
+    }),
+  })).filter(cat => cat.commands.length > 0);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={onClose}>
+      <div
+        className="bg-neutral-950 border border-neutral-800 rounded-2xl w-full max-w-3xl max-h-[85vh] flex flex-col shadow-2xl"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Modal Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-900">
+          <div className="flex items-center gap-3">
+            <BookOpen className="w-5 h-5 text-emerald-400" />
+            <div>
+              <h2 className="text-base font-semibold text-neutral-100">Commands Reference</h2>
+              <p className="text-[11px] text-neutral-500">All supported EvoScript syntax and alternatives</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="text-neutral-500 hover:text-neutral-200 transition-colors p-1.5 rounded-lg hover:bg-neutral-900">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Search */}
+        <div className="px-6 py-3 border-b border-neutral-900">
+          <div className="relative">
+            <Search className="w-4 h-4 text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="Search commands..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="w-full bg-neutral-900 border border-neutral-800 rounded-xl pl-9 pr-4 py-2 text-sm text-neutral-300 placeholder:text-neutral-600 focus:outline-none focus:border-emerald-500/50 transition-colors"
+              autoFocus
+            />
+            {search && (
+              <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300">
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex border-b border-neutral-900 px-6">
+          {[
+            { key: 'builtin', label: 'Built-in Patterns', count: BUILTIN_COMMANDS.reduce((a, c) => a + c.commands.length, 0) },
+            { key: 'rules', label: 'rules.json', count: rawRules.filter(r => !BLACKLISTED_RULE_KEYWORDS.has(r.ruleKeyword)).length },
+          ].map(tab => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key as any)}
+              className={`px-4 py-3 text-xs font-medium border-b-2 transition-colors flex items-center gap-2 ${
+                activeTab === tab.key
+                  ? 'border-emerald-500 text-emerald-400'
+                  : 'border-transparent text-neutral-500 hover:text-neutral-300'
+              }`}
+            >
+              {tab.label}
+              <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${
+                activeTab === tab.key
+                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                  : 'bg-neutral-900 text-neutral-500 border border-neutral-800'
+              }`}>{tab.count}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6">
+          {activeTab === 'builtin' ? (
+            filteredBuiltins.length > 0 ? filteredBuiltins.map((cat, ci) => (
+              <div key={ci}>
+                <h3 className="text-[11px] font-semibold uppercase tracking-widest text-neutral-500 mb-3 flex items-center gap-2">
+                  <span className="w-4 h-px bg-neutral-800" />
+                  {cat.category}
+                  <span className="w-full h-px bg-neutral-900" />
+                </h3>
+                <div className="space-y-2">
+                  {cat.commands.map((cmd, i) => (
+                    <div key={i} className="bg-neutral-900/50 border border-neutral-900 rounded-xl p-3.5 hover:border-neutral-800 transition-colors">
+                      <div className="flex items-start justify-between gap-4 mb-2">
+                        <code className="text-sm text-emerald-400 font-mono leading-relaxed">{cmd.keyword}</code>
+                        <span className="text-xs text-neutral-400 font-mono bg-neutral-950 border border-neutral-800 px-2 py-0.5 rounded-lg whitespace-nowrap flex-shrink-0">
+                          → {cmd.desc}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 mt-1.5">
+                        <ChevronRight className="w-3 h-3 text-neutral-600 flex-shrink-0" />
+                        <code className="text-[11px] text-neutral-500 font-mono">{cmd.example}</code>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )) : (
+              <div className="text-center py-12 text-neutral-600 text-sm">No built-in commands match "{search}"</div>
+            )
+          ) : (
+            Object.keys(grouped).length > 0 ? Object.entries(grouped).map(([cat, rules]) => (
+              <div key={cat}>
+                <h3 className="text-[11px] font-semibold uppercase tracking-widest text-neutral-500 mb-3 flex items-center gap-2">
+                  <span className="w-4 h-px bg-neutral-800" />
+                  {cat}
+                  <span className="text-[10px] text-neutral-700 font-mono normal-case tracking-normal">({rules.length})</span>
+                  <span className="flex-1 h-px bg-neutral-900" />
+                </h3>
+                <div className="space-y-2">
+                  {rules.map((rule, i) => (
+                    <div key={i} className="bg-neutral-900/50 border border-neutral-900 rounded-xl p-3.5 hover:border-neutral-800 transition-colors">
+                      <div className="flex items-start justify-between gap-4 mb-1.5">
+                        <code className="text-sm text-emerald-400 font-mono">{rule.ruleKeyword}</code>
+                      </div>
+                      <p className="text-[11px] text-neutral-500 leading-relaxed">{rule.desc}</p>
+                      <div className="mt-2 flex items-center gap-2">
+                        <span className="text-[10px] text-neutral-600 font-mono bg-neutral-950 border border-neutral-900 px-2 py-0.5 rounded">
+                          → {rule.replace.replace(/\t/g, ' ').slice(0, 60)}{rule.replace.length > 60 ? '…' : ''}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )) : (
+              <div className="text-center py-12 text-neutral-600 text-sm">No rules match "{search}"</div>
+            )
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="px-6 py-3 border-t border-neutral-900 flex items-center justify-between">
+          <p className="text-[11px] text-neutral-600">
+            {activeTab === 'builtin'
+              ? `${BUILTIN_COMMANDS.reduce((a, c) => a + c.commands.length, 0)} built-in patterns`
+              : `${rawRules.filter(r => !BLACKLISTED_RULE_KEYWORDS.has(r.ruleKeyword)).length} rules from rules.json`}
+          </p>
+          <button onClick={onClose} className="text-xs text-neutral-500 hover:text-neutral-300 transition-colors border border-neutral-800 hover:border-neutral-700 px-3 py-1.5 rounded-lg">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function App() {
@@ -134,14 +324,13 @@ export default function App() {
   const [copiedOutput, setCopiedOutput] = useState(false);
   const [copiedCompiled, setCopiedCompiled] = useState(false);
   const [activeExample, setActiveExample] = useState(0);
+  const [showCommands, setShowCommands] = useState(false);
   const outputRef = useRef<HTMLDivElement>(null);
 
-  // ── Translation Engine ──────────────────────────────────────────────────────
   const analyzeWithHeuristics = (rawCode: string) => {
     setIsAnalyzing(true);
     const rawRules = Array.isArray(syntaxRulesJSON) ? syntaxRulesJSON : (syntaxRulesJSON as any)?.default;
     const isJsonConnected = Array.isArray(rawRules) && rawRules.length > 0;
-
     try {
       const newInsights: Insight[] = [];
       const currentEvolvedSyntax: SyntaxRule[] = [];
@@ -153,7 +342,6 @@ export default function App() {
             .sort((a: any, b: any) => getRuleScore(b) - getRuleScore(a))
         : [];
 
-      // Style detection
       const nonCommentLines = rawCode.split('\n').filter(l => l.trim() && !l.trim().startsWith('#') && !l.trim().startsWith('//'));
       if (nonCommentLines.length > 0) {
         const sq = (rawCode.match(/'/g) || []).length;
@@ -177,7 +365,6 @@ export default function App() {
           const indent = (line.match(/^(\s*)/) || ['', ''])[1];
           const trimmed = line.trim();
 
-          // Pre-processor runs first
           const pre = preProcessLine(trimmed);
           if (pre !== null) {
             finalCodeLines.push(indent + pre);
@@ -185,37 +372,28 @@ export default function App() {
               : pre.startsWith('else') ? 'else: (pre-processed)'
               : 'arithmetic shorthand (pre-processed)';
             if (!currentEvolvedSyntax.some(s => s.keyword === key))
-              currentEvolvedSyntax.push({ keyword: key, desc: 'Pre-processed before rules engine to ensure correct output.' });
+              currentEvolvedSyntax.push({ keyword: key, desc: 'Pre-processed before rules engine.' });
             return;
           }
 
-          // Rules engine
           let translatedLine = line;
           let matched = false;
-
           for (const rule of rules) {
             try {
               const pattern = compilePattern(rule.pattern, rule.flags);
               if (!pattern.test(trimmed)) continue;
-
               let translation = trimmed.replace(pattern, rule.replace);
-
-              // Handle tab-separated nested expressions
               if (translation.includes('\t')) {
                 const [left, right] = translation.split('\t');
                 let resolvedRight = right;
                 for (const nested of rules) {
                   try {
                     const np = compilePattern(nested.pattern, nested.flags);
-                    if (np.test(resolvedRight)) {
-                      resolvedRight = resolvedRight.replace(np, nested.replace);
-                      break;
-                    }
+                    if (np.test(resolvedRight)) { resolvedRight = resolvedRight.replace(np, nested.replace); break; }
                   } catch {}
                 }
                 translation = left + resolvedRight;
               }
-
               translatedLine = indent + translation;
               if (!currentEvolvedSyntax.some(s => s.keyword === rule.ruleKeyword))
                 currentEvolvedSyntax.push({ keyword: rule.ruleKeyword, desc: rule.desc });
@@ -226,7 +404,6 @@ export default function App() {
             }
           }
 
-          // C-style for loop fallback
           if (!matched && /^for\s*\(/.test(trimmed)) {
             translatedLine = indent + trimmed.replace(
               /for\s*\(?(?:let|var|int)?\s*([a-zA-Z_]+)\s*=\s*([^;]+);\s*[^;]+;\s*[^)]+\)?/,
@@ -243,13 +420,10 @@ export default function App() {
       }
 
       let finalCode = finalCodeLines.join('\n');
-
-      // Strip type/var keywords
       if (/\b(var|let|const|int|float|string|bool)\s+[a-zA-Z0-9_]+\s*=/.test(finalCode)) {
         newInsights.push({ type: 'optimization', message: 'Type/var keywords stripped — Python uses dynamic typing.' });
         finalCode = finalCode.replace(/\b(var|let|const|int|float|string|bool)\s+([a-zA-Z0-9_]+)\s*=/g, '$2 =');
       }
-
       if (currentEvolvedSyntax.length === 0 && nonCommentLines.length > 0)
         newInsights.push({ type: 'info', message: 'No natural language patterns detected. Looks like standard Python!' });
 
@@ -268,7 +442,6 @@ export default function App() {
     return () => clearTimeout(t);
   }, [code]);
 
-  // ── Executor ─────────────────────────────────────────────────────────────────
   const getTypeString = (val: any): string => {
     if (val === null || val === undefined) return "<class 'NoneType'>";
     if (typeof val === 'boolean') return "<class 'bool'>";
@@ -279,15 +452,11 @@ export default function App() {
 
   const resolveValue = (str: string, variables: Record<string, any>): any => {
     const s = str.trim();
-
-    // type(x)
     const typeMatch = s.match(/^type\((.+)\)$/);
     if (typeMatch) {
       const v = typeMatch[1].trim();
       return v in variables ? getTypeString(variables[v]) : `NameError: '${v}' is not defined`;
     }
-
-    // cast: int(...), float(...), str(...), bool(...)
     const castMatch = s.match(/^(int|float|str|bool)\((.+)\)$/);
     if (castMatch) {
       const inner = resolveValue(castMatch[2], variables);
@@ -296,25 +465,17 @@ export default function App() {
       if (castMatch[1] === 'str') return String(inner);
       if (castMatch[1] === 'bool') return !!inner;
     }
-
-    // len(x)
     const lenMatch = s.match(/^len\((.+)\)$/);
     if (lenMatch) {
       const v = resolveValue(lenMatch[1], variables);
       return Array.isArray(v) ? v.length : typeof v === 'string' ? v.length : 0;
     }
-
-    // list / tuple literals
     if ((s.startsWith('[') && s.endsWith(']')) || (s.startsWith('(') && s.endsWith(')'))) {
       const content = s.slice(1, -1).trim();
       return content ? content.split(',').map(i => resolveValue(i, variables)) : [];
     }
-
-    // string literal
     if ((s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'")))
       return s.slice(1, -1);
-
-    // simple math expression (only variables and numbers)
     if (/^[\w\s\+\-\*\/\%\(\)\.]+$/.test(s) && /[\+\-\*\/]/.test(s)) {
       try {
         const expr = s.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\b/g, (_, name) =>
@@ -324,7 +485,6 @@ export default function App() {
         return Function('"use strict"; return (' + expr + ')')();
       } catch {}
     }
-
     if (s in variables) return variables[s];
     if (!isNaN(Number(s))) return Number(s);
     if (s === 'True') return true;
@@ -346,23 +506,12 @@ export default function App() {
       const el = rv(a), cont = rv(b);
       return Array.isArray(cont) ? cont.includes(el) : String(cont).includes(String(el));
     }
-    if (expr.includes(' not in ')) {
-      const [a, b] = expr.split(' not in ');
-      const el = rv(a), cont = rv(b);
-      return Array.isArray(cont) ? !cont.includes(el) : !String(cont).includes(String(el));
-    }
     return !!rv(expr);
   };
 
-  const executeSingleStatement = (
-    stmt: string,
-    variables: Record<string, any>,
-    logs: ExecutionResult[]
-  ) => {
+  const executeSingleStatement = (stmt: string, variables: Record<string, any>, logs: ExecutionResult[]) => {
     const t = stmt.trim();
     if (!t || t.startsWith('#') || t.startsWith('//')) return;
-
-    // print(...)  or  print ...
     if (t.startsWith('print(') || t.startsWith('print ')) {
       let expr = '';
       if (t.startsWith('print(')) {
@@ -382,8 +531,6 @@ export default function App() {
       logs.push({ line: String(val), type: isErr ? 'error' : 'output' });
       return;
     }
-
-    // assignment / compound operators
     const opMatch = t.match(/^([a-zA-Z_][a-zA-Z0-9_]*)\s*(\+=|-=|\*=|\/=|%=|:=|=)\s*(.+)$/);
     if (opMatch) {
       const [, name, op, rhs] = opMatch;
@@ -396,13 +543,10 @@ export default function App() {
       else if (op === '%=') variables[name] = (Number(variables[name]) || 0) % (Number(val) || 1);
       return;
     }
-
-    // .append(x)
     const appendMatch = t.match(/^([a-zA-Z_][a-zA-Z0-9_]*)\.append\((.+)\)$/);
     if (appendMatch) {
       const arr = variables[appendMatch[1]];
       if (Array.isArray(arr)) arr.push(resolveValue(appendMatch[2], variables));
-      return;
     }
   };
 
@@ -423,7 +567,6 @@ export default function App() {
         const trimmed = line.trim();
         if (!trimmed || trimmed.startsWith('#') || trimmed.startsWith('//')) continue;
 
-        // inline if/elif/else: "if ...: action"
         const inlineMatch = trimmed.match(/^(if|elif|else)\s*(.*?):\s+(.+)$/);
         if (inlineMatch) {
           const [, kw, cond, action] = inlineMatch;
@@ -440,7 +583,6 @@ export default function App() {
           continue;
         }
 
-        // block if/elif/else:
         const blockMatch = trimmed.match(/^(if|elif|else)\s*(.*?):$/);
         if (blockMatch) {
           const [, kw, cond] = blockMatch;
@@ -466,14 +608,11 @@ export default function App() {
       logs.push({ line: '', type: 'divider' });
       logs.push({ line: '>>> Execution completed successfully', type: 'system' });
 
-      // Show final variable state
       const varEntries = Object.entries(variables);
       if (varEntries.length > 0) {
         logs.push({ line: '', type: 'divider' });
         logs.push({ line: '>>> Variable state at exit:', type: 'system' });
-        varEntries.forEach(([k, v]) => {
-          logs.push({ line: `    ${k} = ${JSON.stringify(v)}`, type: 'output' });
-        });
+        varEntries.forEach(([k, v]) => logs.push({ line: `    ${k} = ${JSON.stringify(v)}`, type: 'output' }));
       }
 
       setOutput(logs);
@@ -482,7 +621,6 @@ export default function App() {
     }, 800);
   };
 
-  // ── Helpers ──────────────────────────────────────────────────────────────────
   const copyToClipboard = (text: string, which: 'output' | 'compiled') => {
     navigator.clipboard.writeText(text).then(() => {
       if (which === 'output') { setCopiedOutput(true); setTimeout(() => setCopiedOutput(false), 2000); }
@@ -499,247 +637,232 @@ export default function App() {
   const lineCount = code.split('\n').length;
   const outputLineCount = output?.filter(l => l.type === 'output').length ?? 0;
 
-  // ── UI ────────────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col font-sans">
+    <>
+      {showCommands && <CommandsModal onClose={() => setShowCommands(false)} />}
 
-      {/* Header */}
-      <header className="border-b border-neutral-900 bg-neutral-950/90 backdrop-blur-md sticky top-0 z-40 px-6 py-3 flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="bg-gradient-to-tr from-emerald-500 to-teal-400 p-2 rounded-xl text-neutral-950 shadow-lg shadow-emerald-500/20">
-            <BrainCircuit className="w-5 h-5" />
-          </div>
-          <div>
-            <h1 className="text-base font-bold tracking-tight bg-gradient-to-r from-emerald-400 via-teal-300 to-neutral-200 bg-clip-text text-transparent">
-              EvoScript Simulator
-            </h1>
-            <p className="text-[11px] text-neutral-500">Natural language → Python • Heuristic Engine v2</p>
-          </div>
-        </div>
-        <div className="flex items-center space-x-2">
-          <span className="hidden sm:flex items-center text-xs bg-neutral-900 border border-neutral-800 rounded-full px-3 py-1 text-neutral-400">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 mr-1.5" />
-            Autopilot Active
-          </span>
-        </div>
-      </header>
+      <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col font-sans">
 
-      {/* Example Picker */}
-      <div className="border-b border-neutral-900 bg-neutral-950/60 px-6 py-2 flex items-center space-x-2 overflow-x-auto">
-        <span className="text-[11px] text-neutral-500 whitespace-nowrap mr-1">Examples:</span>
-        {EXAMPLES.map((ex, idx) => (
-          <button
-            key={idx}
-            onClick={() => loadExample(idx)}
-            className={`text-[11px] px-3 py-1 rounded-full border whitespace-nowrap transition-all ${
-              activeExample === idx
-                ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-400'
-                : 'bg-neutral-900 border-neutral-800 text-neutral-400 hover:border-neutral-700 hover:text-neutral-300'
-            }`}
-          >
-            {ex.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Main Layout */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 p-4 overflow-hidden">
-
-        {/* Left sidebar */}
-        <div className="lg:col-span-3 space-y-4 flex flex-col">
-
-          {/* Style Profile */}
-          <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4">
-            <div className="flex items-center justify-between pb-3 mb-3 border-b border-neutral-900">
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-400 flex items-center">
-                <Activity className="w-3.5 h-3.5 mr-1.5 text-emerald-400" />Style Profile
-              </h2>
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+        {/* Header */}
+        <header className="border-b border-neutral-900 bg-neutral-950/90 backdrop-blur-md sticky top-0 z-40 px-6 py-3 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="bg-gradient-to-tr from-emerald-500 to-teal-400 p-2 rounded-xl text-neutral-950 shadow-lg shadow-emerald-500/20">
+              <BrainCircuit className="w-5 h-5" />
             </div>
-            <div className="grid grid-cols-2 gap-2">
-              {[['Quotes', styleProfile.quotes], ['Naming', styleProfile.naming], ['Lines', String(lineCount)], ['Outputs', String(outputLineCount)]].map(([label, val]) => (
-                <div key={label} className="bg-neutral-950/60 p-2.5 rounded-xl border border-neutral-900">
-                  <p className="text-[10px] text-neutral-500 uppercase mb-0.5">{label}</p>
-                  <p className="text-sm font-medium text-neutral-200 truncate">{val}</p>
-                </div>
-              ))}
+            <div>
+              <h1 className="text-base font-bold tracking-tight bg-gradient-to-r from-emerald-400 via-teal-300 to-neutral-200 bg-clip-text text-transparent">
+                EvoScript Simulator
+              </h1>
+              <p className="text-[11px] text-neutral-500">Natural language → Python • Heuristic Engine v2</p>
             </div>
           </div>
+          <div className="flex items-center gap-2">
+            {/* Commands Reference Button */}
+            <button
+              onClick={() => setShowCommands(true)}
+              className="flex items-center gap-2 text-xs bg-neutral-900 border border-neutral-800 hover:border-emerald-500/40 hover:text-emerald-400 text-neutral-400 rounded-xl px-3 py-2 transition-all"
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Commands</span>
+            </button>
+            <span className="hidden sm:flex items-center text-xs bg-neutral-900 border border-neutral-800 rounded-full px-3 py-1 text-neutral-400">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 mr-1.5" />
+              Autopilot Active
+            </span>
+          </div>
+        </header>
 
-          {/* Insights */}
-          <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4">
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-400 pb-3 mb-3 border-b border-neutral-900 flex items-center">
-              <Zap className="w-3.5 h-3.5 mr-1.5 text-emerald-400" />Insights
-            </h2>
-            {insights.length > 0 ? (
-              <div className="space-y-2">
-                {insights.map((ins, idx) => (
-                  <div key={idx} className={`p-3 rounded-xl border text-xs flex items-start gap-2 ${
-                    ins.type === 'debt' ? 'bg-red-950/10 border-red-900/30 text-red-300'
-                    : ins.type === 'info' ? 'bg-blue-950/10 border-blue-900/30 text-blue-300'
-                    : 'bg-emerald-950/10 border-emerald-900/30 text-emerald-300'
-                  }`}>
-                    {ins.type === 'debt' ? <AlertTriangle className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
-                      : <Zap className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />}
-                    {ins.message}
+        {/* Example Picker */}
+        <div className="border-b border-neutral-900 bg-neutral-950/60 px-6 py-2 flex items-center space-x-2 overflow-x-auto">
+          <span className="text-[11px] text-neutral-500 whitespace-nowrap mr-1">Examples:</span>
+          {EXAMPLES.map((ex, idx) => (
+            <button
+              key={idx}
+              onClick={() => loadExample(idx)}
+              className={`text-[11px] px-3 py-1 rounded-full border whitespace-nowrap transition-all ${
+                activeExample === idx
+                  ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-400'
+                  : 'bg-neutral-900 border-neutral-800 text-neutral-400 hover:border-neutral-700 hover:text-neutral-300'
+              }`}
+            >
+              {ex.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Main Layout */}
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 p-4 overflow-hidden">
+
+          {/* Left sidebar */}
+          <div className="lg:col-span-3 space-y-4 flex flex-col">
+            <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4">
+              <div className="flex items-center justify-between pb-3 mb-3 border-b border-neutral-900">
+                <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-400 flex items-center">
+                  <Activity className="w-3.5 h-3.5 mr-1.5 text-emerald-400" />Style Profile
+                </h2>
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {[['Quotes', styleProfile.quotes], ['Naming', styleProfile.naming], ['Lines', String(lineCount)], ['Outputs', String(outputLineCount)]].map(([label, val]) => (
+                  <div key={label} className="bg-neutral-950/60 p-2.5 rounded-xl border border-neutral-900">
+                    <p className="text-[10px] text-neutral-500 uppercase mb-0.5">{label}</p>
+                    <p className="text-sm font-medium text-neutral-200 truncate">{val}</p>
                   </div>
                 ))}
               </div>
-            ) : (
-              <p className="text-center text-neutral-600 text-xs py-4 border border-dashed border-neutral-900 rounded-xl">
-                No insights yet.
-              </p>
-            )}
-          </div>
+            </div>
 
-          {/* Active Translations */}
-          <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4 flex-1 flex flex-col min-h-0">
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-400 pb-3 mb-3 border-b border-neutral-900 flex items-center">
-              <Sparkles className="w-3.5 h-3.5 mr-1.5 text-emerald-400" />
-              Active Translations
-              {evolvedSyntax.length > 0 && (
-                <span className="ml-auto bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] px-1.5 py-0.5 rounded-full">
-                  {evolvedSyntax.length}
-                </span>
-              )}
-            </h2>
-            <div className="flex-1 overflow-y-auto space-y-2 pr-0.5">
-              {evolvedSyntax.length > 0 ? evolvedSyntax.map((rule, idx) => (
-                <div key={idx} className="bg-neutral-950/40 border border-neutral-900 p-2.5 rounded-xl hover:border-neutral-800 transition-colors">
-                  <div className="flex items-center justify-between mb-1">
-                    <code className="text-[11px] text-emerald-400 font-mono bg-neutral-950 px-1.5 py-0.5 rounded border border-neutral-800/80 truncate max-w-[140px]">
-                      {rule.keyword}
-                    </code>
-                    <span className="text-[9px] text-neutral-600 uppercase font-mono ml-1 flex-shrink-0">matched</span>
-                  </div>
-                  <p className="text-[11px] text-neutral-500 leading-relaxed">{rule.desc}</p>
+            <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-400 pb-3 mb-3 border-b border-neutral-900 flex items-center">
+                <Zap className="w-3.5 h-3.5 mr-1.5 text-emerald-400" />Insights
+              </h2>
+              {insights.length > 0 ? (
+                <div className="space-y-2">
+                  {insights.map((ins, idx) => (
+                    <div key={idx} className={`p-3 rounded-xl border text-xs flex items-start gap-2 ${
+                      ins.type === 'debt' ? 'bg-red-950/10 border-red-900/30 text-red-300'
+                      : ins.type === 'info' ? 'bg-blue-950/10 border-blue-900/30 text-blue-300'
+                      : 'bg-emerald-950/10 border-emerald-900/30 text-emerald-300'
+                    }`}>
+                      {ins.type === 'debt' ? <AlertTriangle className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" /> : <Zap className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />}
+                      {ins.message}
+                    </div>
+                  ))}
                 </div>
-              )) : (
-                <div className="text-center py-6 text-neutral-600 text-xs">
-                  Write natural language code to see matched rules here.
-                </div>
+              ) : (
+                <p className="text-center text-neutral-600 text-xs py-4 border border-dashed border-neutral-900 rounded-xl">No insights yet.</p>
               )}
             </div>
-          </div>
-        </div>
 
-        {/* Center + Right editors */}
-        <div className="lg:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-4 min-h-[500px]">
-
-          {/* Input */}
-          <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4 flex flex-col h-full">
-            <div className="flex items-center justify-between pb-3 mb-3 border-b border-neutral-900">
-              <div className="flex items-center gap-2">
-                <Code2 className="w-4 h-4 text-emerald-400" />
-                <span className="text-sm font-medium text-neutral-300">Input</span>
-                <span className="text-[10px] text-neutral-600 font-mono">natural language / python</span>
-              </div>
-              <button
-                onClick={() => { setCode(''); setOutput(null); }}
-                className="text-neutral-600 hover:text-red-400 transition-colors p-1 rounded"
-                title="Clear"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-              </button>
-            </div>
-            <textarea
-              className="flex-1 bg-neutral-950/40 border border-neutral-900 rounded-xl p-3.5 text-sm font-mono text-neutral-300 focus:outline-none focus:border-emerald-500/40 resize-none leading-relaxed transition-all placeholder:text-neutral-600"
-              placeholder={`Try writing:\nprint hello world\nmake a variable called x and set it to 10\nif x is greater than 5 then print big\nalternatively then print small`}
-              value={code}
-              onChange={e => setCode(e.target.value)}
-              spellCheck={false}
-            />
-            <div className="mt-2 flex items-center justify-between">
-              <span className="text-[10px] text-neutral-600 font-mono">{lineCount} line{lineCount !== 1 ? 's' : ''}</span>
-              <button
-                onClick={() => { setCode(code); analyzeWithHeuristics(code); }}
-                className="text-[11px] text-neutral-500 hover:text-neutral-300 flex items-center gap-1 transition-colors"
-              >
-                <RotateCcw className="w-3 h-3" /> Re-analyse
-              </button>
-            </div>
-          </div>
-
-          {/* Output column */}
-          <div className="flex flex-col gap-4 h-full">
-
-            {/* Translated Python */}
             <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4 flex-1 flex flex-col min-h-0">
-              <div className="flex items-center justify-between pb-3 mb-3 border-b border-neutral-900">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-emerald-400" />
-                  <span className="text-sm font-medium text-neutral-300">Translated Python</span>
-                  {isAnalyzing && <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />}
-                </div>
-                <button
-                  onClick={() => copyToClipboard(compiledCode, 'compiled')}
-                  className="text-neutral-600 hover:text-neutral-300 transition-colors p-1 rounded"
-                  title="Copy"
-                >
-                  {copiedCompiled ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                </button>
-              </div>
-              <pre className="flex-1 bg-neutral-950/40 border border-neutral-900 rounded-xl p-3.5 text-sm font-mono text-emerald-300/90 overflow-y-auto leading-relaxed select-all min-h-[120px]">
-                {compiledCode || <span className="text-neutral-600">Waiting for input...</span>}
-              </pre>
-              <div className="mt-3 flex justify-end">
-                <button
-                  onClick={runCodeSimulated}
-                  disabled={isRunning || !compiledCode.trim()}
-                  className="bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 disabled:bg-neutral-800 disabled:text-neutral-600 text-neutral-950 font-semibold px-4 py-2 rounded-xl text-xs flex items-center gap-2 transition-all shadow-md shadow-emerald-500/10 disabled:shadow-none"
-                >
-                  {isRunning
-                    ? <><div className="w-3.5 h-3.5 border-2 border-neutral-950/50 border-t-neutral-950 rounded-full animate-spin" />Running...</>
-                    : <><Play className="w-3.5 h-3.5 fill-neutral-950" />Run Code</>}
-                </button>
-              </div>
-            </div>
-
-            {/* Execution Output */}
-            <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4 flex flex-col" style={{ height: '220px' }}>
-              <div className="flex items-center justify-between pb-3 mb-3 border-b border-neutral-900">
-                <div className="flex items-center gap-2">
-                  <Terminal className="w-4 h-4 text-emerald-400" />
-                  <span className="text-xs font-semibold uppercase tracking-wider text-neutral-400">Output</span>
-                  {output && <span className="text-[10px] text-neutral-600 font-mono">{outputLineCount} line{outputLineCount !== 1 ? 's' : ''}</span>}
-                </div>
-                <div className="flex items-center gap-2">
-                  {output && (
-                    <button
-                      onClick={() => copyToClipboard(output.filter(l => l.type === 'output').map(l => l.line).join('\n'), 'output')}
-                      className="text-neutral-600 hover:text-neutral-300 transition-colors p-1 rounded"
-                      title="Copy output"
-                    >
-                      {copiedOutput ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                    </button>
-                  )}
-                  {output && (
-                    <button onClick={() => setOutput(null)} className="text-neutral-600 hover:text-red-400 transition-colors p-1 rounded" title="Clear output">
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  )}
-                </div>
-              </div>
-              <div ref={outputRef} className="flex-1 bg-neutral-950 rounded-xl p-3 font-mono text-xs overflow-y-auto space-y-0.5 border border-neutral-900">
-                {output ? output.map((entry, idx) => (
-                  entry.type === 'divider'
-                    ? <div key={idx} className="border-t border-neutral-900 my-1" />
-                    : <div key={idx} className={
-                        entry.type === 'system' ? 'text-neutral-600' :
-                        entry.type === 'error' ? 'text-red-400' :
-                        'text-neutral-200'
-                      }>{entry.line}</div>
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-400 pb-3 mb-3 border-b border-neutral-900 flex items-center">
+                <Sparkles className="w-3.5 h-3.5 mr-1.5 text-emerald-400" />
+                Active Translations
+                {evolvedSyntax.length > 0 && (
+                  <span className="ml-auto bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] px-1.5 py-0.5 rounded-full">
+                    {evolvedSyntax.length}
+                  </span>
+                )}
+              </h2>
+              <div className="flex-1 overflow-y-auto space-y-2 pr-0.5">
+                {evolvedSyntax.length > 0 ? evolvedSyntax.map((rule, idx) => (
+                  <div key={idx} className="bg-neutral-950/40 border border-neutral-900 p-2.5 rounded-xl hover:border-neutral-800 transition-colors">
+                    <div className="flex items-center justify-between mb-1">
+                      <code className="text-[11px] text-emerald-400 font-mono bg-neutral-950 px-1.5 py-0.5 rounded border border-neutral-800/80 truncate max-w-[140px]">
+                        {rule.keyword}
+                      </code>
+                      <span className="text-[9px] text-neutral-600 uppercase font-mono ml-1 flex-shrink-0">matched</span>
+                    </div>
+                    <p className="text-[11px] text-neutral-500 leading-relaxed">{rule.desc}</p>
+                  </div>
                 )) : (
-                  <div className="text-neutral-600 italic text-center py-4">
-                    Click <span className="text-emerald-500 not-italic font-medium">Run Code</span> to execute
+                  <div className="text-center py-6 text-neutral-600 text-xs">
+                    Write natural language code to see matched rules here.
                   </div>
                 )}
               </div>
             </div>
+          </div>
 
+          {/* Editors */}
+          <div className="lg:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-4 min-h-[500px]">
+            <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4 flex flex-col h-full">
+              <div className="flex items-center justify-between pb-3 mb-3 border-b border-neutral-900">
+                <div className="flex items-center gap-2">
+                  <Code2 className="w-4 h-4 text-emerald-400" />
+                  <span className="text-sm font-medium text-neutral-300">Input</span>
+                  <span className="text-[10px] text-neutral-600 font-mono">natural language / python</span>
+                </div>
+                <button onClick={() => { setCode(''); setOutput(null); }} className="text-neutral-600 hover:text-red-400 transition-colors p-1 rounded" title="Clear">
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              <textarea
+                className="flex-1 bg-neutral-950/40 border border-neutral-900 rounded-xl p-3.5 text-sm font-mono text-neutral-300 focus:outline-none focus:border-emerald-500/40 resize-none leading-relaxed transition-all placeholder:text-neutral-600"
+                placeholder={`Try writing:\nprint hello world\nmake a variable called x and set it to 10\nif x is greater than 5 then print big\nalternatively then print small\nadd 1 to x`}
+                value={code}
+                onChange={e => setCode(e.target.value)}
+                spellCheck={false}
+              />
+              <div className="mt-2 flex items-center justify-between">
+                <span className="text-[10px] text-neutral-600 font-mono">{lineCount} line{lineCount !== 1 ? 's' : ''}</span>
+                <button
+                  onClick={() => analyzeWithHeuristics(code)}
+                  className="text-[11px] text-neutral-500 hover:text-neutral-300 flex items-center gap-1 transition-colors"
+                >
+                  <RotateCcw className="w-3 h-3" /> Re-analyse
+                </button>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-4 h-full">
+              <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4 flex-1 flex flex-col min-h-0">
+                <div className="flex items-center justify-between pb-3 mb-3 border-b border-neutral-900">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-emerald-400" />
+                    <span className="text-sm font-medium text-neutral-300">Translated Python</span>
+                    {isAnalyzing && <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />}
+                  </div>
+                  <button onClick={() => copyToClipboard(compiledCode, 'compiled')} className="text-neutral-600 hover:text-neutral-300 transition-colors p-1 rounded" title="Copy">
+                    {copiedCompiled ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
+                <pre className="flex-1 bg-neutral-950/40 border border-neutral-900 rounded-xl p-3.5 text-sm font-mono text-emerald-300/90 overflow-y-auto leading-relaxed select-all min-h-[120px]">
+                  {compiledCode || <span className="text-neutral-600">Waiting for input...</span>}
+                </pre>
+                <div className="mt-3 flex justify-end">
+                  <button
+                    onClick={runCodeSimulated}
+                    disabled={isRunning || !compiledCode.trim()}
+                    className="bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 disabled:bg-neutral-800 disabled:text-neutral-600 text-neutral-950 font-semibold px-4 py-2 rounded-xl text-xs flex items-center gap-2 transition-all shadow-md shadow-emerald-500/10 disabled:shadow-none"
+                  >
+                    {isRunning
+                      ? <><div className="w-3.5 h-3.5 border-2 border-neutral-950/50 border-t-neutral-950 rounded-full animate-spin" />Running...</>
+                      : <><Play className="w-3.5 h-3.5 fill-neutral-950" />Run Code</>}
+                  </button>
+                </div>
+              </div>
+
+              <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4 flex flex-col" style={{ height: '220px' }}>
+                <div className="flex items-center justify-between pb-3 mb-3 border-b border-neutral-900">
+                  <div className="flex items-center gap-2">
+                    <Terminal className="w-4 h-4 text-emerald-400" />
+                    <span className="text-xs font-semibold uppercase tracking-wider text-neutral-400">Output</span>
+                    {output && <span className="text-[10px] text-neutral-600 font-mono">{outputLineCount} line{outputLineCount !== 1 ? 's' : ''}</span>}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {output && (
+                      <button onClick={() => copyToClipboard(output.filter(l => l.type === 'output').map(l => l.line).join('\n'), 'output')} className="text-neutral-600 hover:text-neutral-300 transition-colors p-1 rounded">
+                        {copiedOutput ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                      </button>
+                    )}
+                    {output && (
+                      <button onClick={() => setOutput(null)} className="text-neutral-600 hover:text-red-400 transition-colors p-1 rounded">
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <div ref={outputRef} className="flex-1 bg-neutral-950 rounded-xl p-3 font-mono text-xs overflow-y-auto space-y-0.5 border border-neutral-900">
+                  {output ? output.map((entry, idx) => (
+                    entry.type === 'divider'
+                      ? <div key={idx} className="border-t border-neutral-900 my-1" />
+                      : <div key={idx} className={
+                          entry.type === 'system' ? 'text-neutral-600' :
+                          entry.type === 'error' ? 'text-red-400' :
+                          'text-neutral-200'
+                        }>{entry.line}</div>
+                  )) : (
+                    <div className="text-neutral-600 italic text-center py-4">
+                      Click <span className="text-emerald-500 not-italic font-medium">Run Code</span> to execute
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
