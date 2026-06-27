@@ -82,10 +82,17 @@ const BUILTIN_COMMANDS = [
 ];
 
 // ─── Rule Scoring ─────────────────────────────────────────────────────────────
+// Rules are scored so that SPECIFIC patterns beat GENERIC ones.
+// The pre-processor already handles print/if/elif/else/arithmetic, so
+// the JSON engine only runs on lines the pre-processor didn't claim.
+// Within the JSON engine, specificity (number of capture groups + anchors)
+// beats raw pattern length — long synonym lists must not win by size alone.
 const getRuleScore = (rule: any): number => {
   let score = 0;
   const kw: string = rule.ruleKeyword || '';
   const pat: string = rule.pattern || '';
+
+  // Specific structural patterns get priority
   if (kw.includes('then') || kw.includes('[Z]')) score += 10000;
   if (kw.includes('else if') || kw.includes('elif')) score += 5000;
   if (kw.includes('try') || kw.includes('error')) score += 3000;
@@ -93,17 +100,65 @@ const getRuleScore = (rule: any): number => {
   if (kw.includes('file') || kw.includes('directory') || kw.includes('json')) score += 1500;
   if (kw.includes('list') || kw.includes('dict') || kw.includes('set')) score += 1000;
   if (kw.includes('random') || kw.includes('math') || kw.includes('date')) score += 1000;
-  if (kw === 'print/show/say/display/log [X]') score -= 8000;
+
+  // Heavily penalise catch-all / bare passthrough rules — they should only
+  // fire if nothing more specific matched
   if (kw === '[X] = [Y]') score -= 9000;
   if (kw.includes('bare') || kw.includes('generic')) score -= 7000;
-  score += ((pat.match(/\((?!\?:)/g) || []).length) * 100;
-  score += pat.length * 0.1;
+
+  // Score by number of NAMED capture groups (specificity), NOT by raw length.
+  // Long synonym alternation lists inflate pat.length without adding specificity.
+  const captureGroups = (pat.match(/\((?!\?[=!:])/g) || []).length;
+  score += captureGroups * 200;
+
+  // Small length bonus capped so bloated synonym lists can't dominate
+  score += Math.min(pat.length * 0.05, 300);
+
   return score;
 };
 
 // ─── Pre-processor ────────────────────────────────────────────────────────────
+// Handles the most common natural-language constructs BEFORE the JSON rule
+// engine runs. Anything matched here is guaranteed correct and fast.
+// The JSON engine only sees lines that fall through all of these.
 const preProcessLine = (t: string): string | null => {
-  let m = t.match(/^(?:alternatively|alternately|else if|otherwise if)\s+if\s+(.+?)\s+(?:is not the same as|is not equal to|!=|isn't|isnt)\s+(.+?)\s+then\s+(.+)$/i);
+  let m: RegExpMatchArray | null;
+
+  // ── show type of X  (must come before generic print/show rule) ──────────────
+  m = t.match(/^(?:show|print|get|check|display|what is(?: the)?)\s+type(?:\s+of)?\s+([a-zA-Z_][a-zA-Z0-9_]*)$/i);
+  if (m) return `print(type(${m[1].trim()}))`;
+
+  // ── Print / output ─────────────────────────────────────────────────────────
+  // "print X", "show X", "say X", "display X", "log X", "output X", "echo X"
+  // Must run BEFORE the JSON engine so synonym-heavy rules can't steal it.
+  m = t.match(/^(?:print|show|say|display|log|output|echo|write out|put out|emit|dump)\s+(.+)$/i);
+  if (m) {
+    const arg = m[1].trim();
+    // If already wrapped in parens leave as-is, otherwise wrap
+    return /^\(.*\)$/.test(arg) ? `print${arg}` : `print(${arg})`;
+  }
+
+  // ── Single-line if: "if X (comp) Y then Z" ────────────────────────────────
+  m = t.match(/^if\s+(.+?)\s+(?:is not the same as|is not equal to|!=|isn't|isnt)\s+(.+?)\s+then\s+(.+)$/i);
+  if (m) return `if ${m[1].trim()} != ${m[2].trim()}: ${m[3].trim()}`;
+
+  m = t.match(/^if\s+(.+?)\s+(?:is the same as|is equal to|==|equals)\s+(.+?)\s+then\s+(.+)$/i);
+  if (m) return `if ${m[1].trim()} == ${m[2].trim()}: ${m[3].trim()}`;
+
+  m = t.match(/^if\s+(.+?)\s+(?:is bigger than|is greater than|is more than|>)\s+(.+?)\s+then\s+(.+)$/i);
+  if (m) return `if ${m[1].trim()} > ${m[2].trim()}: ${m[3].trim()}`;
+
+  m = t.match(/^if\s+(.+?)\s+(?:is smaller than|is less than|<)\s+(.+?)\s+then\s+(.+)$/i);
+  if (m) return `if ${m[1].trim()} < ${m[2].trim()}: ${m[3].trim()}`;
+
+  m = t.match(/^if\s+(.+?)\s+(?:>=|is at least|is greater than or equal to)\s+(.+?)\s+then\s+(.+)$/i);
+  if (m) return `if ${m[1].trim()} >= ${m[2].trim()}: ${m[3].trim()}`;
+
+  m = t.match(/^if\s+(.+?)\s+(?:<=|is at most|is less than or equal to)\s+(.+?)\s+then\s+(.+)$/i);
+  if (m) return `if ${m[1].trim()} <= ${m[2].trim()}: ${m[3].trim()}`;
+
+  // ── elif / else ────────────────────────────────────────────────────────────
+  m = t.match(/^(?:alternatively|alternately|else if|otherwise if)\s+if\s+(.+?)\s+(?:is not the same as|is not equal to|!=|isn't|isnt)\s+(.+?)\s+then\s+(.+)$/i);
   if (m) return `elif ${m[1].trim()} != ${m[2].trim()}: ${m[3].trim()}`;
 
   m = t.match(/^(?:alternatively|alternately|else if|otherwise if)\s+if\s+(.+?)\s+(?:is the same as|is equal to|==)\s+(.+?)\s+then\s+(.+)$/i);
@@ -118,6 +173,7 @@ const preProcessLine = (t: string): string | null => {
   m = t.match(/^(?:alternatively|alternately|otherwise)\s+(?!if\s)(?:then\s+)?(.+)$/i);
   if (m) return `else: ${m[1].trim()}`;
 
+  // ── Arithmetic shorthands ──────────────────────────────────────────────────
   m = t.match(/^(?:add|increase|plus)\s+(.+?)\s+(?:to|onto|into)\s+([a-zA-Z_][a-zA-Z0-9_]*)$/i);
   if (m) return `${m[2].trim()} += ${m[1].trim()}`;
 
@@ -428,15 +484,22 @@ export default function App() {
           const indent = (line.match(/^(\s*)/) || ['', ''])[1];
           const trimmed = line.trim();
 
-          // Pre-processor first (elif / else / arithmetic shorthands)
+          // Pre-processor first — handles print/show/if/elif/else/arithmetic
+          // before the JSON rule engine ever sees the line.
           const pre = preProcessLine(trimmed);
           if (pre !== null) {
             finalCodeLines.push(indent + postProcessMathWords(pre));
-            const key = pre.startsWith('elif') ? 'elif (pre-processed)'
+            const key = pre.startsWith('print(') ? 'print/show/say/display/log [X]'
+              : pre.startsWith('elif') ? 'elif (pre-processed)'
               : pre.startsWith('else') ? 'else: (pre-processed)'
-              : 'arithmetic shorthand';
+              : pre.startsWith('if ') ? 'if [X] then [Z] (pre-processed)'
+              : /[+\-*\/]=/.test(pre) ? 'arithmetic shorthand'
+              : 'pre-processor';
+            const desc = pre.startsWith('print(') ? 'Resolved by built-in print handler — not the JSON engine.'
+              : pre.startsWith('if ') ? 'Single-line if resolved by built-in handler.'
+              : 'Handled by pre-processor before rules engine.';
             if (!currentEvolvedSyntax.some(s => s.keyword === key))
-              currentEvolvedSyntax.push({ keyword: key, desc: 'Handled by pre-processor before rules engine.' });
+              currentEvolvedSyntax.push({ keyword: key, desc });
             return;
           }
 
@@ -510,8 +573,23 @@ export default function App() {
           finalCodeLines.push(indent + translatedLine);
         });
       } else {
-        finalCodeLines = rawCode.split('\n');
-        newInsights.push({ type: 'debt', message: 'rules.json failed to load — check the import path and that the file is valid JSON.' });
+        // Even without JSON rules, still run the pre-processor so basic
+        // constructs like print/show/if/arithmetic work.
+        const expandedLines = rawCode.split('\n').flatMap(splitIntoLogicalLines);
+        expandedLines.forEach(line => {
+          if (!line.trim() || line.trim().startsWith('#') || line.trim().startsWith('//')) {
+            finalCodeLines.push(line); return;
+          }
+          const indent = (line.match(/^(\s*)/) || ['', ''])[1];
+          const trimmed = line.trim();
+          const pre = preProcessLine(trimmed);
+          if (pre !== null) {
+            finalCodeLines.push(indent + postProcessMathWords(pre));
+          } else {
+            finalCodeLines.push(line);
+          }
+        });
+        newInsights.push({ type: 'debt', message: 'rules.json failed to load — JSON rules unavailable. Basic patterns still work.' });
       }
 
       let finalCode = finalCodeLines.join('\n');
