@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Activity, Zap, AlertTriangle, Code2, 
-  BrainCircuit, History, CheckCircle2, ChevronRight, Play, Terminal, ShieldCheck, Sparkles
+  BrainCircuit, Play, Terminal, ShieldCheck, Sparkles
 } from 'lucide-react';
 import syntaxRulesJSON from './rules.json';
 
@@ -21,6 +21,38 @@ interface Insight {
   message: string;
 }
 
+// Heuristically score rules to sort more specific/complex rules before generic fallback rules
+const getRuleScore = (rule: any): number => {
+  let score = 0;
+  const keyword = rule.ruleKeyword || '';
+  const pattern = rule.pattern || '';
+
+  // 1. Extreme priority for rules with multiple actions or complex flow
+  if (keyword.includes('then') || keyword.includes('[Z]')) score += 10000;
+  if (keyword.includes('else if') || keyword.includes('elif')) score += 5000;
+  if (keyword.includes('try') || keyword.includes('error')) score += 3000;
+  
+  // 2. High priority to specialized functions/operators (cast, math, time, set, dict, file, type checks)
+  if (keyword.includes('cast') || keyword.includes('type') || keyword.includes('isinstance')) score += 2000;
+  if (keyword.includes('file') || keyword.includes('directory') || keyword.includes('json')) score += 1500;
+  if (keyword.includes('list') || keyword.includes('dict') || keyword.includes('set')) score += 1000;
+  if (keyword.includes('random') || keyword.includes('math') || keyword.includes('date')) score += 1000;
+  
+  // 3. Penalty for highly generic commands
+  if (keyword === 'print/show/say/display/log [X]') score -= 8000;
+  if (keyword === '[X] = [Y]') score -= 9000;
+  if (keyword.includes('bare') || keyword.includes('generic')) score -= 7000;
+  
+  // 4. Tie-breaker based on number of capturing groups
+  const groupCount = (pattern.match(/\((?!\?:)/g) || []).length;
+  score += groupCount * 100;
+  
+  // 5. Tie-breaker: longer literal rules are generally more specific
+  score += pattern.length * 0.1;
+
+  return score;
+};
+
 export default function App() {
   const [code, setCode] = useState<string>(`var i = 12
 var c = (1, 2, 3, 4)
@@ -28,7 +60,6 @@ int b = 13
 show type of b
 print hi
 
-// Let's test the new conversational logic!
 make a variable called a and set it to 13
 if a is the same as b then print yes
 add 5 to a
@@ -48,7 +79,6 @@ add 5 to a
   // Safety checker for Regex pattern strings
   const compilePattern = (patternStr: string, flags: string): RegExp => {
     let sanitized = patternStr;
-    // Replace raw ??? with escaped \?\?\?
     if (sanitized.includes('???')) {
       sanitized = sanitized.replace(/\?\?\?/g, '\\?\\?\\?');
     }
@@ -59,17 +89,22 @@ add 5 to a
     setIsAnalyzing(true);
     
     // Safely extract rules to handle production bundle variations (.default)
-    const rules = Array.isArray(syntaxRulesJSON) 
+    const rawRules = Array.isArray(syntaxRulesJSON) 
       ? syntaxRulesJSON 
       : (syntaxRulesJSON as any)?.default || [];
 
-    const isJsonConnected = Array.isArray(rules) && rules.length > 0;
+    const isJsonConnected = Array.isArray(rawRules) && rawRules.length > 0;
 
     try {
       let newInsights: Insight[] = [];
       let currentEvolvedSyntax: SyntaxRule[] = [];
       let finalCodeLines: string[] = [];
       
+      // Sort rules using dynamic heuristic score to prevent shadowing
+      const rules = isJsonConnected 
+        ? [...rawRules].sort((a, b) => getRuleScore(b) - getRuleScore(a)) 
+        : [];
+
       // --- 1. LEARN CODING STYLE ---
       const lines = rawCode.split('\n').filter((l: string) => l.trim().length > 0 && !l.trim().startsWith('//') && !l.trim().startsWith('#'));
       
@@ -141,7 +176,6 @@ add 5 to a
                     break;
                 }
              } catch (ruleError) {
-                // If a single pattern is invalid, warn but keep going!
                 console.warn(`Engine skipped corrupted rule pattern "${rule.ruleKeyword}":`, ruleError);
              }
           }
@@ -191,6 +225,162 @@ add 5 to a
     return () => clearTimeout(delayDebounceFn);
   }, [code]);
 
+  // Evaluator for conditional tests in execution simulator
+  const evaluateCondition = (expr: string, variables: Record<string, any>): boolean => {
+    const resolveValue = (token: string) => {
+      const cleanToken = token.trim().replace(/['"]/g, '');
+      if (cleanToken in variables) {
+        return variables[cleanToken];
+      }
+      if (!isNaN(Number(cleanToken))) {
+        return Number(cleanToken);
+      }
+      if (cleanToken === 'True') return true;
+      if (cleanToken === 'False') return false;
+      if (cleanToken === 'None') return null;
+      return cleanToken;
+    };
+
+    if (expr.includes(' == ')) {
+      const parts = expr.split(' == ');
+      return resolveValue(parts[0]) == resolveValue(parts[1]);
+    }
+    if (expr.includes(' != ')) {
+      const parts = expr.split(' != ');
+      return resolveValue(parts[0]) != resolveValue(parts[1]);
+    }
+    if (expr.includes(' >= ')) {
+      const parts = expr.split(' >= ');
+      return resolveValue(parts[0]) >= resolveValue(parts[1]);
+    }
+    if (expr.includes(' <= ')) {
+      const parts = expr.split(' <= ');
+      return resolveValue(parts[0]) <= resolveValue(parts[1]);
+    }
+    if (expr.includes(' > ')) {
+      const parts = expr.split(' > ');
+      return resolveValue(parts[0]) > resolveValue(parts[1]);
+    }
+    if (expr.includes(' < ')) {
+      const parts = expr.split(' < ');
+      return resolveValue(parts[0]) < resolveValue(parts[1]);
+    }
+    if (expr.includes(' in ')) {
+      const parts = expr.split(' in ');
+      const element = resolveValue(parts[0]);
+      const container = resolveValue(parts[1]);
+      if (Array.isArray(container)) {
+        return container.includes(element);
+      }
+      if (typeof container === 'string') {
+        return container.includes(String(element));
+      }
+      return false;
+    }
+
+    return !!resolveValue(expr);
+  };
+
+  // Dynamic statement processor to evaluate script changes
+  const executeSingleStatement = (stmt: string, variables: Record<string, any>, logs: string[]) => {
+    const trimmed = stmt.trim();
+    if (trimmed === '' || trimmed.startsWith('#') || trimmed.startsWith('//')) return;
+
+    const resolveExprValue = (valStr: string): any => {
+      const str = valStr.trim();
+      
+      // Process explicit type casts: int(...), float(...), str(...), bool(...)
+      const castMatch = str.match(/^(int|float|str|bool)\((.*)\)$/);
+      if (castMatch) {
+        const castType = castMatch[1];
+        const innerVal = resolveExprValue(castMatch[2]);
+        if (castType === 'int') return parseInt(innerVal) || 0;
+        if (castType === 'float') return parseFloat(innerVal) || 0.0;
+        if (castType === 'str') return String(innerVal);
+        if (castType === 'bool') return innerVal === 'True' || innerVal === true;
+      }
+
+      // Parse list or tuple structures
+      if ((str.startsWith('(') && str.endsWith(')')) || (str.startsWith('[') && str.endsWith(']'))) {
+        const content = str.slice(1, -1).trim();
+        if (content === '') return [];
+        return content.split(',').map(item => resolveExprValue(item));
+      }
+
+      if (str in variables) {
+        return variables[str];
+      }
+
+      if (!isNaN(Number(str))) {
+        return Number(str);
+      }
+
+      if (str === 'True') return true;
+      if (str === 'False') return false;
+      if (str === 'None') return null;
+
+      return str.replace(/['"]/g, '');
+    };
+
+    // Math/assignment operators (=, +=, -=, *=, /=)
+    const opMatch = trimmed.match(/^([a-zA-Z_][a-zA-Z0-9_]*)\s*(\+=|-=|\*=|\/=|:=|=)\s*(.+)$/);
+    if (opMatch) {
+      const varName = opMatch[1];
+      const op = opMatch[2];
+      const rawValue = opMatch[3];
+      const parsedValue = resolveExprValue(rawValue);
+
+      if (op === '=' || op === ':=') {
+        variables[varName] = parsedValue;
+      } else if (op === '+=') {
+        const current = variables[varName] !== undefined ? variables[varName] : 0;
+        variables[varName] = current + parsedValue;
+      } else if (op === '-=') {
+        const current = variables[varName] !== undefined ? variables[varName] : 0;
+        variables[varName] = current - parsedValue;
+      } else if (op === '*=') {
+        const current = variables[varName] !== undefined ? variables[varName] : 1;
+        variables[varName] = current * parsedValue;
+      } else if (op === '/=') {
+        const current = variables[varName] !== undefined ? variables[varName] : 1;
+        variables[varName] = current / (parsedValue || 1);
+      }
+      return;
+    }
+
+    // Print and show statements
+    if (trimmed.startsWith('print(') || trimmed.startsWith('print ')) {
+      const printMatch = trimmed.match(/(?:print\((.+)\)|print\s+(.+))/);
+      if (printMatch) {
+        let expr = (printMatch[1] || printMatch[2]).trim();
+        if (trimmed.startsWith('print(') && expr.endsWith(')')) {
+          expr = expr.slice(0, -1);
+        }
+
+        // Support standard variable metadata checking (e.g. type(b))
+        const typeMatch = expr.match(/^type\((.+?)\)$/);
+        if (typeMatch) {
+          const targetVar = typeMatch[1].trim();
+          if (targetVar in variables) {
+            const val = variables[targetVar];
+            let typeStr = "class 'str'";
+            if (Array.isArray(val)) typeStr = "class 'tuple'";
+            else if (typeof val === 'number') typeStr = Number.isInteger(val) ? "class 'int'" : "class 'float'";
+            else if (typeof val === 'boolean') typeStr = "class 'bool'";
+            logs.push(`<type: ${typeStr}>`);
+          } else {
+            logs.push(`NameError: name '${targetVar}' is not defined`);
+          }
+          return;
+        }
+
+        const evaluated = resolveExprValue(expr);
+        logs.push(String(evaluated));
+      }
+      return;
+    }
+  };
+
   // Simulated code execution logic
   const runCodeSimulated = () => {
     setIsRunning(true);
@@ -203,70 +393,49 @@ add 5 to a
 
       logs.push(">>> Starting Execution of EvoScript Symbiote Output...");
 
-      lines.forEach(line => {
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
         const trimmed = line.trim();
-        if (trimmed === '' || trimmed.startsWith('#') || trimmed.startsWith('//')) return;
+        if (trimmed === '' || trimmed.startsWith('#') || trimmed.startsWith('//')) continue;
 
-        // Variable Assignments
-        if (trimmed.includes('=')) {
-          const parts = trimmed.split('=');
-          const varName = parts[0].trim();
-          const varValueStr = parts[1].trim();
-
-          // Strip simple type prefixes if they leaked through
-          const cleanedVarName = varName.replace(/\b(let|var|const|int|float|string)\s+/g, '');
-
-          try {
-            // Attempt a simple math evaluation or parsing
-            if (varValueStr.startsWith('(') && varValueStr.endsWith(')')) {
-              // Parse tuple mock
-              const items = varValueStr.slice(1, -1).split(',').map(i => parseInt(i.trim()) || i.trim());
-              variables[cleanedVarName] = items;
-            } else if (!isNaN(Number(varValueStr))) {
-              variables[cleanedVarName] = Number(varValueStr);
-            } else {
-              // Standard string evaluation
-              variables[cleanedVarName] = varValueStr.replace(/['"]/g, '');
+        // Block & standard condition evaluation support
+        if (trimmed.startsWith('if ')) {
+          const ifMatch = trimmed.match(/^if\s+(.+?)\s*:\s*(.+)$/);
+          if (ifMatch) {
+            const conditionExpr = ifMatch[1].trim();
+            const actionExpr = ifMatch[2].trim();
+            if (evaluateCondition(conditionExpr, variables)) {
+              executeSingleStatement(actionExpr, variables, logs);
             }
-          } catch (e) {
-            variables[cleanedVarName] = varValueStr;
+            continue;
           }
-          return;
+          
+          const blockMatch = trimmed.match(/^if\s+(.+?)\s*:/);
+          if (blockMatch) {
+            const conditionExpr = blockMatch[1].trim();
+            const conditionMet = evaluateCondition(conditionExpr, variables);
+            
+            let j = i + 1;
+            const subLines: string[] = [];
+            while (j < lines.length && (lines[j].startsWith(' ') || lines[j].startsWith('\t') || lines[j].trim() === '')) {
+              if (lines[j].trim() !== '') {
+                subLines.push(lines[j].trim());
+              }
+              j++;
+            }
+            
+            if (conditionMet) {
+              subLines.forEach(subLine => {
+                executeSingleStatement(subLine, variables, logs);
+              });
+            }
+            i = j - 1;
+            continue;
+          }
         }
 
-        // Show type expressions
-        if (trimmed.startsWith('show type of ') || trimmed.startsWith('print(type(')) {
-          const varMatch = trimmed.match(/(?:show type of\s+|print\(type\()([a-zA-Z0-9_]+)\)?/);
-          if (varMatch) {
-            const varName = varMatch[1];
-            if (varName in variables) {
-              const val = variables[varName];
-              let typeStr = 'class \'str\'';
-              if (Array.isArray(val)) typeStr = "class 'tuple'";
-              else if (typeof val === 'number') typeStr = Number.isInteger(val) ? "class 'int'" : "class 'float'";
-              logs.push(`<type: ${typeStr}>`);
-            } else {
-              logs.push(`NameError: name '${varName}' is not defined`);
-            }
-          }
-          return;
-        }
-
-        // Simple Print statements
-        if (trimmed.startsWith('print(') || trimmed.startsWith('print ')) {
-          const contentMatch = trimmed.match(/(?:print\((.+)\)|print\s+(.+))/);
-          if (contentMatch) {
-            const expression = (contentMatch[1] || contentMatch[2]).trim();
-            if (expression in variables) {
-              logs.push(String(variables[expression]));
-            } else {
-              // Clean quotes and print raw text
-              logs.push(expression.replace(/['"]/g, ''));
-            }
-          }
-          return;
-        }
-      });
+        executeSingleStatement(trimmed, variables, logs);
+      }
 
       logs.push(">>> Execution completed successfully.");
       setOutput(logs);
