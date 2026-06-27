@@ -2,33 +2,31 @@ import React, { useState, useEffect } from 'react';
 import { Activity, Zap, AlertTriangle, Code2, BrainCircuit, Play, Terminal, ShieldCheck, Sparkles } from 'lucide-react';
 import syntaxRulesJSON from './rules.json';
 
-// --- TypeScript Interfaces ---
 interface StyleProfile { quotes: string; naming: string; }
 interface SyntaxRule { keyword: string; desc: string; }
 interface Insight { type: 'debt' | 'optimization'; message: string; }
 
-// Heuristically score rules to sort more specific/complex rules before generic fallback rules
 const getRuleScore = (rule: any): number => {
   let score = 0;
   const keyword = rule.ruleKeyword;
   const pattern = rule.pattern;
-  // 1. Extreme priority for rules with multiple actions or complex flow
   if (keyword.includes('then') && keyword.includes('Z')) score += 10000;
   if (keyword.includes('else if') || keyword.includes('elif')) score += 5000;
   if (keyword.includes('try') || keyword.includes('error')) score += 3000;
-  // 2. High priority to specialized functions/operators
   if (keyword.includes('cast') || keyword.includes('type') || keyword.includes('isinstance')) score += 2000;
   if (keyword.includes('file') || keyword.includes('directory') || keyword.includes('json')) score += 1500;
   if (keyword.includes('list') || keyword.includes('dict') || keyword.includes('set')) score += 1000;
   if (keyword.includes('random') || keyword.includes('math') || keyword.includes('date')) score += 1000;
-  // 3. Penalty for highly generic commands
+  // Heavy penalties for rules known to be too greedy
   if (keyword === 'printshowsaydisplaylog X') score -= 8000;
   if (keyword === 'X = Y') score -= 9000;
   if (keyword.includes('bare') || keyword.includes('generic')) score -= 7000;
-  // 4. Tie-breaker based on number of capturing groups
+  // Extra penalty for os/self/file rules that tend to swallow simple statements
+  if (pattern.includes('os.listdir') || pattern.includes('os.path') || pattern.includes('listdir')) score -= 5000;
+  if (keyword.includes('self.') || keyword.includes('set self')) score -= 4000;
+  if (keyword.includes('list files') || keyword.includes('directory')) score -= 4000;
   const groupCount = (pattern.match(/\(\?!.*?\)|(?:\()/g) || []).length;
   score += groupCount * 100;
-  // 5. Tie-breaker: longer literal rules are generally more specific
   score += pattern.length * 0.1;
   return score;
 };
@@ -46,15 +44,12 @@ add 5 to a`
   );
   const [compiledCode, setCompiledCode] = useState<string>('');
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
-  // Execution States
   const [output, setOutput] = useState<string[] | null>(null);
   const [isRunning, setIsRunning] = useState<boolean>(false);
-  // Symbiote States
   const [styleProfile, setStyleProfile] = useState<StyleProfile>({ quotes: 'learning', naming: 'learning' });
   const [insights, setInsights] = useState<Insight[]>([]);
   const [evolvedSyntax, setEvolvedSyntax] = useState<SyntaxRule[]>([]);
 
-  // Safety checker for Regex pattern strings
   const compilePattern = (patternStr: string, flags: string): RegExp => {
     let sanitized = patternStr;
     if (sanitized.includes('???')) sanitized = sanitized.replace(/\?\?\?/g, '??');
@@ -69,9 +64,10 @@ add 5 to a`
       let newInsights: Insight[] = [];
       let currentEvolvedSyntax: SyntaxRule[] = [];
       let finalCodeLines: string[] = [];
-      const rules = isJsonConnected ? [...rawRules].sort((a, b) => getRuleScore(b) - getRuleScore(a)) : [];
+      const rules = isJsonConnected
+        ? [...rawRules].sort((a, b) => getRuleScore(b) - getRuleScore(a))
+        : [];
 
-      // --- 1. LEARN CODING STYLE ---
       const lines = rawCode.split('\n').filter((l: string) => l.trim().length > 0 && !l.trim().startsWith('#') && !l.trim().startsWith('//'));
       if (lines.length > 0) {
         const singleQuotes = (rawCode.match(/'/g) || []).length;
@@ -89,7 +85,6 @@ add 5 to a`
         setStyleProfile({ quotes: quoteStyle, naming: namingStyle });
       }
 
-      // --- 2. VAST DYNAMIC HEURISTIC TRANSLATION ---
       if (isJsonConnected) {
         rawCode.split('\n').forEach((line: string) => {
           let translatedLine = line;
@@ -101,6 +96,7 @@ add 5 to a`
           const indentMatch = line.match(/^(\s*)/);
           const indent = indentMatch ? indentMatch[1] : '';
           const trimmedLine = line.trim();
+
           for (const rule of rules) {
             try {
               const pattern = compilePattern(rule.pattern, rule.flags);
@@ -116,7 +112,7 @@ add 5 to a`
                       if (nestedPattern.test(rightSide)) {
                         rightSide = rightSide.replace(nestedPattern, nestedRule.replace);
                       }
-                    } catch (nestedErr) { /* Silently isolate nested compile errors */ }
+                    } catch (nestedErr) {}
                   }
                   tempTranslation = leftSide + rightSide;
                 }
@@ -131,9 +127,13 @@ add 5 to a`
               console.warn('Engine skipped corrupted rule pattern:', rule.ruleKeyword, ruleError);
             }
           }
+
           if (!matched) {
             if (trimmedLine.match(/^for\s*\(/)) {
-              translatedLine = indent + trimmedLine.replace(/for\s*\(?let|var|int\)?\s*([a-zA-Z_]+)\s*=\s*([^;]+);\s*[^;]+;\s*[^)]+\)?/, 'for $1 in range($2, $3)');
+              translatedLine = indent + trimmedLine.replace(
+                /for\s*\(?let|var|int\)?\s*([a-zA-Z_]+)\s*=\s*([^;]+);\s*[^;]+;\s*[^)]+\)?/,
+                'for $1 in range($2, $3)'
+              );
               if (!currentEvolvedSyntax.some(s => s.keyword === 'for(i=0;i<N;i++)')) {
                 currentEvolvedSyntax.push({ keyword: 'for(i=0;i<N;i++)', desc: 'Translated C-style for-loop.' });
               }
@@ -146,7 +146,6 @@ add 5 to a`
       }
 
       let finalCode = finalCodeLines.join('\n');
-
       if (/\b(var|let|const|int|float|string)\s+[a-zA-Z0-9_]+\s*=/g.test(finalCode)) {
         newInsights.push({ type: 'optimization', message: 'Static type or JS variable keyword removed. Python uses dynamic typing.' });
         finalCode = finalCode.replace(/\b(var|let|const|int|float|string)\s+([a-zA-Z0-9_]+)\s*=/g, '$2 =');
@@ -155,7 +154,6 @@ add 5 to a`
       setEvolvedSyntax(currentEvolvedSyntax);
       setInsights(newInsights);
       setCompiledCode(finalCode);
-
     } catch (globalError) {
       console.error("Heuristics core translation crash averted:", globalError);
     } finally {
@@ -164,13 +162,10 @@ add 5 to a`
   };
 
   useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      analyzeWithHeuristics(code);
-    }, 300);
+    const delayDebounceFn = setTimeout(() => analyzeWithHeuristics(code), 300);
     return () => clearTimeout(delayDebounceFn);
   }, [code]);
 
-  // Evaluator for conditional tests
   const evaluateCondition = (expr: string, variables: Record<string, any>): boolean => {
     const resolveValue = (token: string) => {
       const cleanToken = token.trim().replace(/['"]/g, '');
@@ -198,51 +193,43 @@ add 5 to a`
     return !!resolveValue(expr);
   };
 
-  // Dynamic statement processor
   const executeSingleStatement = (stmt: string, variables: Record<string, any>, logs: string[]) => {
     const trimmed = stmt.trim();
-    if (trimmed === '' || trimmed.startsWith('#') || trimmed.startsWith('//')) return;
+    if (!trimmed || trimmed.startsWith('#') || trimmed.startsWith('//')) return;
 
-    // Helper: resolve a type() call against the variable store
-    const resolveTypeCall = (inner: string): string | null => {
-      const targetVar = inner.trim();
-      if (targetVar in variables) {
-        const val = variables[targetVar];
-        if (Array.isArray(val)) return "<class 'list'>";
-        if (typeof val === 'boolean') return "<class 'bool'>";
-        if (typeof val === 'number') return Number.isInteger(val) ? "<class 'int'>" : "<class 'float'>";
-        if (val === null) return "<class 'NoneType'>";
-        return "<class 'str'>";
-      }
-      return null; // variable not found
+    const getTypeString = (val: any): string => {
+      if (val === null) return "<class 'NoneType'>";
+      if (typeof val === 'boolean') return "<class 'bool'>";
+      if (Array.isArray(val)) return "<class 'list'>";
+      if (typeof val === 'number') return Number.isInteger(val) ? "<class 'int'>" : "<class 'float'>";
+      return "<class 'str'>";
     };
 
     const resolveExprValue = (valStr: string): any => {
       const str = valStr.trim();
 
-      // ✅ FIX: Handle type(...) calls in expressions
+      // Handle type(...) calls
       const typeCallMatch = str.match(/^type\((.+)\)$/);
       if (typeCallMatch) {
-        const result = resolveTypeCall(typeCallMatch[1]);
-        if (result !== null) return result;
-        return `NameError: name '${typeCallMatch[1].trim()}' is not defined`;
+        const targetVar = typeCallMatch[1].trim();
+        if (targetVar in variables) return getTypeString(variables[targetVar]);
+        return `NameError: name '${targetVar}' is not defined`;
       }
 
-      // Handle explicit type casts: int(...), float(...), str(...), bool(...)
+      // Handle explicit casts: int(...), float(...), str(...), bool(...)
       const castMatch = str.match(/^(int|float|str|bool)\((.+)\)$/);
       if (castMatch) {
-        const castType = castMatch[1];
-        const innerVal = resolveExprValue(castMatch[2]);
-        if (castType === 'int') return parseInt(innerVal) || 0;
-        if (castType === 'float') return parseFloat(innerVal) || 0.0;
-        if (castType === 'str') return String(innerVal);
-        if (castType === 'bool') return innerVal === 'True' || innerVal === true;
+        const inner = resolveExprValue(castMatch[2]);
+        if (castMatch[1] === 'int') return parseInt(inner) || 0;
+        if (castMatch[1] === 'float') return parseFloat(inner) || 0.0;
+        if (castMatch[1] === 'str') return String(inner);
+        if (castMatch[1] === 'bool') return inner === 'True' || inner === true;
       }
 
-      // Parse list or tuple structures
+      // Lists/tuples
       if ((str.startsWith('[') && str.endsWith(']')) || (str.startsWith('(') && str.endsWith(')'))) {
         const content = str.slice(1, -1).trim();
-        if (content === '') return [];
+        if (!content) return [];
         return content.split(',').map((item: string) => resolveExprValue(item));
       }
 
@@ -254,17 +241,17 @@ add 5 to a`
       return str.replace(/['"]/g, '');
     };
 
-    // Math/assignment operators
+    // Assignment operators
     const opMatch = trimmed.match(/^([a-zA-Z_][a-zA-Z0-9_]*)\s*(\+=|-=|\*=|\/=|:=|=)\s*(.+)$/);
     if (opMatch) {
       const varName = opMatch[1];
       const op = opMatch[2];
-      const parsedValue = resolveExprValue(opMatch[3]);
-      if (op === '=' || op === ':=') variables[varName] = parsedValue;
-      else if (op === '+=') variables[varName] = (variables[varName] ?? 0) + parsedValue;
-      else if (op === '-=') variables[varName] = (variables[varName] ?? 0) - parsedValue;
-      else if (op === '*=') variables[varName] = (variables[varName] ?? 1) * parsedValue;
-      else if (op === '/=') variables[varName] = (variables[varName] ?? 1) / (parsedValue || 1);
+      const val = resolveExprValue(opMatch[3]);
+      if (op === '=' || op === ':=') variables[varName] = val;
+      else if (op === '+=') variables[varName] = (variables[varName] ?? 0) + val;
+      else if (op === '-=') variables[varName] = (variables[varName] ?? 0) - val;
+      else if (op === '*=') variables[varName] = (variables[varName] ?? 1) * val;
+      else if (op === '/=') variables[varName] = (variables[varName] ?? 1) / (val || 1);
       return;
     }
 
@@ -273,47 +260,41 @@ add 5 to a`
       let expr = '';
 
       if (trimmed.startsWith('print(')) {
-        // ✅ FIX: Properly extract the argument of print(...) by matching balanced parens
-        // instead of blindly slicing the last character
-        const inner = trimmed.slice(6); // remove "print("
-        // Find the matching closing paren
-        let depth = 1;
-        let end = 0;
+        // Balanced paren extraction — avoids slicing off inner closing parens
+        const inner = trimmed.slice(6); // after "print("
+        let depth = 1, end = inner.length - 1;
         for (let ci = 0; ci < inner.length; ci++) {
           if (inner[ci] === '(') depth++;
-          else if (inner[ci] === ')') { depth--; if (depth === 0) { end = ci; break; } }
+          else if (inner[ci] === ')') {
+            depth--;
+            if (depth === 0) { end = ci; break; }
+          }
         }
         expr = inner.slice(0, end).trim();
       } else {
-        // print without parens: `print foo`
-        expr = trimmed.slice(6).trim();
+        expr = trimmed.slice(6).trim(); // after "print "
       }
 
       if (!expr) return;
 
-      // ✅ FIX: Handle type() at top level of print
+      // Top-level type() check
       const typeMatch = expr.match(/^type\((.+)\)$/);
       if (typeMatch) {
-        const result = resolveTypeCall(typeMatch[1]);
-        if (result !== null) {
-          logs.push(result);
+        const targetVar = typeMatch[1].trim();
+        if (targetVar in variables) {
+          logs.push(getTypeString(variables[targetVar]));
         } else {
-          logs.push(`NameError: name '${typeMatch[1].trim()}' is not defined`);
+          logs.push(`NameError: name '${targetVar}' is not defined`);
         }
         return;
       }
 
       const evaluated = resolveExprValue(expr);
-      if (typeof evaluated === 'string' && evaluated.startsWith('NameError:')) {
-        logs.push(evaluated);
-      } else {
-        logs.push(String(evaluated));
-      }
+      logs.push(String(evaluated));
       return;
     }
   };
 
-  // Simulated code execution logic
   const runCodeSimulated = () => {
     setIsRunning(true);
     setOutput(null);
@@ -326,32 +307,26 @@ add 5 to a`
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
         const trimmed = line.trim();
-        if (trimmed === '' || trimmed.startsWith('#') || trimmed.startsWith('//')) continue;
+        if (!trimmed || trimmed.startsWith('#') || trimmed.startsWith('//')) continue;
 
-        // Block if evaluation support
         if (trimmed.startsWith('if ')) {
           const ifMatch = trimmed.match(/^if (.+?):\s*(.+)$/);
           if (ifMatch) {
-            const conditionExpr = ifMatch[1].trim();
-            const actionExpr = ifMatch[2].trim();
-            if (evaluateCondition(conditionExpr, variables)) {
-              executeSingleStatement(actionExpr, variables, logs);
+            if (evaluateCondition(ifMatch[1].trim(), variables)) {
+              executeSingleStatement(ifMatch[2].trim(), variables, logs);
             }
             continue;
           }
           const blockMatch = trimmed.match(/^if (.+?):$/);
           if (blockMatch) {
-            const conditionExpr = blockMatch[1].trim();
-            const conditionMet = evaluateCondition(conditionExpr, variables);
+            const conditionMet = evaluateCondition(blockMatch[1].trim(), variables);
             let j = i + 1;
             const subLines: string[] = [];
             while (j < lines.length && (lines[j].startsWith('    ') || lines[j].startsWith('\t') || lines[j].trim() === '')) {
-              if (lines[j].trim() !== '') subLines.push(lines[j].trim());
+              if (lines[j].trim()) subLines.push(lines[j].trim());
               j++;
             }
-            if (conditionMet) {
-              subLines.forEach((subLine: string) => executeSingleStatement(subLine, variables, logs));
-            }
+            if (conditionMet) subLines.forEach((s: string) => executeSingleStatement(s, variables, logs));
             i = j - 1;
             continue;
           }
@@ -368,7 +343,6 @@ add 5 to a`
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col font-sans selection:bg-neutral-800">
-      {/* Header Bar */}
       <header className="border-b border-neutral-900 bg-neutral-950/80 backdrop-blur-md sticky top-0 z-40 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <div className="bg-gradient-to-tr from-emerald-500 to-teal-500 p-2 rounded-xl text-neutral-950 shadow-lg shadow-emerald-500/20">
@@ -387,10 +361,7 @@ add 5 to a`
         </div>
       </header>
 
-      {/* Main Workspace */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 overflow-hidden">
-
-        {/* Left: Style Symbiote & Insights */}
         <div className="lg:col-span-3 space-y-6 flex flex-col h-full">
           <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-5 space-y-6">
             <div className="flex items-center justify-between border-b border-neutral-900 pb-4">
@@ -426,15 +397,14 @@ add 5 to a`
                     </div>
                   ))}
                 </div>
-              ) : !isAnalyzing ? (
+              ) : !isAnalyzing && (
                 <div className="text-center p-6 text-neutral-600 text-xs border border-dashed border-neutral-900 rounded-xl">
                   The Heuristic Engine is monitoring your environment.
                 </div>
-              ) : null}
+              )}
             </div>
           </div>
 
-          {/* Active Evolved Rules Panel */}
           <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-5 flex-1 flex flex-col min-h-[250px]">
             <h2 className="text-sm font-semibold tracking-wide uppercase text-neutral-300 pb-4 border-b border-neutral-900 flex items-center">
               <Sparkles className="w-4 h-4 mr-2 text-emerald-400" />
@@ -459,9 +429,7 @@ add 5 to a`
           </div>
         </div>
 
-        {/* Center/Right: Workspace Editors */}
         <div className="lg:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-6 h-full min-h-[500px]">
-          {/* Natural Language Code Editor */}
           <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-5 flex flex-col h-full">
             <div className="flex items-center justify-between border-b border-neutral-900 pb-4 mb-4">
               <div className="flex items-center space-x-2">
@@ -479,9 +447,7 @@ add 5 to a`
             />
           </div>
 
-          {/* Compiled Code Output + Terminal */}
           <div className="space-y-6 flex flex-col h-full">
-            {/* Compiled Output Preview */}
             <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-5 flex-1 flex flex-col">
               <div className="flex items-center justify-between border-b border-neutral-900 pb-4 mb-4">
                 <div className="flex items-center space-x-2">
@@ -509,16 +475,13 @@ add 5 to a`
                   disabled={isRunning || !compiledCode}
                   className="bg-emerald-500 hover:bg-emerald-400 disabled:bg-neutral-800 disabled:text-neutral-500 text-neutral-950 font-semibold px-4 py-2 rounded-xl text-xs flex items-center transition-all shadow-md shadow-emerald-500/10 disabled:shadow-none"
                 >
-                  {isRunning ? (
-                    <><div className="w-3.5 h-3.5 border-2 border-neutral-950 border-t-transparent rounded-full animate-spin mr-2"></div>Running Symbiote...</>
-                  ) : (
-                    <><Play className="w-3.5 h-3.5 mr-2 fill-neutral-950" />Run Code</>
-                  )}
+                  {isRunning
+                    ? <><div className="w-3.5 h-3.5 border-2 border-neutral-950 border-t-transparent rounded-full animate-spin mr-2" />Running Symbiote...</>
+                    : <><Play className="w-3.5 h-3.5 mr-2 fill-neutral-950" />Run Code</>}
                 </button>
               </div>
             </div>
 
-            {/* Output terminal */}
             <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-5 h-[200px] flex flex-col">
               <div className="flex items-center space-x-2 pb-3 mb-3 border-b border-neutral-900">
                 <Terminal className="w-4 h-4 text-emerald-400" />
