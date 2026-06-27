@@ -67,6 +67,18 @@ const BUILTIN_COMMANDS = [
       { keyword: 'divide Y by X', desc: 'Y /= X', example: 'divide total by 4' },
     ],
   },
+  {
+    category: 'Inline Math Words (post-processed)',
+    commands: [
+      { keyword: 'X times Y', desc: 'X * Y', example: 'make variable x 5 times 3' },
+      { keyword: 'X plus Y', desc: 'X + Y', example: 'make variable y 10 plus 2' },
+      { keyword: 'X minus Y', desc: 'X - Y', example: 'make variable z 9 minus 4' },
+      { keyword: 'X divided by Y', desc: 'X / Y', example: 'make variable r 10 divided by 2' },
+      { keyword: 'X to the power of Y', desc: 'X ** Y', example: 'make variable p 2 to the power of 8' },
+      { keyword: 'X squared', desc: 'X ** 2', example: 'make variable s n squared' },
+      { keyword: 'X modulo Y', desc: 'X % Y', example: 'make variable m 10 modulo 3' },
+    ],
+  },
 ];
 
 // ─── Rule Scoring ─────────────────────────────────────────────────────────────
@@ -89,7 +101,7 @@ const getRuleScore = (rule: any): number => {
   return score;
 };
 
-// ─── Pre-processor (handles elif/else/arithmetic before rules engine) ─────────
+// ─── Pre-processor ────────────────────────────────────────────────────────────
 const preProcessLine = (t: string): string | null => {
   let m = t.match(/^(?:alternatively|alternately|else if|otherwise if)\s+if\s+(.+?)\s+(?:is not the same as|is not equal to|!=|isn't|isnt)\s+(.+?)\s+then\s+(.+)$/i);
   if (m) return `elif ${m[1].trim()} != ${m[2].trim()}: ${m[3].trim()}`;
@@ -121,13 +133,21 @@ const preProcessLine = (t: string): string | null => {
   return null;
 };
 
-// ─── FIX 1: compilePattern — was escaping ??? wrong, breaking valid regex ─────
-const compilePattern = (pat: string, flags: string): RegExp => {
-  // Just replace literal ??? with ?? (possessive → greedy fallback)
-  // Do NOT escape — the pattern is already a regex string
-  const sanitized = pat.replace(/\?\?\?/g, '??');
-  return new RegExp(sanitized, flags);
-};
+// ─── Post-processor: math words → operators ───────────────────────────────────
+const postProcessMathWords = (line: string): string =>
+  line
+    .replace(/\bto the power of\b/gi, '**')
+    .replace(/\bdivided by\b/gi, '/')
+    .replace(/\btimes\b/g, '*')
+    .replace(/\bplus\b/g, '+')
+    .replace(/\bminus\b/g, '-')
+    .replace(/\bmodulo\b/gi, '%')
+    .replace(/\bsquared\b/g, '** 2')
+    .replace(/\bcubed\b/g, '** 3');
+
+// ─── compilePattern ───────────────────────────────────────────────────────────
+const compilePattern = (pat: string, flags: string): RegExp =>
+  new RegExp(pat.replace(/\?\?\?/g, '??'), flags);
 
 // ─── Commands Reference Modal ─────────────────────────────────────────────────
 const CommandsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
@@ -174,7 +194,6 @@ const CommandsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         style={{ maxHeight: '85vh' }}
         onClick={e => e.stopPropagation()}
       >
-        {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-900 flex-shrink-0">
           <div className="flex items-center gap-3">
             <BookOpen className="w-5 h-5 text-emerald-400" />
@@ -188,7 +207,6 @@ const CommandsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           </button>
         </div>
 
-        {/* Search */}
         <div className="px-6 py-3 border-b border-neutral-900 flex-shrink-0">
           <div className="relative">
             <Search className="w-4 h-4 text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -208,11 +226,10 @@ const CommandsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           </div>
         </div>
 
-        {/* Tabs */}
         <div className="flex border-b border-neutral-900 px-6 flex-shrink-0">
           {[
             { key: 'builtin', label: 'Built-in Patterns', count: totalBuiltin },
-            { key: 'rules', label: `rules.json`, count: totalRules },
+            { key: 'rules', label: 'rules.json', count: totalRules },
           ].map(tab => (
             <button
               key={tab.key}
@@ -233,7 +250,6 @@ const CommandsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           ))}
         </div>
 
-        {/* Content */}
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6 min-h-0">
           {activeTab === 'builtin' ? (
             filteredBuiltins.length > 0 ? filteredBuiltins.map((cat, ci) => (
@@ -290,12 +306,9 @@ const CommandsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           )}
         </div>
 
-        {/* Footer */}
         <div className="px-6 py-3 border-t border-neutral-900 flex items-center justify-between flex-shrink-0">
           <p className="text-[11px] text-neutral-600">
-            {activeTab === 'builtin'
-              ? `${totalBuiltin} built-in patterns`
-              : `${totalRules} rules loaded from rules.json`}
+            {activeTab === 'builtin' ? `${totalBuiltin} built-in patterns` : `${totalRules} rules loaded from rules.json`}
           </p>
           <button onClick={onClose} className="text-xs text-neutral-500 hover:text-neutral-300 transition-colors border border-neutral-800 hover:border-neutral-700 px-3 py-1.5 rounded-lg">
             Close
@@ -326,7 +339,6 @@ export default function App() {
   const analyzeWithHeuristics = (rawCode: string) => {
     setIsAnalyzing(true);
 
-    // FIX 2: handle both default export shapes from Vite bundler
     const rawRules: RuleEntry[] = (() => {
       const r = syntaxRulesJSON as any;
       if (Array.isArray(r)) return r;
@@ -370,10 +382,10 @@ export default function App() {
           const indent = (line.match(/^(\s*)/) || ['', ''])[1];
           const trimmed = line.trim();
 
-          // Pre-processor first (elif/else/arithmetic)
+          // Pre-processor first (elif / else / arithmetic shorthands)
           const pre = preProcessLine(trimmed);
           if (pre !== null) {
-            finalCodeLines.push(indent + pre);
+            finalCodeLines.push(indent + postProcessMathWords(pre));
             const key = pre.startsWith('elif') ? 'elif (pre-processed)'
               : pre.startsWith('else') ? 'else: (pre-processed)'
               : 'arithmetic shorthand';
@@ -382,48 +394,66 @@ export default function App() {
             return;
           }
 
-          // Rules engine
-          let translatedLine = line;
-          let matched = false;
+          // ── Multi-pass rules engine ──────────────────────────────────────
+          // Keeps applying rules until the line fully stabilises (no more changes).
+          // This lets compound natural-language statements resolve completely even
+          // when two rules need to fire on the same line.
+          let translatedLine = trimmed;
+          let passChanged = true;
+          const matchedRuleKeys = new Set<string>();
+          let safetyLimit = 20; // prevent infinite loops on pathological rules
 
-          for (const rule of rules) {
-            try {
-              const pattern = compilePattern(rule.pattern, rule.flags);
-              if (!pattern.test(trimmed)) continue;
+          while (passChanged && safetyLimit-- > 0) {
+            passChanged = false;
+            for (const rule of rules) {
+              try {
+                const pattern = compilePattern(rule.pattern, rule.flags);
+                if (!pattern.test(translatedLine)) continue;
 
-              let translation = trimmed.replace(compilePattern(rule.pattern, rule.flags), rule.replace);
+                let translation = translatedLine.replace(
+                  compilePattern(rule.pattern, rule.flags),
+                  rule.replace
+                );
 
-              // FIX 3: rules use TAB as delimiter for nested substitution, NOT ': '
-              if (translation.includes('\t')) {
-                const tabIdx = translation.indexOf('\t');
-                const left = translation.slice(0, tabIdx);
-                let right = translation.slice(tabIdx + 1);
-                // Resolve the right-hand side through the rules engine too
-                for (const nested of rules) {
-                  try {
-                    const np = compilePattern(nested.pattern, nested.flags);
-                    if (np.test(right)) {
-                      right = right.replace(compilePattern(nested.pattern, nested.flags), nested.replace);
-                      break;
-                    }
-                  } catch { /* skip bad nested rule */ }
+                // Tab-delimited nested substitution
+                if (translation.includes('\t')) {
+                  const tabIdx = translation.indexOf('\t');
+                  const left = translation.slice(0, tabIdx);
+                  let right = translation.slice(tabIdx + 1);
+                  for (const nested of rules) {
+                    try {
+                      const np = compilePattern(nested.pattern, nested.flags);
+                      if (np.test(right)) {
+                        right = right.replace(compilePattern(nested.pattern, nested.flags), nested.replace);
+                        break;
+                      }
+                    } catch { /* skip bad nested rule */ }
+                  }
+                  translation = left + right;
                 }
-                translation = left + right;
-              }
 
-              translatedLine = indent + translation;
-              if (!currentEvolvedSyntax.some(s => s.keyword === rule.ruleKeyword))
-                currentEvolvedSyntax.push({ keyword: rule.ruleKeyword, desc: rule.desc });
-              matched = true;
-              break;
-            } catch (e) {
-              console.warn('Skipped bad rule:', rule.ruleKeyword, e);
+                if (translation !== translatedLine) {
+                  translatedLine = translation;
+                  passChanged = true;
+                  if (!matchedRuleKeys.has(rule.ruleKeyword)) {
+                    matchedRuleKeys.add(rule.ruleKeyword);
+                    if (!currentEvolvedSyntax.some(s => s.keyword === rule.ruleKeyword))
+                      currentEvolvedSyntax.push({ keyword: rule.ruleKeyword, desc: rule.desc });
+                  }
+                  break; // restart from top of sorted rules with updated line
+                }
+              } catch (e) {
+                console.warn('Skipped bad rule:', rule.ruleKeyword, e);
+              }
             }
           }
 
+          // Post-processor: resolve any remaining inline math words
+          translatedLine = postProcessMathWords(translatedLine);
+
           // C-style for loop fallback
-          if (!matched && /^for\s*\(/.test(trimmed)) {
-            translatedLine = indent + trimmed.replace(
+          if (matchedRuleKeys.size === 0 && /^for\s*\(/.test(trimmed)) {
+            translatedLine = trimmed.replace(
               /for\s*\(\s*(?:let\s+|var\s+|int\s+)?([a-zA-Z0-9_]+)\s*=\s*(\d+)\s*;\s*\1\s*<\s*(\d+)\s*;\s*\1\+\+\s*\)/,
               'for $1 in range($2, $3):'
             );
@@ -431,7 +461,7 @@ export default function App() {
               currentEvolvedSyntax.push({ keyword: 'C-style for loop', desc: 'Translated C/JS for-loop to Python range().' });
           }
 
-          finalCodeLines.push(translatedLine);
+          finalCodeLines.push(indent + translatedLine);
         });
       } else {
         finalCodeLines = rawCode.split('\n');
@@ -440,7 +470,7 @@ export default function App() {
 
       let finalCode = finalCodeLines.join('\n');
 
-      // Strip type/var keywords left over
+      // Strip leftover type/var keywords
       if (/\b(var|let|const|int|float|string|bool)\s+[a-zA-Z0-9_]+\s*=/.test(finalCode)) {
         newInsights.push({ type: 'optimization', message: 'Type/var keywords stripped — Python uses dynamic typing.' });
         finalCode = finalCode.replace(/\b(var|let|const|int|float|string|bool)\s+([a-zA-Z0-9_]+)\s*=/g, '$2 =');
@@ -475,13 +505,11 @@ export default function App() {
 
   const resolveValue = (str: string, variables: Record<string, any>): any => {
     const s = str.trim();
-    // type(x)
     const typeMatch = s.match(/^type\((.+)\)$/);
     if (typeMatch) {
       const v = typeMatch[1].trim();
       return v in variables ? getTypeString(variables[v]) : `NameError: '${v}' is not defined`;
     }
-    // cast: int() float() str() bool()
     const castMatch = s.match(/^(int|float|str|bool)\((.+)\)$/);
     if (castMatch) {
       const inner = resolveValue(castMatch[2], variables);
@@ -490,21 +518,17 @@ export default function App() {
       if (castMatch[1] === 'str') return String(inner);
       if (castMatch[1] === 'bool') return !!inner;
     }
-    // len()
     const lenMatch = s.match(/^len\((.+)\)$/);
     if (lenMatch) {
       const v = resolveValue(lenMatch[1], variables);
       return Array.isArray(v) ? v.length : typeof v === 'string' ? v.length : 0;
     }
-    // list/tuple literal
     if ((s.startsWith('[') && s.endsWith(']')) || (s.startsWith('(') && s.endsWith(')'))) {
       const content = s.slice(1, -1).trim();
       return content ? content.split(',').map(i => resolveValue(i.trim(), variables)) : [];
     }
-    // quoted string
     if ((s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'")))
       return s.slice(1, -1);
-    // arithmetic expression
     if (/^[\w\s\+\-\*\/\%\(\)\.]+$/.test(s) && /[\+\-\*\/]/.test(s)) {
       try {
         const expr = s.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\b/g, (_, n) =>
@@ -542,7 +566,6 @@ export default function App() {
     const t = stmt.trim();
     if (!t || t.startsWith('#') || t.startsWith('//')) return;
 
-    // print()
     if (t.startsWith('print(') || t.startsWith('print ')) {
       let expr = '';
       if (t.startsWith('print(')) {
@@ -558,14 +581,10 @@ export default function App() {
       }
       if (!expr) return;
       const val = resolveValue(expr, variables);
-      logs.push({
-        line: String(val),
-        type: typeof val === 'string' && val.startsWith('NameError') ? 'error' : 'output'
-      });
+      logs.push({ line: String(val), type: typeof val === 'string' && val.startsWith('NameError') ? 'error' : 'output' });
       return;
     }
 
-    // assignment / compound assignment
     const opMatch = t.match(/^([a-zA-Z_][a-zA-Z0-9_]*)\s*(\+=|-=|\*=|\/=|%=|:=|=)\s*(.+)$/);
     if (opMatch) {
       const [, name, op, rhs] = opMatch;
@@ -579,7 +598,6 @@ export default function App() {
       return;
     }
 
-    // list.append()
     const appendMatch = t.match(/^([a-zA-Z_][a-zA-Z0-9_]*)\.append\((.+)\)$/);
     if (appendMatch) {
       const arr = variables[appendMatch[1]];
@@ -604,7 +622,6 @@ export default function App() {
         const trimmed = line.trim();
         if (!trimmed || trimmed.startsWith('#') || trimmed.startsWith('//')) continue;
 
-        // inline: if/elif/else X: action
         const inlineMatch = trimmed.match(/^(if|elif|else)\s*(.*?):\s+(.+)$/);
         if (inlineMatch) {
           const [, kw, cond, action] = inlineMatch;
@@ -621,7 +638,6 @@ export default function App() {
           continue;
         }
 
-        // block: if/elif/else X:\n    body
         const blockMatch = trimmed.match(/^(if|elif|else)\s*(.*?):$/);
         if (blockMatch) {
           const [, kw, cond] = blockMatch;
@@ -646,14 +662,11 @@ export default function App() {
 
       logs.push({ line: '', type: 'divider' });
       logs.push({ line: '>>> Execution completed successfully', type: 'system' });
-
       const varEntries = Object.entries(variables);
       if (varEntries.length > 0) {
         logs.push({ line: '', type: 'divider' });
         logs.push({ line: '>>> Variables at exit:', type: 'system' });
-        varEntries.forEach(([k, v]) =>
-          logs.push({ line: `    ${k} = ${JSON.stringify(v)}`, type: 'output' })
-        );
+        varEntries.forEach(([k, v]) => logs.push({ line: `    ${k} = ${JSON.stringify(v)}`, type: 'output' }));
       }
 
       setOutput(logs);
@@ -702,7 +715,6 @@ export default function App() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {/* Commands button — always visible */}
             <button
               onClick={() => setShowCommands(true)}
               className="flex items-center gap-2 text-xs bg-neutral-900 border border-neutral-800 hover:border-emerald-500/50 hover:text-emerald-400 text-neutral-300 rounded-xl px-3 py-2 transition-all font-medium"
@@ -741,7 +753,6 @@ export default function App() {
           {/* Left Sidebar */}
           <div className="lg:col-span-3 space-y-4 flex flex-col">
 
-            {/* Style Profile */}
             <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4">
               <div className="flex items-center justify-between pb-3 mb-3 border-b border-neutral-900">
                 <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-400 flex items-center">
@@ -759,7 +770,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* Insights */}
             <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4">
               <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-400 pb-3 mb-3 border-b border-neutral-900 flex items-center">
                 <Zap className="w-3.5 h-3.5 mr-1.5 text-emerald-400" />Insights
@@ -784,7 +794,6 @@ export default function App() {
               )}
             </div>
 
-            {/* Active Translations */}
             <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4 flex-1 flex flex-col">
               <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-400 pb-3 mb-3 border-b border-neutral-900 flex items-center">
                 <Sparkles className="w-3.5 h-3.5 mr-1.5 text-emerald-400" />
@@ -818,7 +827,7 @@ export default function App() {
           {/* Editors */}
           <div className="lg:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-4 min-h-[500px]">
 
-            {/* Input Editor */}
+            {/* Input */}
             <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4 flex flex-col h-full">
               <div className="flex items-center justify-between pb-3 mb-3 border-b border-neutral-900">
                 <div className="flex items-center gap-2">
@@ -836,7 +845,7 @@ export default function App() {
               </div>
               <textarea
                 className="flex-1 bg-neutral-950/40 border border-neutral-900 rounded-xl p-3.5 text-sm font-mono text-neutral-300 focus:outline-none focus:border-emerald-500/40 resize-none leading-relaxed transition-all placeholder:text-neutral-600"
-                placeholder={`Try:\nprint hello world\nmake a variable called x and set it to 10\nif x is greater than 5 then print big\nalternatively then print small\nadd 1 to x`}
+                placeholder={`Try:\nprint hello world\nmake variable x 5 times 3\nif x is greater than 5 then print big\nalternatively then print small\nadd 1 to x`}
                 value={code}
                 onChange={e => setCode(e.target.value)}
                 spellCheck={false}
@@ -855,7 +864,6 @@ export default function App() {
             {/* Right Column */}
             <div className="flex flex-col gap-4 h-full">
 
-              {/* Translated Output */}
               <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4 flex-1 flex flex-col min-h-0">
                 <div className="flex items-center justify-between pb-3 mb-3 border-b border-neutral-900">
                   <div className="flex items-center gap-2">
@@ -887,7 +895,6 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Execution Output */}
               <div className="bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4 flex flex-col" style={{ height: '220px' }}>
                 <div className="flex items-center justify-between pb-3 mb-3 border-b border-neutral-900">
                   <div className="flex items-center gap-2">
