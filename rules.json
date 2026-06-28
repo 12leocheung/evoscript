@@ -385,6 +385,20 @@
     "ruleKeyword": "swap [X] and [Y]"
   },
   {
+    "pattern": "^\\s*(?:if|when|whenever|should|in case|assuming|provided that|check if|check whether|see if|given that|as long as|only if|provided|whenever|if it is true that|suppose that)\\s+(?:the\\s+)?type\\s+of\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:is the same as|is equal to|is equal|equals|is exactly|==|matches|is identical to|is identical|is equivalent to|is the same type as)\\s+(?:the\\s+)?type\\s+of\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?:then)?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "if type($1) == type($2):",
+    "desc": "if the type of X equals the type of Y.",
+    "ruleKeyword": "if type of [X] is the same as type of [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:if|when|whenever|should|in case|assuming|provided that|check if|check whether|see if|given that|as long as|only if|provided|whenever|if it is true that|suppose that)\\s+(?:the\\s+)?type\\s+of\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:is not the same as|isn't the same as|is not equal to|is not equal|does not equal|doesnt equal|different from|is different from|!=)\\s+(?:the\\s+)?type\\s+of\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?:then)?\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "if type($1) != type($2):",
+    "desc": "if the type of X is not the same as the type of Y.",
+    "ruleKeyword": "if type of [X] is not the same as type of [Y]"
+  },
+  {
     "pattern": "^\\s*(?:if|when|whenever|should|in case|assuming|provided that|check if|check whether|see if|given that|as long as|only if|provided|whenever|if it is true that|suppose that)\\s+(.+?)\\s+(?:is the same as|equals|is equal to|is equal|is exactly|==|matches|is identical to|is identical|is|is equivalent to)\\s+(.+?)\\s*[\\s:=>]*$",
     "flags": "i",
     "replace": "if $1 == $2:",
