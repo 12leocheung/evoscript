@@ -14,7 +14,14 @@
     "ruleKeyword": "set [X] to [Y]"
   },
   {
-    "pattern": "^\\s*(?:assign|store|save|put|place|stick|shove|throw|chuck|dump|write|load|push|deposit|stash|retain|file|register|record|inject|embed|insert|pack|stuff|cram|tuck|hide|lock|secure|seal|deposit)\\s+(.+?)\\s+(?:into|in|to|as|inside|under the name|in a variable called|in a var called|into a variable called|into a var called|under variable|under var|inside a variable called|inside a var called|to the variable named|to the var named|into the variable named|into the var named)\\s+['\"]?([a-zA-Z_][a-zA-Z0-9_]*)['\"]?\\s*[\\s:=>]*$",
+    "pattern": "^\\s*(?:let|make|set|assign|declare)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:be|become|equal to|equal|as|to|to be)\\s+(.+?)\\s*[\\s:=>]*$",
+    "flags": "i",
+    "replace": "$1 = $2",
+    "desc": "Natural assignment with 'let X be Y', 'make X equal Y'.",
+    "ruleKeyword": "let [X] be [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:make|let|set|assign|store|save|put)\\s+(.+?)\\s+(?:into|in|to|as|inside|under the name|in a variable called|in a var called|into a variable called|into a var called|under variable|under var|inside a variable called|inside a var called|to the variable named|to the var named|into the variable named|into the var named)\\s+['\"]?([a-zA-Z_][a-zA-Z0-9_]*)['\"]?\\s*[\\s:=>]*$",
     "flags": "i",
     "replace": "$2 = $1",
     "desc": "Reversed assignment — value first then variable.",
@@ -161,6 +168,13 @@
     "ruleKeyword": "show type of [X]"
   },
   {
+    "pattern": "^\\s*(?:type|typeof|check type of|show type of|display type of|tell me the type of|what is the type of|what's the type of|what type of)\\s+(.+?)\\??\\s*$",
+    "flags": "i",
+    "replace": "print(type($1))",
+    "desc": "Print type of expression with more natural phrasing.",
+    "ruleKeyword": "type of [X]"
+  },
+  {
     "pattern": "^\\s*(?:what type|what kind|what sort|what datatype|what data type|what class)\\s+(?:is|of|are)?\\s+(.+?)\\??\\s*$",
     "flags": "i",
     "replace": "print(type($1))",
@@ -168,11 +182,18 @@
     "ruleKeyword": "what type is [X]?"
   },
   {
-    "pattern": "^\\s*(?:is|check if|check whether|see if|test if)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:a|an)\\s+(int|integer|float|string|str|bool|boolean|list|dict|dictionary|set|tuple|complex|bytes|bytearray|range|frozenset|dict_keys|dict_values)\\??\\s*$",
+    "pattern": "^\\s*(?:is|check if|check whether|see if|test if|verify whether|does)\\s+(.+?)\\s+(?:a|an|the)\\s+(int|integer|float|string|str|bool|boolean|list|dict|dictionary|set|tuple|complex|bytes|bytearray|range|frozenset|dict_keys|dict_values)\\??\\s*$",
     "flags": "i",
     "replace": "print(isinstance($1, $2))",
     "desc": "isinstance type check.",
     "ruleKeyword": "is [X] a [TYPE]?"
+  },
+  {
+    "pattern": "^\\s*(?:does|is|check if|check whether|see if|test if|verify whether)\\s+(.+?)\\s+(?:have|has|have the type|has the type|be of type|be a|be an|be of class|belong to)\\s+(int|integer|float|string|str|bool|boolean|list|dict|dictionary|set|tuple|complex|bytes|bytearray|range|frozenset|dict_keys|dict_values)\\??\\s*$",
+    "flags": "i",
+    "replace": "print(isinstance($1, $2))",
+    "desc": "Alternate phrasing for isinstance type check.",
+    "ruleKeyword": "does [X] have type [TYPE]?"
   },
   {
     "pattern": "^\\s*(?:add|increase|bump up|bump|raise|increment by|plus|inc by|plus-ify|add on|chuck|tack on|throw|put|stick|append|attach|heap|pile|inject|feed|slap|insert)\\s+(.+?)\\s+(?:to|onto|into|on top of|on to|to the variable|to variable|into the variable|into variable)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*[\\s:=>]*$",
@@ -180,6 +201,34 @@
     "replace": "$2 += $1",
     "desc": "Add X to Y.",
     "ruleKeyword": "add [X] to [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:([a-zA-Z_][a-zA-Z0-9_]*|\\d+(?:\\.\\d+)?))\\s+(?:plus|added to)\\s+([a-zA-Z_][a-zA-Z0-9_]*|\\d+(?:\\.\\d+)?)\\s*$",
+    "flags": "i",
+    "replace": "$1 + $2",
+    "desc": "Add two values.",
+    "ruleKeyword": "[X] plus [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:([a-zA-Z_][a-zA-Z0-9_]*|\\d+(?:\\.\\d+)?))\\s+(?:minus|subtract)\\s+([a-zA-Z_][a-zA-Z0-9_]*|\\d+(?:\\.\\d+)?)\\s*$",
+    "flags": "i",
+    "replace": "$1 - $2",
+    "desc": "Subtract two values.",
+    "ruleKeyword": "[X] minus [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:([a-zA-Z_][a-zA-Z0-9_]*|\\d+(?:\\.\\d+)?))\\s+(?:times|multiplied by|multiply by|x|×)\\s+([a-zA-Z_][a-zA-Z0-9_]*|\\d+(?:\\.\\d+)?)\\s*$",
+    "flags": "i",
+    "replace": "$1 * $2",
+    "desc": "Multiply two values.",
+    "ruleKeyword": "[X] times [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:([a-zA-Z_][a-zA-Z0-9_]*|\\d+(?:\\.\\d+)?))\\s+(?:divided by|over|per)\\s+([a-zA-Z_][a-zA-Z0-9_]*|\\d+(?:\\.\\d+)?)\\s*$",
+    "flags": "i",
+    "replace": "$1 / $2",
+    "desc": "Divide two values.",
+    "ruleKeyword": "[X] divided by [Y]"
   },
   {
     "pattern": "^\\s*(?:increase|bump|raise|increment|grow|boost|go up|push up|jack up|ramp up|up|scale up|multiply up|add to)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:by|with|using|of|amount|value)\\s+(.+?)\\s*[\\s:=>]*$",
@@ -1377,6 +1426,62 @@
     "replace": "# TODO: $1",
     "desc": "TODO comment.",
     "ruleKeyword": "todo: [text]"
+  },
+  {
+    "pattern": "^\\s*(?:no\\s+comments|without\\s+comments|no\\s+commentary|dont\\s+add\\s+comments|don't\\s+add\\s+comments|no\\s+notes|without\\s+notes|skip\\s+comments|skip\\s+commentary)\\s*$",
+    "flags": "i",
+    "replace": "",
+    "desc": "Directive to omit comments from generated code.",
+    "ruleKeyword": "no comments"
+  },
+  {
+    "pattern": "^\\s*(?:set|make|let|assign|put|store|save)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(?:as|to|equal|equal to|to be|as the value of|as the value|as value|to value|with value|having value|in value)\\s+(.+?)\\s*$",
+    "flags": "i",
+    "replace": "$1 = $2",
+    "desc": "Flexible assignment with a variety of phrasing.",
+    "ruleKeyword": "set [X] as [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:give|assign|store|save|put|set)\\s+(.+?)\\s+to\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*$",
+    "flags": "i",
+    "replace": "$2 = $1",
+    "desc": "Flexible reversed assignment phrase.",
+    "ruleKeyword": "give [Y] to [X]"
+  },
+  {
+    "pattern": "^\\s*(?:add|plus|added to)\\s+([a-zA-Z_][a-zA-Z0-9_]*|\\d+(?:\\.\\d+)?)\\s+([a-zA-Z_][a-zA-Z0-9_]*|\\d+(?:\\.\\d+)?)\\s*$",
+    "flags": "i",
+    "replace": "$1 + $2",
+    "desc": "Flexible add expression.",
+    "ruleKeyword": "[X] plus [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:subtract|minus|take away)\\s+([a-zA-Z_][a-zA-Z0-9_]*|\\d+(?:\\.\\d+)?)\\s+([a-zA-Z_][a-zA-Z0-9_]*|\\d+(?:\\.\\d+)?)\\s*$",
+    "flags": "i",
+    "replace": "$1 - $2",
+    "desc": "Flexible subtract expression.",
+    "ruleKeyword": "[X] minus [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:multiply|times|multiplied by|x|×)\\s+([a-zA-Z_][a-zA-Z0-9_]*|\\d+(?:\\.\\d+)?)\\s+([a-zA-Z_][a-zA-Z0-9_]*|\\d+(?:\\.\\d+)?)\\s*$",
+    "flags": "i",
+    "replace": "$1 * $2",
+    "desc": "Flexible multiply expression.",
+    "ruleKeyword": "[X] times [Y]"
+  },
+  {
+    "pattern": "^\\s*(?:divide|divided by|over|per)\\s+([a-zA-Z_][a-zA-Z0-9_]*|\\d+(?:\\.\\d+)?)\\s+([a-zA-Z_][a-zA-Z0-9_]*|\\d+(?:\\.\\d+)?)\\s*$",
+    "flags": "i",
+    "replace": "$1 / $2",
+    "desc": "Flexible division expression.",
+    "ruleKeyword": "[X] divided by [Y]"
+  },
+  {
+    "pattern": "^\\s*([a-zA-Z_][a-zA-Z0-9_]*|\\d+(?:\\.\\d+)?)\\s+(?:is|equals?|equal to|is the same as|matches|is identical to)\\s+([a-zA-Z_][a-zA-Z0-9_]*|\\d+(?:\\.\\d+)?)\\s*$",
+    "flags": "i",
+    "replace": "$1 == $2",
+    "desc": "Flexible equality comparison.",
+    "ruleKeyword": "[X] equals [Y]"
   },
   {
     "pattern": "^\\s*-{3,}\\s*$",
